@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:travesiacr.online)",
-      "WebFetch(domain:www.travesiacr.online)",
-      "PowerShell(Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','C:\\\\Users\\\\veroc\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-veroc-travesia\\\\80135d42-de83-4bb2-acb8-66ab0bab8ffd\\\\scratchpad\\\\serve.ps1' -WindowStyle Hidden; Start-Sleep -Seconds 2; try { \\(Invoke-WebRequest -Uri 'http://localhost:8080/' -UseBasicParsing -TimeoutSec 5\\).StatusCode } catch { $_.Exception.Message })"
-    ]
-  }
-}
