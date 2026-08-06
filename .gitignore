@@ -4,6 +4,9 @@
 # Claude Code local settings
 .claude/
 
+# Paquete generado
+*.zip
+
 # OS / editor
 .DS_Store
 Thumbs.db
