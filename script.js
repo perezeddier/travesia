@@ -219,11 +219,21 @@ const I18N = {
 
 /* ---------- GALERÍA ---------- */
 const GALLERY = [
-  { img: "hero.jpg",          cap: { es: "Volcán Arenal, La Fortuna",        en: "Arenal Volcano, La Fortuna" } },
-  { img: "gallery-hotel.jpg", cap: { es: "Gran Hotel Costa Rica, San José",  en: "Gran Hotel Costa Rica, San José" } },
-  { img: "staria.jpg",        cap: { es: "En ruta por Costa Rica",           en: "On the road in Costa Rica" } },
-  { img: "hiace.jpg",         cap: { es: "Rumbo a la costa",                 en: "Heading to the coast" } },
-  { img: "maxus.jpg",         cap: { es: "Llegada al resort",                en: "Arriving at the resort" } },
+  { img: "g-van-sunset.jpg",       cap: { es: "Nuestra flota al atardecer",        en: "Our fleet at sunset" } },
+  { img: "g-clients-van.jpg",      cap: { es: "Clientes felices con nuestro equipo",en: "Happy clients with our team" } },
+  { img: "g-arenal.jpg",           cap: { es: "Volcán Arenal",                     en: "Arenal Volcano" } },
+  { img: "g-family-waterfall.jpg", cap: { es: "Familias en La Fortuna",            en: "Families at La Fortuna" } },
+  { img: "g-fortuna-waterfall.jpg",cap: { es: "Catarata La Fortuna",               en: "La Fortuna Waterfall" } },
+  { img: "g-morpho.jpg",           cap: { es: "Mariposa morfo azul",               en: "Blue morpho butterfly" } },
+  { img: "g-group-waterfall.jpg",  cap: { es: "Aventuras compartidas",             en: "Shared adventures" } },
+  { img: "gallery-hotel.jpg",      cap: { es: "Gran Hotel Costa Rica, San José",   en: "Gran Hotel Costa Rica, San José" } },
+  { img: "g-monkey.jpg",           cap: { es: "Fauna costarricense",               en: "Costa Rican wildlife" } },
+  { img: "g-flag.jpg",             cap: { es: "¡Pura vida!",                       en: "Pura vida!" } },
+  { img: "g-van-garden.jpg",       cap: { es: "Lista para tu viaje",               en: "Ready for your trip" } },
+  { img: "g-arenal-lagoon.jpg",    cap: { es: "Arenal y su laguna",                en: "Arenal & its lagoon" } },
+  { img: "g-group-ballena.jpg",    cap: { es: "Parque Marino Ballena",             en: "Marino Ballena National Park" } },
+  { img: "g-cloudforest.jpg",      cap: { es: "Bosque nuboso",                     en: "Cloud-forest trails" } },
+  { img: "g-llanos-cortes.jpg",    cap: { es: "Catarata Llanos de Cortés",         en: "Llanos de Cortés Waterfall" } },
 ];
 
 function renderGallery() {
