@@ -1,9 +1,29 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://travesiacr.online/</loc>
-    <lastmod>2026-08-06</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://travesiacr.online/</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-la-fortuna</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-manuel-antonio</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-tamarindo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-jaco</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-puerto-viejo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-papagayo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-nosara</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-dominical</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-santa-teresa</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-tamarindo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-la-fortuna</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-playas-del-coco</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-playa-flamingo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-papagayo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-nosara</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/liberia-airport-to-playa-conchal</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/la-fortuna-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/la-fortuna-to-tamarindo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/la-fortuna-to-manuel-antonio</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/monteverde-to-manuel-antonio</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/manuel-antonio-to-tamarindo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/jaco-to-la-fortuna</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
+

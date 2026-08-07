@@ -87,6 +87,7 @@ const I18N = {
     "routes.popular": "Most popular routes",
     "routes.custom": "Need a different route? Request a custom quote",
     "route.book": "Book",
+    "route.view": "View route",
     "route.priceNote": "per vehicle",
     "finder.from": "From",
     "finder.to": "To",
@@ -184,6 +185,7 @@ const I18N = {
     "routes.popular": "Rutas más populares",
     "routes.custom": "¿Necesitas otra ruta? Pide una cotización personalizada",
     "route.book": "Reservar",
+    "route.view": "Ver ruta",
     "route.priceNote": "por vehículo",
     "finder.from": "Desde",
     "finder.to": "Hasta",
@@ -400,9 +402,13 @@ function renderRoutes() {
     if (!p) return "";
     const from = ptName(i), to = ptName(j);
     const tag = i === 0 ? "SJO" : i === 1 ? "LIR" : "Costa Rica";
+    const slug = (typeof PT_SLUG !== "undefined" && PT_SLUG[i] && PT_SLUG[j])
+      ? `/shuttle/${PT_SLUG[i]}-to-${PT_SLUG[j]}` : null;
     const msg = `Hi Travesía! I'd like to book a private transfer from ${from} to ${to} (from $${p.staria}). Date & passengers: `;
+    const href = slug || wa(msg);
+    const ext = slug ? "" : ` target="_blank" rel="noopener"`;
     return `
-      <article class="route-card" data-reveal>
+      <a class="route-card" href="${href}"${ext} data-reveal>
         <span class="route-tag">${tag}</span>
         <div class="route-path">
           <span class="route-from">${from}</span>
@@ -411,12 +417,9 @@ function renderRoutes() {
         </div>
         <div class="route-meta">
           <div class="route-price"><em>$</em>${p.staria}<small data-i18n="route.priceNote">${t("route.priceNote")}</small></div>
-          <a class="route-book" href="${wa(msg)}" target="_blank" rel="noopener">
-            <span data-i18n="route.book">${t("route.book")}</span>
-            <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
-          </a>
+          <span class="route-book"><span data-i18n="route.view">${t("route.view")}</span> &rarr;</span>
         </div>
-      </article>`;
+      </a>`;
   }).join("");
 }
 
@@ -790,6 +793,14 @@ document.addEventListener("DOMContentLoaded", () => {
     setupCombo("toInput", "toList");
     setComboValue("fromInput", 0);   // SJO por defecto
     setComboValue("toInput", 2);     // La Fortuna por defecto
+    // Pre-llenado desde una página de ruta (?from=&to=)
+    const qp = new URLSearchParams(location.search);
+    const qf = qp.get("from"), qt = qp.get("to");
+    if (qf != null && qt != null && PT_PLACES[+qf] != null && PT_PLACES[+qt] != null) {
+      setComboValue("fromInput", +qf);
+      setComboValue("toInput", +qt);
+      setTimeout(() => document.getElementById("finder")?.scrollIntoView({ behavior: "smooth", block: "center" }), 400);
+    }
     if (swapBtn) swapBtn.addEventListener("click", () => {
       const v = fromInput.value, p = fromInput.dataset.place;
       fromInput.value = toInput.value; fromInput.dataset.place = toInput.dataset.place;
