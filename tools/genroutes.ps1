@@ -77,7 +77,7 @@ foreach($p in $pages){
   $slug="$($o.slug)-to-$($d.slug)"
   $url="$base/shuttle/$slug"
   $cards=(PriceCard "Hyundai Staria" 5 $p.s)+(PriceCard "Toyota Hiace" 9 $p.h)+(PriceCard "Maxus V90" 12 $p.m)
-  $intro="Travel privately from $($o.n) to $($d.n) with Travesia Costa Rica. $($d.blurb) The transfer takes about $($p.dur), door to door, with a professional English- and Spanish-speaking driver. One flat price per vehicle - taxes and tolls included, and no per-person fees."
+  $intro="Travel privately from $($o.n) to $($d.n) with Travesia Costa Rica. $($d.blurb) The transfer takes about $($p.dur), door to door, with a professional local driver. One flat price per vehicle - taxes and tolls included, and no per-person fees."
   $faq=@"
 <details><summary>How long is the transfer from $($o.n) to $($d.n)?</summary><div class='a'>The private shuttle takes about $($p.dur) door to door, depending on traffic and any stops you request.</div></details>
 <details><summary>How much is a shuttle from $($o.n) to $($d.n)?</summary><div class='a'>From `$$($p.s) per vehicle for up to 5 passengers (Hyundai Staria), with larger vehicles available. The price is per vehicle, not per person, and includes taxes and tolls.</div></details>
