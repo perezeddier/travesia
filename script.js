@@ -52,9 +52,9 @@ function ptDuration(dur) {
 }
 
 const FLEET = [
-  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5  },
-  { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9  },
-  { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12 },
+  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg" },
+  { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9,  img: "hiace.jpg"  },
+  { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12, img: "maxus.jpg"  },
 ];
 
 /* ---------- TRANSLATIONS ---------- */
@@ -502,7 +502,10 @@ function renderFleet() {
     const msg = `Hi Travesía! I'm interested in the ${f.name} (${f.pax} passengers). `;
     return `
       <article class="fleet-card" data-reveal>
-        <div class="fleet-visual">${ICON_VAN}</div>
+        <div class="fleet-visual">
+          <img class="fleet-photo" src="assets/${f.img}" alt="${f.name} — Travesía Costa Rica private shuttle" loading="lazy" onerror="this.remove(); this.parentNode.classList.add('no-photo');" />
+          <span class="fleet-visual-icon">${ICON_VAN}</span>
+        </div>
         <div class="fleet-body">
           <div class="fleet-name">${f.name}</div>
           <div class="fleet-class">${f.cls}</div>
