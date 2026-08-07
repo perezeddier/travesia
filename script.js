@@ -13,16 +13,43 @@ function wa(text) {
 }
 
 /* ---------- DATA ---------- */
-const ROUTES = [
-  { from: "San José (SJO)", to: "La Fortuna / Arenal", price: 190, tag: "sjo" },
-  { from: "San José (SJO)", to: "Manuel Antonio",      price: 195, tag: "sjo" },
-  { from: "San José (SJO)", to: "Monteverde",          price: 200, tag: "sjo" },
-  { from: "Liberia (LIR)",  to: "Tamarindo",           price: 120, tag: "lir" },
-  { from: "Liberia (LIR)",  to: "La Fortuna / Arenal", price: 195, tag: "lir" },
-  { from: "Liberia (LIR)",  to: "Monteverde",          price: 195, tag: "lir" },
-  { from: "La Fortuna / Arenal", to: "Tamarindo",      price: 280, tag: "hub" },
-  { from: "La Fortuna / Arenal", to: "Manuel Antonio", price: 295, tag: "hub" },
+/* Rutas populares mostradas como tarjetas: [indiceOrigen, indiceDestino] en PT_PLACES */
+const POPULAR = [
+  [0, 2],   // SJO → La Fortuna
+  [0, 4],   // SJO → Manuel Antonio
+  [0, 3],   // SJO → Monteverde
+  [0, 11],  // SJO → Jacó
+  [1, 5],   // LIR → Tamarindo
+  [1, 2],   // LIR → La Fortuna
+  [1, 12],  // LIR → Playas del Coco
+  [2, 3],   // La Fortuna → Monteverde
+  [2, 5],   // La Fortuna → Tamarindo
+  [2, 4],   // La Fortuna → Manuel Antonio
 ];
+
+/* ---------- Índice de precios (rutas sin dirección) ----------
+   Clave "min-max" -> { staria, hiace, maxus, dur } */
+const PT_LOOKUP = {};
+if (typeof PT_ROWS !== "undefined") {
+  for (const r of PT_ROWS) {
+    const a = Math.min(r[0], r[1]), b = Math.max(r[0], r[1]);
+    PT_LOOKUP[`${a}-${b}`] = { staria: r[2], hiace: r[3], maxus: r[4], dur: r[5] };
+  }
+}
+function ptName(i) {
+  const raw = PT_PLACES[i];
+  return (typeof PT_DISPLAY !== "undefined" && PT_DISPLAY[raw]) || raw;
+}
+function ptPrice(i, j) {
+  return PT_LOOKUP[`${Math.min(i, j)}-${Math.max(i, j)}`] || null;
+}
+/* Oculta duraciones claramente erróneas en los datos de origen (p.ej. "45h") */
+function ptDuration(dur) {
+  if (!dur) return "";
+  const m = dur.match(/^(\d+)h$/);
+  if (m && Number(m[1]) > 12) return "";  // "30h", "40h", "45h", "55h" = error de datos
+  return dur;
+}
 
 const FLEET = [
   { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5  },
@@ -47,12 +74,24 @@ const I18N = {
     "hero.trust1": "& LIR airport pickups",
     "hero.trust2": "WhatsApp support",
     "hero.trust3": "passenger vehicles",
-    "routes.eyebrow": "Popular departures",
-    "routes.title": "Routes & fixed prices",
-    "routes.lead": "Transparent flat rates for the whole vehicle — not per person. Don't see your route? Just ask.",
+    "routes.eyebrow": "Fares & destinations",
+    "routes.title": "Find your route & price",
+    "routes.lead": "Pick where you're coming from and where you're going — see the price instantly. Flat rate for the whole vehicle, not per person.",
+    "routes.popular": "Most popular routes",
     "routes.custom": "Need a different route? Request a custom quote",
     "route.book": "Book",
     "route.priceNote": "per vehicle",
+    "finder.from": "From",
+    "finder.to": "To",
+    "finder.pick": "Choose your pickup and destination to see the price.",
+    "finder.same": "Pickup and destination can't be the same. Choose a different place.",
+    "finder.notfound": "We don't have a set price for that pair yet — send it to us on WhatsApp and we'll quote it in minutes.",
+    "finder.notfoundBtn": "Quote this route on WhatsApp",
+    "finder.taxes": "Final price per vehicle · taxes included",
+    "finder.upto": "up to",
+    "finder.pax": "passengers",
+    "finder.book": "Book",
+    "finder.ask": "Ask",
     "fleet.eyebrow": "The fleet",
     "fleet.title": "Modern, comfortable vehicles",
     "fleet.lead": "Air-conditioned, well-maintained and GPS-monitored. Choose the size that fits your group and luggage.",
@@ -92,12 +131,24 @@ const I18N = {
     "hero.trust1": "y recogidas en LIR",
     "hero.trust2": "soporte por WhatsApp",
     "hero.trust3": "vehículos de pasajeros",
-    "routes.eyebrow": "Salidas populares",
-    "routes.title": "Rutas y precios fijos",
-    "routes.lead": "Tarifas planas y transparentes por vehículo completo — no por persona. ¿No ves tu ruta? Solo pregúntanos.",
+    "routes.eyebrow": "Tarifas y destinos",
+    "routes.title": "Encuentra tu ruta y precio",
+    "routes.lead": "Elige de dónde sales y a dónde vas — mira el precio al instante. Tarifa plana por vehículo completo, no por persona.",
+    "routes.popular": "Rutas más populares",
     "routes.custom": "¿Necesitas otra ruta? Pide una cotización personalizada",
     "route.book": "Reservar",
     "route.priceNote": "por vehículo",
+    "finder.from": "Desde",
+    "finder.to": "Hasta",
+    "finder.pick": "Elige tu punto de recogida y destino para ver el precio.",
+    "finder.same": "El origen y el destino no pueden ser iguales. Elige otro lugar.",
+    "finder.notfound": "Aún no tenemos precio fijo para ese par — mándanoslo por WhatsApp y te cotizamos en minutos.",
+    "finder.notfoundBtn": "Cotizar esta ruta por WhatsApp",
+    "finder.taxes": "Precio final por vehículo · impuestos incluidos",
+    "finder.upto": "hasta",
+    "finder.pax": "pasajeros",
+    "finder.book": "Reservar",
+    "finder.ask": "Consultar",
     "fleet.eyebrow": "La flota",
     "fleet.title": "Vehículos modernos y cómodos",
     "fleet.lead": "Con aire acondicionado, bien mantenidos y monitoreados por GPS. Elige el tamaño ideal para tu grupo y equipaje.",
@@ -143,18 +194,22 @@ let currentLang = "en";
 
 function renderRoutes() {
   const grid = document.getElementById("routesGrid");
-  grid.innerHTML = ROUTES.map((r) => {
-    const msg = `Hi Travesía! I'd like to book a private transfer from ${r.from} to ${r.to} ($${r.price}). Date & passengers: `;
+  grid.innerHTML = POPULAR.map(([i, j]) => {
+    const p = ptPrice(i, j);
+    if (!p) return "";
+    const from = ptName(i), to = ptName(j);
+    const tag = i === 0 ? "SJO" : i === 1 ? "LIR" : "Costa Rica";
+    const msg = `Hi Travesía! I'd like to book a private transfer from ${from} to ${to} (from $${p.staria}). Date & passengers: `;
     return `
       <article class="route-card" data-reveal>
-        <span class="route-tag">${r.tag === "hub" ? "Inter-city" : r.tag.toUpperCase()}</span>
+        <span class="route-tag">${tag}</span>
         <div class="route-path">
-          <span class="route-from">${r.from}</span>
+          <span class="route-from">${from}</span>
           ${ARROW}
-          <span class="route-to">${r.to}</span>
+          <span class="route-to">${to}</span>
         </div>
         <div class="route-meta">
-          <div class="route-price">$${r.price}<small data-i18n="route.priceNote">${t("route.priceNote")}</small></div>
+          <div class="route-price"><em>$</em>${p.staria}<small data-i18n="route.priceNote">${t("route.priceNote")}</small></div>
           <a class="route-book" href="${wa(msg)}" target="_blank" rel="noopener">
             <span data-i18n="route.book">${t("route.book")}</span>
             <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
@@ -162,6 +217,78 @@ function renderRoutes() {
         </div>
       </article>`;
   }).join("");
+}
+
+/* ---------- ROUTE FINDER ---------- */
+const VEHICLES = [
+  { key: "staria", name: "Hyundai Staria", pax: 5 },
+  { key: "hiace",  name: "Toyota Hiace",   pax: 9 },
+  { key: "maxus",  name: "Maxus V90",      pax: 12 },
+];
+
+function fillSelect(sel, selectedIdx) {
+  // Orden: aeropuertos y San José primero, luego alfabético por nombre mostrado
+  const pinned = [0, 1, 44, 45]; // SJO, LIR, San José centro, Alajuela
+  const rest = PT_PLACES.map((_, i) => i)
+    .filter((i) => !pinned.includes(i))
+    .sort((a, b) => ptName(a).localeCompare(ptName(b), "es"));
+  const order = [...pinned, ...rest];
+  sel.innerHTML = order
+    .map((i) => `<option value="${i}"${i === selectedIdx ? " selected" : ""}>${ptName(i)}</option>`)
+    .join("");
+}
+
+function renderFinder() {
+  const fromSel = document.getElementById("fromSel");
+  const toSel = document.getElementById("toSel");
+  if (!fromSel || !toSel) return;
+  const i = Number(fromSel.value), j = Number(toSel.value);
+  const box = document.getElementById("finderResult");
+
+  if (i === j) {
+    box.className = "finder-result state-msg";
+    box.innerHTML = `<p>${t("finder.same")}</p>`;
+    return;
+  }
+  const p = ptPrice(i, j);
+  if (!p) {
+    const msg = `Hi Travesía! I'd like a quote from ${ptName(i)} to ${ptName(j)}. Date & passengers: `;
+    box.className = "finder-result state-msg";
+    box.innerHTML = `
+      <p>${t("finder.notfound")}</p>
+      <a class="btn btn-wa" href="${wa(msg)}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
+        <span>${t("finder.notfoundBtn")}</span>
+      </a>`;
+    return;
+  }
+
+  const dur = ptDuration(p.dur);
+  const rows = VEHICLES.map((v) => {
+    const price = p[v.key];
+    const has = price != null;
+    const msg = `Hi Travesía! I'd like to book the ${v.name} from ${ptName(i)} to ${ptName(j)}${has ? ` ($${price})` : ""}. Date & passengers: `;
+    return `
+      <div class="veh-row${has ? "" : " veh-na"}">
+        <div class="veh-info">
+          <span class="veh-name">${v.name}</span>
+          <span class="veh-pax">${t("finder.upto")} ${v.pax} ${t("finder.pax")}</span>
+        </div>
+        <div class="veh-buy">
+          <span class="veh-price">${has ? `<em>$</em>${price}` : "—"}</span>
+          <a class="veh-book" href="${wa(msg)}" target="_blank" rel="noopener">${has ? t("finder.book") : t("finder.ask")}</a>
+        </div>
+      </div>`;
+  }).join("");
+
+  box.className = "finder-result state-price";
+  box.innerHTML = `
+    <div class="finder-route">
+      <span>${ptName(i)}</span>${ARROW}<span>${ptName(j)}</span>
+      ${dur ? `<span class="finder-dur"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>${dur}</span>` : ""}
+    </div>
+    <div class="veh-list">${rows}</div>
+    <p class="finder-note">${t("finder.taxes")}</p>`;
 }
 
 function renderFleet() {
@@ -203,6 +330,7 @@ function applyLang(lang) {
     const key = el.getAttribute("data-i18n");
     if (I18N[currentLang][key] != null) el.innerHTML = I18N[currentLang][key];
   });
+  if (document.getElementById("finderResult")) renderFinder(); // el buscador usa texto dinámico
   try { localStorage.setItem("travesia-lang", currentLang); } catch (e) {}
 }
 
@@ -215,6 +343,22 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRoutes();
   renderFleet();
   renderWhy();
+
+  // Buscador de rutas
+  const fromSel = document.getElementById("fromSel");
+  const toSel = document.getElementById("toSel");
+  const swapBtn = document.getElementById("swapBtn");
+  if (fromSel && toSel) {
+    fillSelect(fromSel, 0);   // SJO por defecto
+    fillSelect(toSel, 2);     // La Fortuna por defecto
+    fromSel.addEventListener("change", renderFinder);
+    toSel.addEventListener("change", renderFinder);
+    if (swapBtn) swapBtn.addEventListener("click", () => {
+      const a = fromSel.value; fromSel.value = toSel.value; toSel.value = a;
+      renderFinder();
+    });
+  }
+
   applyLang(currentLang);
 
   document.getElementById("year").textContent = "2026";
