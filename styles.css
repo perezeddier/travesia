@@ -337,6 +337,13 @@ body.no-scroll { overflow: hidden; }
 }
 .co-field input:focus, .co-field textarea:focus { outline: none; border-color: var(--gold); }
 .co-field textarea { resize: vertical; }
+.co-sum-addon span:first-child { color: var(--gold-2); }
+.co-upgrade { display: flex; align-items: flex-start; gap: 12px; background: var(--bg-3); border: 1px solid rgba(224,123,31,.35); border-radius: 12px; padding: 14px; cursor: pointer; }
+.co-upgrade input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--gold); flex: 0 0 auto; }
+.co-up-body { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.co-up-title { font-weight: 700; color: var(--text); font-size: .95rem; }
+.co-up-desc { color: var(--muted); font-size: .84rem; line-height: 1.5; }
+.co-up-price { color: var(--gold-2); font-weight: 700; white-space: nowrap; }
 .co-pay { width: 100%; margin-top: 4px; }
 .co-secure { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--muted-2); font-size: .8rem; margin: 6px 0 0; }
 .co-secure svg { color: var(--wa); }

@@ -132,6 +132,10 @@ const I18N = {
     "co.phone": "WhatsApp / phone",
     "co.notes": "Notes (optional)",
     "co.pay": "Reserve & pay",
+    "co.expTitle": "Add the Travesía Experience",
+    "co.expDesc": "Turn your transfer into a mini-adventure: 1–2 hours of stops at scenic viewpoints, a coffee farm, a waterfall or a local spot along the way.",
+    "co.expAdd": "+$80",
+    "co.addon": "Travesía Experience",
     "co.secure": "Secure card payment · taxes included",
     "co.back": "Back to trip",
     "co.empty": "Add at least one route to your trip first.",
@@ -235,6 +239,10 @@ const I18N = {
     "co.phone": "WhatsApp / teléfono",
     "co.notes": "Notas (opcional)",
     "co.pay": "Reservar y pagar",
+    "co.expTitle": "Añade la Experiencia Travesía",
+    "co.expDesc": "Convierte tu traslado en una mini-aventura: 1 a 2 horas de paradas en miradores, una finca de café, una catarata o un lugar local en el camino.",
+    "co.expAdd": "+$80",
+    "co.addon": "Experiencia Travesía",
     "co.secure": "Pago seguro con tarjeta · impuestos incluidos",
     "co.back": "Volver al viaje",
     "co.empty": "Agrega al menos una ruta a tu viaje primero.",
@@ -668,12 +676,20 @@ function renderCart() {
 }
 
 /* ---------- CHECKOUT (reserva + pago) ---------- */
+function checkoutHasExperience() {
+  return !!document.querySelector('#coForm [name="experience"]')?.checked;
+}
+function checkoutTotal() {
+  return cartTotal() + (checkoutHasExperience() ? 80 : 0);
+}
 function renderCheckoutSummary() {
   const box = document.getElementById("coSummary");
   if (!box) return;
+  const exp = checkoutHasExperience();
   box.innerHTML = `
-    <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${cartTotal()}</strong></div>
-    ${CART.map((it) => `<div class="co-sum-row"><span>${it.from} → ${it.to}</span><span>${it.vname} · $${it.price}</span></div>`).join("")}`;
+    <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${checkoutTotal()}</strong></div>
+    ${CART.map((it) => `<div class="co-sum-row"><span>${it.from} → ${it.to}</span><span>${it.vname} · $${it.price}</span></div>`).join("")}
+    ${exp ? `<div class="co-sum-row co-sum-addon"><span>+ ${t("co.addon")}</span><span>$80</span></div>` : ""}`;
 }
 function openCheckout() {
   if (!CART.length) { toast(t("co.empty")); return; }
@@ -690,7 +706,9 @@ function closeCheckout() {
 /* Mensaje de reserva completo (interino por WhatsApp; luego lo cobra Tilopay) */
 function checkoutOrderMessage(d) {
   const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname} · $${it.price}`).join("\n");
-  return `Hi Travesía! New booking:\n${legs}\nTotal: $${cartTotal()}\n\n` +
+  const exp = d.experience ? "\n+ Travesía Experience (scenic stops): $80" : "";
+  const total = cartTotal() + (d.experience ? 80 : 0);
+  return `Hi Travesía! New booking:\n${legs}${exp}\nTotal: $${total}\n\n` +
     `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
     `Pickup: ${d.pickup}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
 }
@@ -875,6 +893,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("checkoutClose")?.addEventListener("click", closeCheckout);
   document.getElementById("checkoutBack")?.addEventListener("click", () => { closeCheckout(); openCart(); });
   document.getElementById("checkoutOverlay")?.addEventListener("click", closeCheckout);
+  document.querySelector('#coForm [name="experience"]')?.addEventListener("change", renderCheckoutSummary);
   const coForm = document.getElementById("coForm");
   if (coForm) coForm.addEventListener("submit", (e) => {
     e.preventDefault();
