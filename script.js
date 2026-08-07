@@ -64,7 +64,12 @@ const I18N = {
     "nav.fleet": "Fleet",
     "nav.why": "Why us",
     "nav.contact": "Contact",
+    "nav.faq": "FAQ",
     "nav.book": "Book on WhatsApp",
+    "faq.eyebrow": "Good to know",
+    "faq.title": "Frequently asked questions",
+    "faq.lead": "Everything you need to know before booking your private transfer in Costa Rica.",
+    "faq.more": "Have another question? Ask us on WhatsApp",
     "hero.eyebrow": "Arrive relaxed · Travel in comfort",
     "hero.title1": "Costa Rica Private Shuttles",
     "hero.title2": "& Airport Transfers",
@@ -121,7 +126,12 @@ const I18N = {
     "nav.fleet": "Flota",
     "nav.why": "Por qué",
     "nav.contact": "Contacto",
+    "nav.faq": "Preguntas",
     "nav.book": "Reservar por WhatsApp",
+    "faq.eyebrow": "Bueno saberlo",
+    "faq.title": "Preguntas frecuentes",
+    "faq.lead": "Todo lo que necesitas saber antes de reservar tu traslado privado en Costa Rica.",
+    "faq.more": "¿Tienes otra pregunta? Escríbenos por WhatsApp",
     "hero.eyebrow": "Llega relajado · Viaja con confort",
     "hero.title1": "Transporte Privado y Traslados",
     "hero.title2": "de Aeropuerto en Costa Rica",
@@ -174,6 +184,82 @@ const I18N = {
     "why.4.d": "Un solo precio por vehículo. Sin cargos ocultos ni sorpresas al final del viaje.",
   },
 };
+
+/* ---------- FAQ (bilingüe) ---------- */
+const FAQ = [
+  {
+    q: { en: "Is the price per person or per vehicle?",
+         es: "¿El precio es por persona o por vehículo?" },
+    a: { en: "The price is per vehicle, not per person — you travel privately with just your group. One flat rate covers the whole car, with taxes and tolls already included.",
+         es: "El precio es por vehículo, no por persona — viajas en privado solo con tu grupo. Una sola tarifa plana cubre todo el vehículo, con impuestos y peajes ya incluidos." }
+  },
+  {
+    q: { en: "Do you pick up from both SJO and Liberia (LIR) airports?",
+         es: "¿Recogen en ambos aeropuertos, SJO y Liberia (LIR)?" },
+    a: { en: "Yes. We offer door-to-door private transfers from both Juan Santamaría (SJO) in San José and Daniel Oduber (LIR) in Liberia, to any major destination in Costa Rica.",
+         es: "Sí. Ofrecemos traslados privados puerta a puerta desde ambos aeropuertos — Juan Santamaría (SJO) en San José y Daniel Oduber (LIR) en Liberia — hacia cualquier destino importante de Costa Rica." }
+  },
+  {
+    q: { en: "What happens if my flight is delayed?",
+         es: "¿Qué pasa si mi vuelo se retrasa?" },
+    a: { en: "No problem. When you book, just share your flight number — we track it and adjust your pickup time so your driver is waiting when you land, at no extra cost.",
+         es: "No hay problema. Al reservar, compártenos tu número de vuelo — lo monitoreamos y ajustamos la hora de recogida para que tu chofer esté esperando cuando aterrices, sin costo extra." }
+  },
+  {
+    q: { en: "Is the service private or shared?",
+         es: "¿El servicio es privado o compartido?" },
+    a: { en: "100% private. The vehicle is exclusively for you and your group — no strangers and no extra stops to pick up other passengers.",
+         es: "100% privado. El vehículo es exclusivo para ti y tu grupo — sin desconocidos ni paradas para recoger a otros pasajeros." }
+  },
+  {
+    q: { en: "How can I pay?",
+         es: "¿Cómo puedo pagar?" },
+    a: { en: "You can pay by secure online payment link (credit or debit card) or in cash — US dollars or Costa Rican colones. We send you the details when we confirm your trip on WhatsApp.",
+         es: "Puedes pagar mediante un enlace de pago seguro en línea (tarjeta de crédito o débito) o en efectivo — dólares o colones. Te enviamos los detalles al confirmar tu viaje por WhatsApp." }
+  },
+  {
+    q: { en: "How do I book my transfer?",
+         es: "¿Cómo reservo mi traslado?" },
+    a: { en: "Send us your route, date and number of passengers on WhatsApp. We confirm availability and price in minutes and send you a secure payment link to lock in your reservation.",
+         es: "Envíanos tu ruta, fecha y número de pasajeros por WhatsApp. Confirmamos disponibilidad y precio en minutos y te enviamos un enlace de pago seguro para apartar tu reserva." }
+  },
+  {
+    q: { en: "Can I cancel my reservation?",
+         es: "¿Puedo cancelar mi reserva?" },
+    a: { en: "Yes — we offer free cancellation up to 48 hours before your trip. Just message us on WhatsApp and we'll take care of it.",
+         es: "Sí — ofrecemos cancelación gratuita hasta 48 horas antes de tu viaje. Solo escríbenos por WhatsApp y nos encargamos." }
+  },
+  {
+    q: { en: "Do you provide child seats?",
+         es: "¿Ofrecen sillas para niños?" },
+    a: { en: "Yes, free of charge on request. Tell us your children's ages when booking and we'll have the right seats ready in the vehicle.",
+         es: "Sí, gratis a solicitud. Indícanos las edades de los niños al reservar y tendremos las sillas adecuadas listas en el vehículo." }
+  },
+  {
+    q: { en: "How much luggage can I bring?",
+         es: "¿Cuánto equipaje puedo llevar?" },
+    a: { en: "Luggage is included — each passenger can bring a suitcase and a carry-on. Traveling with surfboards, golf clubs or extra bags? Just tell us and we'll assign the right vehicle.",
+         es: "El equipaje está incluido — cada pasajero puede llevar una maleta y un equipaje de mano. ¿Viajas con tablas de surf, palos de golf o maletas extra? Avísanos y asignamos el vehículo adecuado." }
+  },
+  {
+    q: { en: "Can we make stops along the way?",
+         es: "¿Podemos hacer paradas en el camino?" },
+    a: { en: "Of course. Quick stops for the restroom, coffee or photos are included. Want to add a longer sightseeing stop? Let us know and we'll build it into your trip.",
+         es: "Por supuesto. Las paradas rápidas para el baño, un café o fotos están incluidas. ¿Quieres agregar una parada turística más larga? Avísanos y la incluimos en tu viaje." }
+  },
+  {
+    q: { en: "Do your drivers speak English?",
+         es: "¿Sus choferes hablan inglés?" },
+    a: { en: "Yes. Our professional drivers speak English and Spanish, know every route, and are happy to share tips about your destination.",
+         es: "Sí. Nuestros choferes profesionales hablan inglés y español, conocen cada ruta y con gusto te comparten recomendaciones de tu destino." }
+  },
+  {
+    q: { en: "How far in advance should I book?",
+         es: "¿Con cuánta anticipación debo reservar?" },
+    a: { en: "We recommend booking at least 24 hours ahead to guarantee availability, especially in high season (December–April). Last minute? Message us and we'll do our best.",
+         es: "Recomendamos reservar con al menos 24 horas de anticipación para garantizar disponibilidad, sobre todo en temporada alta (diciembre–abril). ¿A última hora? Escríbenos y hacemos lo posible." }
+  },
+];
 
 const WHY = [
   { key: "1", icon: '<path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-5 0-9 2.5-9 6v2h18v-2c0-3.5-4-6-9-6Z"/>' },
@@ -321,6 +407,19 @@ function renderWhy() {
     </article>`).join("");
 }
 
+function renderFAQ() {
+  const list = document.getElementById("faqList");
+  if (!list) return;
+  list.innerHTML = FAQ.map((f) => `
+    <details class="faq-item" data-reveal>
+      <summary>
+        <span>${f.q[currentLang] || f.q.en}</span>
+        <svg class="faq-chevron" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </summary>
+      <div class="faq-answer"><p>${f.a[currentLang] || f.a.en}</p></div>
+    </details>`).join("");
+}
+
 /* ---------- I18N APPLY ---------- */
 function applyLang(lang) {
   currentLang = I18N[lang] ? lang : "en";
@@ -331,6 +430,7 @@ function applyLang(lang) {
     if (I18N[currentLang][key] != null) el.innerHTML = I18N[currentLang][key];
   });
   if (document.getElementById("finderResult")) renderFinder(); // el buscador usa texto dinámico
+  if (document.getElementById("faqList")) renderFAQ();          // las FAQ usan texto dinámico
   try { localStorage.setItem("travesia-lang", currentLang); } catch (e) {}
 }
 
@@ -343,6 +443,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRoutes();
   renderFleet();
   renderWhy();
+  renderFAQ();
 
   // Buscador de rutas
   const fromSel = document.getElementById("fromSel");
