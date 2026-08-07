@@ -387,14 +387,30 @@
           <label class="co-field"><span data-i18n="co.phone">WhatsApp / phone</span><input type="tel" name="phone" required></label>
         </div>
         <label class="co-field"><span data-i18n="co.notes">Notes (optional)</span><textarea name="notes" rows="2"></textarea></label>
-        <label class="co-upgrade">
-          <input type="checkbox" name="experience" value="1">
-          <span class="co-up-body">
-            <span class="co-up-title" data-i18n="co.expTitle">Add Travesía VIP</span>
-            <span class="co-up-desc" data-i18n="co.expDesc">Upgrade to Travesía VIP: 1–2 hours of flexible tourist stops along the way, plus a welcome kit.</span>
-          </span>
-          <span class="co-up-price" data-i18n="co.expAdd">+$80</span>
-        </label>
+        <div class="co-choose">
+          <span class="co-choose-label" data-i18n="co.choose">Choose your service</span>
+          <div class="co-tiers">
+            <label class="co-tier">
+              <input type="radio" name="experience" value="0" checked>
+              <span class="co-tier-head"><span class="co-tier-name" data-i18n="co.stdName">Standard</span><span class="co-tier-price" data-i18n="co.stdPrice">Included</span></span>
+              <ul class="co-tier-list">
+                <li data-i18n="co.std1">Bottled water &amp; free WiFi</li>
+                <li data-i18n="co.std2">Door-to-door service</li>
+                <li data-i18n="co.std3">Direct transfer</li>
+              </ul>
+            </label>
+            <label class="co-tier co-tier-vip">
+              <input type="radio" name="experience" value="1">
+              <span class="co-tier-head"><span class="co-tier-name" data-i18n="co.vipName">Travesía VIP</span><span class="co-tier-price">+$80</span></span>
+              <ul class="co-tier-list">
+                <li data-i18n="co.vip1">Everything in Standard</li>
+                <li data-i18n="co.vip2">Guaranteed bilingual driver-guide</li>
+                <li data-i18n="co.vip3">1–2h of tourist stops</li>
+                <li data-i18n="co.vip4">Welcome kit: snacks &amp; drinks</li>
+              </ul>
+            </label>
+          </div>
+        </div>
         <button type="submit" class="btn btn-primary btn-lg co-pay" data-i18n="co.pay">Reserve &amp; pay</button>
         <p class="co-secure"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> <span data-i18n="co.secure">Secure card payment · taxes included</span></p>
       </form>

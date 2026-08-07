@@ -338,12 +338,19 @@ body.no-scroll { overflow: hidden; }
 .co-field input:focus, .co-field textarea:focus { outline: none; border-color: var(--gold); }
 .co-field textarea { resize: vertical; }
 .co-sum-addon span:first-child { color: var(--gold-2); }
-.co-upgrade { display: flex; align-items: flex-start; gap: 12px; background: var(--bg-3); border: 1px solid rgba(224,123,31,.35); border-radius: 12px; padding: 14px; cursor: pointer; }
-.co-upgrade input { margin-top: 3px; width: 18px; height: 18px; accent-color: var(--gold); flex: 0 0 auto; }
-.co-up-body { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.co-up-title { font-weight: 700; color: var(--text); font-size: .95rem; }
-.co-up-desc { color: var(--muted); font-size: .84rem; line-height: 1.5; }
-.co-up-price { color: var(--gold-2); font-weight: 700; white-space: nowrap; }
+.co-choose { display: flex; flex-direction: column; gap: 8px; }
+.co-choose-label { font-size: .82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.co-tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.co-tier { position: relative; display: block; cursor: pointer; background: var(--bg-3); border: 1px solid var(--line); border-radius: 12px; padding: 14px; transition: border-color .2s ease, background .2s ease; }
+.co-tier input { position: absolute; top: 13px; right: 13px; width: 17px; height: 17px; accent-color: var(--gold); }
+.co-tier:has(input:checked) { border-color: var(--gold); background: rgba(224,123,31,.08); }
+.co-tier-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; padding-right: 22px; }
+.co-tier-name { font-weight: 700; color: var(--text); font-size: 1rem; }
+.co-tier-price { color: var(--gold-2); font-weight: 700; font-size: .85rem; }
+.co-tier-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.co-tier-list li { color: var(--muted); font-size: .8rem; line-height: 1.35; padding-left: 16px; position: relative; }
+.co-tier-list li::before { content: "\2713"; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+@media (max-width: 480px) { .co-tiers { grid-template-columns: 1fr; } }
 .co-pay { width: 100%; margin-top: 4px; }
 .co-secure { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--muted-2); font-size: .8rem; margin: 6px 0 0; }
 .co-secure svg { color: var(--wa); }

@@ -132,9 +132,17 @@ const I18N = {
     "co.phone": "WhatsApp / phone",
     "co.notes": "Notes (optional)",
     "co.pay": "Reserve & pay",
-    "co.expTitle": "Add Travesía VIP",
-    "co.expDesc": "Upgrade to Travesía VIP: 1–2 hours of flexible tourist stops along the way (scenic viewpoints, a coffee farm, a waterfall or a local spot) — plus a welcome kit.",
-    "co.expAdd": "+$80",
+    "co.choose": "Choose your service",
+    "co.stdName": "Standard",
+    "co.stdPrice": "Included",
+    "co.std1": "Bottled water & free WiFi",
+    "co.std2": "Door-to-door service",
+    "co.std3": "Direct transfer",
+    "co.vipName": "Travesía VIP",
+    "co.vip1": "Everything in Standard",
+    "co.vip2": "Guaranteed bilingual driver-guide",
+    "co.vip3": "1–2h of tourist stops",
+    "co.vip4": "Welcome kit: snacks & drinks",
     "co.addon": "Travesía VIP",
     "co.secure": "Secure card payment · taxes included",
     "co.back": "Back to trip",
@@ -239,9 +247,17 @@ const I18N = {
     "co.phone": "WhatsApp / teléfono",
     "co.notes": "Notas (opcional)",
     "co.pay": "Reservar y pagar",
-    "co.expTitle": "Añade Travesía VIP",
-    "co.expDesc": "Sube a Travesía VIP: 1 a 2 horas de paradas turísticas flexibles en el camino (miradores, una finca de café, una catarata o un lugar local) — más un kit de bienvenida.",
-    "co.expAdd": "+$80",
+    "co.choose": "Elige tu servicio",
+    "co.stdName": "Standard",
+    "co.stdPrice": "Incluido",
+    "co.std1": "Agua embotellada y WiFi gratis",
+    "co.std2": "Servicio puerta a puerta",
+    "co.std3": "Traslado directo",
+    "co.vipName": "Travesía VIP",
+    "co.vip1": "Todo lo del Standard",
+    "co.vip2": "Chofer-guía bilingüe garantizado",
+    "co.vip3": "1–2 h de paradas turísticas",
+    "co.vip4": "Kit de bienvenida: snacks y bebidas",
     "co.addon": "Travesía VIP",
     "co.secure": "Pago seguro con tarjeta · impuestos incluidos",
     "co.back": "Volver al viaje",
@@ -677,7 +693,7 @@ function renderCart() {
 
 /* ---------- CHECKOUT (reserva + pago) ---------- */
 function checkoutHasExperience() {
-  return !!document.querySelector('#coForm [name="experience"]')?.checked;
+  return document.querySelector('#coForm [name="experience"]:checked')?.value === "1";
 }
 function checkoutTotal() {
   return cartTotal() + (checkoutHasExperience() ? 80 : 0);
@@ -706,8 +722,8 @@ function closeCheckout() {
 /* Mensaje de reserva completo (interino por WhatsApp; luego lo cobra Tilopay) */
 function checkoutOrderMessage(d) {
   const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname} · $${it.price}`).join("\n");
-  const exp = d.experience ? "\n+ Travesía VIP (1-2h tourist stops + welcome kit): $80" : "";
-  const total = cartTotal() + (d.experience ? 80 : 0);
+  const exp = d.experience === "1" ? "\n+ Travesía VIP (guaranteed bilingual guide + 1-2h tourist stops + welcome kit w/ snacks & drinks): $80" : "";
+  const total = cartTotal() + (d.experience === "1" ? 80 : 0);
   return `Hi Travesía! New booking:\n${legs}${exp}\nTotal: $${total}\n\n` +
     `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
     `Pickup: ${d.pickup}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
@@ -893,7 +909,7 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("checkoutClose")?.addEventListener("click", closeCheckout);
   document.getElementById("checkoutBack")?.addEventListener("click", () => { closeCheckout(); openCart(); });
   document.getElementById("checkoutOverlay")?.addEventListener("click", closeCheckout);
-  document.querySelector('#coForm [name="experience"]')?.addEventListener("change", renderCheckoutSummary);
+  document.getElementById("coForm")?.addEventListener("change", (e) => { if (e.target.name === "experience") renderCheckoutSummary(); });
   const coForm = document.getElementById("coForm");
   if (coForm) coForm.addEventListener("submit", (e) => {
     e.preventDefault();
