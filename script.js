@@ -108,9 +108,27 @@ const I18N = {
     "cart.remove": "Remove",
     "cart.total": "Total",
     "cart.note": "Final price per vehicle · taxes included.",
-    "cart.checkout": "Book all on WhatsApp",
+    "cart.checkout": "Reserve & pay",
     "cart.clear": "Empty trip",
     "cart.added": "Added to your trip ✓",
+    "cart.wa": "Special route or question? Message us on WhatsApp",
+    "co.title": "Complete your booking",
+    "co.trip": "Your trip",
+    "co.date": "Travel date",
+    "co.time": "Pickup time",
+    "co.adults": "Adults",
+    "co.children": "Children (for free child seats)",
+    "co.pickup": "Pickup — hotel or address",
+    "co.dropoff": "Drop-off — hotel or address",
+    "co.flight": "Flight number (optional)",
+    "co.name": "Full name",
+    "co.email": "Email",
+    "co.phone": "WhatsApp / phone",
+    "co.notes": "Notes (optional)",
+    "co.pay": "Reserve & pay",
+    "co.secure": "Secure card payment · taxes included",
+    "co.back": "Back to trip",
+    "co.empty": "Add at least one route to your trip first.",
     "fleet.eyebrow": "The fleet",
     "fleet.title": "Modern, comfortable vehicles",
     "fleet.lead": "Air-conditioned, well-maintained and fully insured. Choose the size that fits your group and luggage.",
@@ -187,9 +205,27 @@ const I18N = {
     "cart.remove": "Quitar",
     "cart.total": "Total",
     "cart.note": "Precio final por vehículo · impuestos incluidos.",
-    "cart.checkout": "Reservar todo por WhatsApp",
+    "cart.checkout": "Reservar y pagar",
     "cart.clear": "Vaciar viaje",
     "cart.added": "Agregado a tu viaje ✓",
+    "cart.wa": "¿Ruta especial o duda? Escríbenos por WhatsApp",
+    "co.title": "Completa tu reserva",
+    "co.trip": "Tu viaje",
+    "co.date": "Fecha del viaje",
+    "co.time": "Hora de recogida",
+    "co.adults": "Adultos",
+    "co.children": "Niños (para sillas gratis)",
+    "co.pickup": "Recogida — hotel o dirección",
+    "co.dropoff": "Destino — hotel o dirección",
+    "co.flight": "Número de vuelo (opcional)",
+    "co.name": "Nombre completo",
+    "co.email": "Correo electrónico",
+    "co.phone": "WhatsApp / teléfono",
+    "co.notes": "Notas (opcional)",
+    "co.pay": "Reservar y pagar",
+    "co.secure": "Pago seguro con tarjeta · impuestos incluidos",
+    "co.back": "Volver al viaje",
+    "co.empty": "Agrega al menos una ruta a tu viaje primero.",
     "fleet.eyebrow": "La flota",
     "fleet.title": "Vehículos modernos y cómodos",
     "fleet.lead": "Con aire acondicionado, bien mantenidos y con seguro completo. Elige el tamaño ideal para tu grupo y equipaje.",
@@ -591,7 +627,35 @@ function renderCart() {
   const totalEl = document.getElementById("cartTotal");
   if (totalEl) totalEl.textContent = "$" + cartTotal();
   const checkout = document.getElementById("cartCheckout");
-  if (checkout) { checkout.href = cartCheckoutHref(); checkout.classList.toggle("is-disabled", !CART.length); }
+  if (checkout) { checkout.disabled = !CART.length; checkout.classList.toggle("is-disabled", !CART.length); }
+}
+
+/* ---------- CHECKOUT (reserva + pago) ---------- */
+function renderCheckoutSummary() {
+  const box = document.getElementById("coSummary");
+  if (!box) return;
+  box.innerHTML = `
+    <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${cartTotal()}</strong></div>
+    ${CART.map((it) => `<div class="co-sum-row"><span>${it.from} → ${it.to}</span><span>${it.vname} · $${it.price}</span></div>`).join("")}`;
+}
+function openCheckout() {
+  if (!CART.length) { toast(t("co.empty")); return; }
+  renderCheckoutSummary();
+  document.getElementById("checkout")?.classList.add("open");
+  document.getElementById("checkoutOverlay")?.classList.add("show");
+  document.body.classList.add("no-scroll");
+}
+function closeCheckout() {
+  document.getElementById("checkout")?.classList.remove("open");
+  document.getElementById("checkoutOverlay")?.classList.remove("show");
+  document.body.classList.remove("no-scroll");
+}
+/* Mensaje de reserva completo (interino por WhatsApp; luego lo cobra Tilopay) */
+function checkoutOrderMessage(d) {
+  const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname} · $${it.price}`).join("\n");
+  return `Hi Travesía! New booking:\n${legs}\nTotal: $${cartTotal()}\n\n` +
+    `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
+    `Pickup: ${d.pickup}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
 }
 
 function openCart() {
@@ -688,6 +752,7 @@ function applyLang(lang) {
   if (document.getElementById("faqList")) renderFAQ();          // las FAQ usan texto dinámico
   if (document.getElementById("galleryGrid")) renderGallery();  // la galería usa texto dinámico
   if (document.getElementById("cartItems")) renderCart();       // el carrito usa texto dinámico
+  if (document.getElementById("checkout")?.classList.contains("open")) renderCheckoutSummary();
   try { localStorage.setItem("travesia-lang", currentLang); } catch (e) {}
 }
 
@@ -756,6 +821,21 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("cartItems")?.addEventListener("click", (e) => {
     const rm = e.target.closest("[data-remove]");
     if (rm) removeFromCart(Number(rm.getAttribute("data-remove")));
+  });
+
+  // Checkout
+  document.getElementById("cartCheckout")?.addEventListener("click", () => { closeCart(); openCheckout(); });
+  document.getElementById("checkoutClose")?.addEventListener("click", closeCheckout);
+  document.getElementById("checkoutBack")?.addEventListener("click", () => { closeCheckout(); openCart(); });
+  document.getElementById("checkoutOverlay")?.addEventListener("click", closeCheckout);
+  const coForm = document.getElementById("coForm");
+  if (coForm) coForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    if (!coForm.reportValidity()) return;
+    const data = Object.fromEntries(new FormData(coForm).entries());
+    // TODO Tilopay: aquí se creará el cobro con tarjeta (función serverless en Vercel).
+    // Interino: enviar la reserva completa por WhatsApp para confirmar y cobrar.
+    window.open(wa(checkoutOrderMessage(data)), "_blank");
   });
 
   applyLang(currentLang);

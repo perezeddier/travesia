@@ -52,6 +52,9 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 .btn-wa:hover { background: var(--wa-dark); box-shadow: 0 10px 26px rgba(37,211,102,.28); }
 .btn-ghost { background: rgba(255,255,255,.04); color: var(--text); border-color: var(--line); }
 .btn-ghost:hover { background: rgba(255,255,255,.08); border-color: var(--gold); }
+.btn-primary { background: var(--gold); color: #241c05; border-color: var(--gold); font-weight: 700; }
+.btn-primary:hover { background: var(--gold-2); box-shadow: 0 10px 26px rgba(224,123,31,.3); }
+.btn-primary:disabled, .btn-primary.is-disabled { opacity: .45; pointer-events: none; }
 .btn-outline { background: transparent; color: var(--gold-2); border-color: var(--gold); }
 .btn-outline:hover { background: rgba(224,123,31,.12); }
 
@@ -295,7 +298,48 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
 .cart-checkout.is-disabled { pointer-events: none; opacity: .45; }
 .cart-clear { display: block; margin: 12px auto 0; background: none; border: none; color: var(--muted-2); font-size: .84rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
 .cart-clear:hover { color: var(--text); }
+.cart-wa { display: block; text-align: center; margin: 12px 0 0; color: var(--wa); font-size: .86rem; font-weight: 600; }
+.cart-wa:hover { color: var(--wa-dark); }
 body.no-scroll { overflow: hidden; }
+
+/* ===================== CHECKOUT ===================== */
+.checkout-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
+  opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease; z-index: 62;
+}
+.checkout-overlay.show { opacity: 1; visibility: visible; }
+.checkout {
+  position: fixed; top: 0; right: 0; height: 100%; width: min(460px, 96vw);
+  background: var(--bg-2); border-left: 1px solid var(--line); box-shadow: -20px 0 60px rgba(0,0,0,.5);
+  transform: translateX(100%); transition: transform .3s cubic-bezier(.4,0,.2,1);
+  z-index: 63; display: flex; flex-direction: column;
+}
+.checkout.open { transform: translateX(0); }
+.checkout-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+.checkout-back { background: none; border: none; color: var(--muted); font-size: .92rem; cursor: pointer; }
+.checkout-back:hover { color: var(--text); }
+.checkout-close { background: none; border: none; color: var(--muted); font-size: 1.9rem; line-height: 1; cursor: pointer; }
+.checkout-close:hover { color: var(--text); }
+.checkout-body { flex: 1; overflow-y: auto; padding: 20px 22px 28px; }
+.checkout-title { font-family: var(--font-head); font-size: 1.5rem; font-weight: 600; margin-bottom: 16px; }
+
+.co-summary { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 20px; }
+.co-sum-head { display: flex; justify-content: space-between; align-items: baseline; font-weight: 700; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
+.co-sum-head strong { font-family: var(--font-head); font-size: 1.3rem; }
+.co-sum-row { display: flex; justify-content: space-between; gap: 12px; font-size: .86rem; color: var(--muted); padding: 3px 0; }
+
+.co-form { display: flex; flex-direction: column; gap: 14px; }
+.co-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.co-field { display: flex; flex-direction: column; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--muted); }
+.co-field input, .co-field textarea {
+  background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 13px; font-family: var(--font-body); font-size: .98rem; font-weight: 400; width: 100%;
+}
+.co-field input:focus, .co-field textarea:focus { outline: none; border-color: var(--gold); }
+.co-field textarea { resize: vertical; }
+.co-pay { width: 100%; margin-top: 4px; }
+.co-secure { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--muted-2); font-size: .8rem; margin: 6px 0 0; }
+.co-secure svg { color: var(--wa); }
 
 /* Toast */
 .toast {
