@@ -175,15 +175,21 @@
       <div class="finder" id="finder">
         <div class="finder-controls">
           <div class="finder-field">
-            <label for="fromSel" data-i18n="finder.from">From</label>
-            <select id="fromSel" class="finder-select"></select>
+            <label for="fromInput" data-i18n="finder.from">From</label>
+            <div class="combo">
+              <input id="fromInput" class="finder-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" spellcheck="false" data-i18n-ph="finder.ph" placeholder="Destination or hotel…" />
+              <ul class="combo-list" id="fromList" role="listbox"></ul>
+            </div>
           </div>
           <button class="finder-swap" id="swapBtn" type="button" aria-label="Swap" title="Swap">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
           </button>
           <div class="finder-field">
-            <label for="toSel" data-i18n="finder.to">To</label>
-            <select id="toSel" class="finder-select"></select>
+            <label for="toInput" data-i18n="finder.to">To</label>
+            <div class="combo">
+              <input id="toInput" class="finder-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" spellcheck="false" data-i18n-ph="finder.ph" placeholder="Destination or hotel…" />
+              <ul class="combo-list" id="toList" role="listbox"></ul>
+            </div>
           </div>
         </div>
         <div class="finder-result" id="finderResult"><!-- injected by script.js --></div>

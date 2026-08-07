@@ -90,6 +90,7 @@ const I18N = {
     "route.priceNote": "per vehicle",
     "finder.from": "From",
     "finder.to": "To",
+    "finder.ph": "Destination or hotel…",
     "finder.pick": "Choose your pickup and destination to see the price.",
     "finder.same": "Pickup and destination can't be the same. Choose a different place.",
     "finder.notfound": "We don't have a set price for that pair yet — send it to us on WhatsApp and we'll quote it in minutes.",
@@ -168,6 +169,7 @@ const I18N = {
     "route.priceNote": "por vehículo",
     "finder.from": "Desde",
     "finder.to": "Hasta",
+    "finder.ph": "Destino u hotel…",
     "finder.pick": "Elige tu punto de recogida y destino para ver el precio.",
     "finder.same": "El origen y el destino no pueden ser iguales. Elige otro lugar.",
     "finder.notfound": "Aún no tenemos precio fijo para ese par — mándanoslo por WhatsApp y te cotizamos en minutos.",
@@ -389,25 +391,100 @@ const VEHICLES = [
   { key: "maxus",  name: "Maxus V90",      pax: 12 },
 ];
 
-function fillSelect(sel, selectedIdx) {
-  // Orden: aeropuertos y San José primero, luego alfabético por nombre mostrado
-  const pinned = [0, 1, 44, 45]; // SJO, LIR, San José centro, Alajuela
-  const rest = PT_PLACES.map((_, i) => i)
-    .filter((i) => !pinned.includes(i))
-    .sort((a, b) => ptName(a).localeCompare(ptName(b), "es"));
-  const order = [...pinned, ...rest];
-  sel.innerHTML = order
-    .map((i) => `<option value="${i}"${i === selectedIdx ? " selected" : ""}>${ptName(i)}</option>`)
-    .join("");
+/* ---------- Buscador con autocompletado (destinos + hoteles) ---------- */
+const normTxt = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+let COMBO_OPTS = [];
+function buildComboOptions() {
+  COMBO_OPTS = [];
+  PT_PLACES.forEach((_, i) =>
+    COMBO_OPTS.push({ label: ptName(i), place: i, hotel: false, search: normTxt(ptName(i)) }));
+  if (typeof PT_HOTELS !== "undefined") {
+    PT_HOTELS.forEach((h) =>
+      COMBO_OPTS.push({ label: h.name, place: h.place, hotel: true, zone: ptName(h.place), search: normTxt(h.name) }));
+  }
+}
+
+function comboState(inputId) {
+  const input = document.getElementById(inputId);
+  const v = input && input.dataset.place;
+  return v != null && v !== "" ? Number(v) : null;
+}
+function setComboValue(inputId, placeIdx, label) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  input.value = label != null ? label : ptName(placeIdx);
+  input.dataset.place = String(placeIdx);
+}
+
+function filterCombo(query) {
+  const q = normTxt(query.trim());
+  if (!q) {
+    const pinned = [0, 1, 44]; // SJO, LIR, San José centro
+    const dests = COMBO_OPTS.filter((o) => !o.hotel);
+    return [
+      ...pinned.map((i) => dests.find((o) => o.place === i)).filter(Boolean),
+      ...dests.filter((o) => !pinned.includes(o.place)).sort((a, b) => a.label.localeCompare(b.label, "es")),
+    ].slice(0, 8);
+  }
+  return COMBO_OPTS
+    .filter((o) => o.search.includes(q))
+    .sort((a, b) => (b.search.startsWith(q) - a.search.startsWith(q)) || a.label.localeCompare(b.label, "es"))
+    .slice(0, 8);
+}
+
+function renderComboList(inputId, listId) {
+  const input = document.getElementById(inputId), list = document.getElementById(listId);
+  if (!input || !list) return;
+  const opts = filterCombo(input.value);
+  if (!opts.length) { list.innerHTML = ""; list.classList.remove("open"); input.setAttribute("aria-expanded", "false"); return; }
+  list.innerHTML = opts.map((o) => `
+    <li class="combo-item" role="option" data-place="${o.place}" data-label="${o.label.replace(/"/g, "&quot;")}">
+      <span class="combo-label">${o.label}</span>
+      ${o.hotel ? `<span class="combo-zone">${o.zone}</span>` : ""}
+    </li>`).join("");
+  list.classList.add("open");
+  input.setAttribute("aria-expanded", "true");
+}
+
+function chooseCombo(inputId, listId, placeIdx, label) {
+  setComboValue(inputId, placeIdx, label);
+  document.getElementById(listId)?.classList.remove("open");
+  document.getElementById(inputId)?.setAttribute("aria-expanded", "false");
+  renderFinder();
+}
+
+function setupCombo(inputId, listId) {
+  const input = document.getElementById(inputId), list = document.getElementById(listId);
+  if (!input || !list) return;
+  input.addEventListener("focus", () => renderComboList(inputId, listId));
+  input.addEventListener("input", () => { input.dataset.place = ""; renderComboList(inputId, listId); });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") { list.classList.remove("open"); input.setAttribute("aria-expanded", "false"); }
+    else if (e.key === "Enter") {
+      const first = list.querySelector(".combo-item");
+      if (first) { e.preventDefault(); chooseCombo(inputId, listId, Number(first.dataset.place), first.getAttribute("data-label")); }
+    }
+  });
+  list.addEventListener("mousedown", (e) => {
+    const item = e.target.closest(".combo-item");
+    if (item) { e.preventDefault(); chooseCombo(inputId, listId, Number(item.dataset.place), item.getAttribute("data-label")); }
+  });
+  input.addEventListener("blur", () => setTimeout(() => {
+    list.classList.remove("open");
+    input.setAttribute("aria-expanded", "false");
+  }, 120));
 }
 
 function renderFinder() {
-  const fromSel = document.getElementById("fromSel");
-  const toSel = document.getElementById("toSel");
-  if (!fromSel || !toSel) return;
-  const i = Number(fromSel.value), j = Number(toSel.value);
   const box = document.getElementById("finderResult");
+  if (!box) return;
+  const i = comboState("fromInput"), j = comboState("toInput");
 
+  if (i == null || j == null) {
+    box.className = "finder-result state-msg";
+    box.innerHTML = `<p>${t("finder.pick")}</p>`;
+    return;
+  }
   if (i === j) {
     box.className = "finder-result state-msg";
     box.innerHTML = `<p>${t("finder.same")}</p>`;
@@ -530,15 +607,12 @@ function closeCart() {
 
 /* Encadenar: el destino al que viajaste pasa a ser el nuevo origen */
 function continueFrom(j) {
-  const fromSel = document.getElementById("fromSel"), toSel = document.getElementById("toSel");
-  if (!fromSel || !toSel) return;
-  fromSel.value = String(j);
-  if (Number(toSel.value) === j) {
-    const alt = [...toSel.options].map((o) => Number(o.value)).find((v) => v !== j);
-    if (alt != null) toSel.value = String(alt);
-  }
+  setComboValue("fromInput", j);
+  const toInput = document.getElementById("toInput");
+  if (toInput) { toInput.value = ""; toInput.dataset.place = ""; }  // elige el siguiente destino
   renderFinder();
   document.getElementById("finder").scrollIntoView({ behavior: "smooth", block: "center" });
+  setTimeout(() => toInput && toInput.focus(), 350);
 }
 
 /* Aviso breve */
@@ -606,6 +680,10 @@ function applyLang(lang) {
     const key = el.getAttribute("data-i18n");
     if (I18N[currentLang][key] != null) el.innerHTML = I18N[currentLang][key];
   });
+  document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-ph");
+    if (I18N[currentLang][key] != null) el.placeholder = I18N[currentLang][key];
+  });
   if (document.getElementById("finderResult")) renderFinder(); // el buscador usa texto dinámico
   if (document.getElementById("faqList")) renderFAQ();          // las FAQ usan texto dinámico
   if (document.getElementById("galleryGrid")) renderGallery();  // la galería usa texto dinámico
@@ -637,17 +715,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
 
-  // Buscador de rutas
-  const fromSel = document.getElementById("fromSel");
-  const toSel = document.getElementById("toSel");
+  // Buscador de rutas (autocompletado destinos + hoteles)
+  const fromInput = document.getElementById("fromInput");
+  const toInput = document.getElementById("toInput");
   const swapBtn = document.getElementById("swapBtn");
-  if (fromSel && toSel) {
-    fillSelect(fromSel, 0);   // SJO por defecto
-    fillSelect(toSel, 2);     // La Fortuna por defecto
-    fromSel.addEventListener("change", renderFinder);
-    toSel.addEventListener("change", renderFinder);
+  if (fromInput && toInput) {
+    buildComboOptions();
+    setupCombo("fromInput", "fromList");
+    setupCombo("toInput", "toList");
+    setComboValue("fromInput", 0);   // SJO por defecto
+    setComboValue("toInput", 2);     // La Fortuna por defecto
     if (swapBtn) swapBtn.addEventListener("click", () => {
-      const a = fromSel.value; fromSel.value = toSel.value; toSel.value = a;
+      const v = fromInput.value, p = fromInput.dataset.place;
+      fromInput.value = toInput.value; fromInput.dataset.place = toInput.dataset.place;
+      toInput.value = v; toInput.dataset.place = p;
       renderFinder();
     });
   }
