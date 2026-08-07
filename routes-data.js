@@ -70,9 +70,12 @@ const PT_DISPLAY = {
 /* Slugs de destinos con página de ruta SEO (index -> slug en /shuttle/) */
 const PT_SLUG = {
   0: "san-jose-airport", 1: "liberia-airport", 2: "la-fortuna", 3: "monteverde",
-  4: "manuel-antonio", 5: "tamarindo", 6: "playa-conchal", 8: "papagayo",
+  4: "manuel-antonio", 5: "tamarindo", 6: "playa-conchal", 7: "brasilito", 8: "papagayo",
   9: "puerto-viejo", 10: "santa-teresa", 11: "jaco", 12: "playas-del-coco",
-  13: "playa-flamingo", 19: "dominical", 39: "nosara",
+  13: "playa-flamingo", 14: "playa-hermosa", 19: "dominical", 20: "uvita",
+  23: "los-suenos", 30: "rincon-de-la-vieja", 32: "la-paz-waterfall-gardens",
+  36: "sarapiqui", 39: "nosara", 40: "samara", 42: "rio-celeste",
+  44: "san-jose-city", 45: "alajuela",
 };
 
 /* [i, j, staria, hiace, maxus, duracion] — 633 rutas */
