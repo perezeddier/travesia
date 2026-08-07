@@ -359,7 +359,9 @@ body.no-scroll { overflow: hidden; }
 /* ===================== FOOTER ===================== */
 .site-footer { background: var(--bg-2); padding: 60px 0 26px; border-top: 1px solid var(--line); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 34px; }
-.footer-brand p { color: var(--muted); margin: 16px 0 0; max-width: 340px; font-size: .96rem; }
+.footer-logo { display: inline-block; }
+.footer-logo img { width: 180px; height: auto; border-radius: 16px; display: block; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.footer-brand p { color: var(--muted); margin: 18px 0 0; max-width: 340px; font-size: .96rem; }
 .footer-col h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: 1.4px; color: var(--gold); margin-bottom: 14px; }
 .footer-col a { display: block; color: var(--muted); padding: 5px 0; font-size: .96rem; transition: color .2s ease; }
 .footer-col a:hover { color: var(--text); }
