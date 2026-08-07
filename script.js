@@ -132,10 +132,10 @@ const I18N = {
     "co.phone": "WhatsApp / phone",
     "co.notes": "Notes (optional)",
     "co.pay": "Reserve & pay",
-    "co.expTitle": "Add the VIP Experience",
-    "co.expDesc": "Upgrade your transfer to VIP: 1–2 hours of private stops at scenic viewpoints, a coffee farm, a waterfall or a local spot along the way — plus a welcome touch.",
+    "co.expTitle": "Add Travesía VIP",
+    "co.expDesc": "Upgrade to Travesía VIP: 1–2 hours of flexible tourist stops along the way (scenic viewpoints, a coffee farm, a waterfall or a local spot) — plus a welcome kit.",
     "co.expAdd": "+$80",
-    "co.addon": "VIP Experience",
+    "co.addon": "Travesía VIP",
     "co.secure": "Secure card payment · taxes included",
     "co.back": "Back to trip",
     "co.empty": "Add at least one route to your trip first.",
@@ -239,10 +239,10 @@ const I18N = {
     "co.phone": "WhatsApp / teléfono",
     "co.notes": "Notas (opcional)",
     "co.pay": "Reservar y pagar",
-    "co.expTitle": "Añade la Experiencia VIP",
-    "co.expDesc": "Sube tu traslado a VIP: 1 a 2 horas de paradas privadas en miradores, una finca de café, una catarata o un lugar local en el camino — con un detalle de bienvenida.",
+    "co.expTitle": "Añade Travesía VIP",
+    "co.expDesc": "Sube a Travesía VIP: 1 a 2 horas de paradas turísticas flexibles en el camino (miradores, una finca de café, una catarata o un lugar local) — más un kit de bienvenida.",
     "co.expAdd": "+$80",
-    "co.addon": "Experiencia VIP",
+    "co.addon": "Travesía VIP",
     "co.secure": "Pago seguro con tarjeta · impuestos incluidos",
     "co.back": "Volver al viaje",
     "co.empty": "Agrega al menos una ruta a tu viaje primero.",
@@ -706,7 +706,7 @@ function closeCheckout() {
 /* Mensaje de reserva completo (interino por WhatsApp; luego lo cobra Tilopay) */
 function checkoutOrderMessage(d) {
   const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname} · $${it.price}`).join("\n");
-  const exp = d.experience ? "\n+ VIP Experience (scenic stops): $80" : "";
+  const exp = d.experience ? "\n+ Travesía VIP (1-2h tourist stops + welcome kit): $80" : "";
   const total = cartTotal() + (d.experience ? 80 : 0);
   return `Hi Travesía! New booking:\n${legs}${exp}\nTotal: $${total}\n\n` +
     `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
