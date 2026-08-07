@@ -69,6 +69,27 @@ img{max-width:100%;display:block}
 .rp-related .r-route{font-weight:600}
 .rp-related .r-price{color:var(--or-2);font-size:.88rem;margin-top:3px}
 
+/* Artículos / guías */
+.article{max-width:760px;margin:0 auto}
+.article p{color:var(--muted);margin:0 0 16px;font-size:1.05rem}
+.article h2{font-family:var(--font-head);font-weight:600;font-size:1.5rem;margin:32px 0 12px;color:var(--text)}
+.article h3{font-size:1.15rem;margin:22px 0 8px;color:var(--text)}
+.article ul,.article ol{color:var(--muted);margin:0 0 16px;padding-left:22px}
+.article li{margin-bottom:7px}
+.article a{color:var(--or-2);text-decoration:underline;text-underline-offset:3px}
+.article strong{color:var(--text)}
+.tip{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--or);border-radius:10px;padding:14px 16px;margin:4px 0 22px}
+.tip strong{color:var(--or-2)}
+.gscroll{overflow-x:auto;margin:0 0 20px}
+.gtable{width:100%;border-collapse:collapse;font-size:.95rem;min-width:460px}
+.gtable th,.gtable td{border:1px solid var(--line);padding:10px 12px;text-align:left;color:var(--muted)}
+.gtable th{background:var(--surface);color:var(--text);font-weight:600}
+.guide-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px}
+.guide-list a{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;transition:border-color .2s,transform .2s}
+.guide-list a:hover{border-color:var(--or);transform:translateY(-3px)}
+.guide-list h3{font-family:var(--font-head);font-size:1.18rem;margin-bottom:7px}
+.guide-list p{color:var(--muted);font-size:.92rem;margin:0}
+
 .rp-footer{padding:30px 0;text-align:center;color:var(--muted-2);font-size:.9rem}
 .rp-footer a{color:var(--muted)}
 .rp-footer a:hover{color:var(--text)}
