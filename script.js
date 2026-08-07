@@ -116,6 +116,9 @@ const I18N = {
     "fleet.pax": "passengers",
     "fleet.bags": "bags",
     "fleet.book": "Book this vehicle",
+    "gallery.eyebrow": "Real photos",
+    "gallery.title": "Our fleet across Costa Rica",
+    "gallery.lead": "Real vehicles, real trips — from the airport to the volcano and the coast.",
     "why.eyebrow": "Why Travesía",
     "why.title": "More than a drive",
     "cta.title": "Ready when you are",
@@ -191,6 +194,9 @@ const I18N = {
     "fleet.pax": "pasajeros",
     "fleet.bags": "maletas",
     "fleet.book": "Reservar este vehículo",
+    "gallery.eyebrow": "Fotos reales",
+    "gallery.title": "Nuestra flota por Costa Rica",
+    "gallery.lead": "Vehículos reales, viajes reales — del aeropuerto al volcán y a la costa.",
     "why.eyebrow": "Por qué Travesía",
     "why.title": "Más que un traslado",
     "cta.title": "Listos cuando tú lo estés",
@@ -210,6 +216,41 @@ const I18N = {
     "why.4.d": "Un solo precio por vehículo. Sin cargos ocultos ni sorpresas al final del viaje.",
   },
 };
+
+/* ---------- GALERÍA ---------- */
+const GALLERY = [
+  { img: "hero.jpg",          cap: { es: "Volcán Arenal, La Fortuna",        en: "Arenal Volcano, La Fortuna" } },
+  { img: "gallery-hotel.jpg", cap: { es: "Gran Hotel Costa Rica, San José",  en: "Gran Hotel Costa Rica, San José" } },
+  { img: "staria.jpg",        cap: { es: "En ruta por Costa Rica",           en: "On the road in Costa Rica" } },
+  { img: "hiace.jpg",         cap: { es: "Rumbo a la costa",                 en: "Heading to the coast" } },
+  { img: "maxus.jpg",         cap: { es: "Llegada al resort",                en: "Arriving at the resort" } },
+];
+
+function renderGallery() {
+  const grid = document.getElementById("galleryGrid");
+  if (!grid) return;
+  grid.innerHTML = GALLERY.map((g) => {
+    const cap = g.cap[currentLang] || g.cap.en;
+    return `
+      <button class="gallery-item" type="button" data-full="assets/${g.img}" data-cap="${cap}">
+        <img src="assets/${g.img}" alt="${cap} — Travesía Costa Rica" loading="lazy" />
+        <span class="gallery-cap">${cap}</span>
+      </button>`;
+  }).join("");
+}
+
+function openLightbox(src, cap) {
+  const lb = document.getElementById("lightbox");
+  if (!lb) return;
+  lb.querySelector("img").src = src;
+  lb.querySelector(".lightbox-cap").textContent = cap || "";
+  lb.classList.add("open");
+  document.body.classList.add("no-scroll");
+}
+function closeLightbox() {
+  document.getElementById("lightbox")?.classList.remove("open");
+  document.body.classList.remove("no-scroll");
+}
 
 /* ---------- FAQ (bilingüe) ---------- */
 const FAQ = [
@@ -557,6 +598,7 @@ function applyLang(lang) {
   });
   if (document.getElementById("finderResult")) renderFinder(); // el buscador usa texto dinámico
   if (document.getElementById("faqList")) renderFAQ();          // las FAQ usan texto dinámico
+  if (document.getElementById("galleryGrid")) renderGallery();  // la galería usa texto dinámico
   if (document.getElementById("cartItems")) renderCart();       // el carrito usa texto dinámico
   try { localStorage.setItem("travesia-lang", currentLang); } catch (e) {}
 }
@@ -570,7 +612,20 @@ document.addEventListener("DOMContentLoaded", () => {
   renderRoutes();
   renderFleet();
   renderWhy();
+  renderGallery();
   renderFAQ();
+
+  // Galería: abrir lightbox al hacer clic
+  const galleryGrid = document.getElementById("galleryGrid");
+  if (galleryGrid) galleryGrid.addEventListener("click", (e) => {
+    const item = e.target.closest("[data-full]");
+    if (item) openLightbox(item.getAttribute("data-full"), item.getAttribute("data-cap"));
+  });
+  document.getElementById("lightboxClose")?.addEventListener("click", closeLightbox);
+  document.getElementById("lightbox")?.addEventListener("click", (e) => {
+    if (e.target.id === "lightbox") closeLightbox();
+  });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
 
   // Buscador de rutas
   const fromSel = document.getElementById("fromSel");
