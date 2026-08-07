@@ -340,8 +340,10 @@ body.no-scroll { overflow: hidden; }
 .co-sum-addon span:first-child { color: var(--gold-2); }
 .co-choose { display: flex; flex-direction: column; gap: 8px; }
 .co-choose-label { font-size: .82rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
-.co-tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.co-tiers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 7px; }
 .co-tier { position: relative; display: block; cursor: pointer; background: var(--bg-3); border: 1px solid var(--line); border-radius: 12px; padding: 14px; transition: border-color .2s ease, background .2s ease; }
+.co-tier-vip { border-color: rgba(224,123,31,.4); }
+.co-tier-badge { position: absolute; top: -9px; left: 12px; background: var(--gold); color: #241c05; font-size: .6rem; font-weight: 800; text-transform: uppercase; letter-spacing: .5px; padding: 2px 8px; border-radius: 999px; }
 .co-tier input { position: absolute; top: 13px; right: 13px; width: 17px; height: 17px; accent-color: var(--gold); }
 .co-tier:has(input:checked) { border-color: var(--gold); background: rgba(224,123,31,.08); }
 .co-tier-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 10px; padding-right: 22px; }
