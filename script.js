@@ -97,6 +97,17 @@ const I18N = {
     "finder.pax": "passengers",
     "finder.book": "Book",
     "finder.ask": "Ask",
+    "finder.add": "Add",
+    "finder.continue": "Continue from",
+    "cart.open": "Cart",
+    "cart.title": "Your trip",
+    "cart.empty": "Your trip is empty. Add routes from the finder above — you can chain several stops and pay once.",
+    "cart.remove": "Remove",
+    "cart.total": "Total",
+    "cart.note": "Final price per vehicle · taxes included.",
+    "cart.checkout": "Book all on WhatsApp",
+    "cart.clear": "Empty trip",
+    "cart.added": "Added to your trip ✓",
     "fleet.eyebrow": "The fleet",
     "fleet.title": "Modern, comfortable vehicles",
     "fleet.lead": "Air-conditioned, well-maintained and GPS-monitored. Choose the size that fits your group and luggage.",
@@ -159,6 +170,17 @@ const I18N = {
     "finder.pax": "pasajeros",
     "finder.book": "Reservar",
     "finder.ask": "Consultar",
+    "finder.add": "Agregar",
+    "finder.continue": "Continuar desde",
+    "cart.open": "Carrito",
+    "cart.title": "Tu viaje",
+    "cart.empty": "Tu viaje está vacío. Agrega rutas desde el buscador de arriba — puedes encadenar varios tramos y pagar una sola vez.",
+    "cart.remove": "Quitar",
+    "cart.total": "Total",
+    "cart.note": "Precio final por vehículo · impuestos incluidos.",
+    "cart.checkout": "Reservar todo por WhatsApp",
+    "cart.clear": "Vaciar viaje",
+    "cart.added": "Agregado a tu viaje ✓",
     "fleet.eyebrow": "La flota",
     "fleet.title": "Vehículos modernos y cómodos",
     "fleet.lead": "Con aire acondicionado, bien mantenidos y monitoreados por GPS. Elige el tamaño ideal para tu grupo y equipaje.",
@@ -353,7 +375,7 @@ function renderFinder() {
   const rows = VEHICLES.map((v) => {
     const price = p[v.key];
     const has = price != null;
-    const msg = `Hi Travesía! I'd like to book the ${v.name} from ${ptName(i)} to ${ptName(j)}${has ? ` ($${price})` : ""}. Date & passengers: `;
+    const msg = `Hi Travesía! I'd like a quote for the ${v.name} from ${ptName(i)} to ${ptName(j)}. Date & passengers: `;
     return `
       <div class="veh-row${has ? "" : " veh-na"}">
         <div class="veh-info">
@@ -362,7 +384,9 @@ function renderFinder() {
         </div>
         <div class="veh-buy">
           <span class="veh-price">${has ? `<em>$</em>${price}` : "—"}</span>
-          <a class="veh-book" href="${wa(msg)}" target="_blank" rel="noopener">${has ? t("finder.book") : t("finder.ask")}</a>
+          ${has
+            ? `<button class="veh-add" type="button" data-add="${i}-${j}-${v.key}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg><span>${t("finder.add")}</span></button>`
+            : `<a class="veh-book" href="${wa(msg)}" target="_blank" rel="noopener">${t("finder.ask")}</a>`}
         </div>
       </div>`;
   }).join("");
@@ -374,7 +398,102 @@ function renderFinder() {
       ${dur ? `<span class="finder-dur"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>${dur}</span>` : ""}
     </div>
     <div class="veh-list">${rows}</div>
-    <p class="finder-note">${t("finder.taxes")}</p>`;
+    <p class="finder-note">${t("finder.taxes")}</p>
+    <button class="finder-continue" type="button" data-continue="${j}">
+      <span>${t("finder.continue")} ${ptName(j)}</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </button>`;
+}
+
+/* ---------- CART (multi-tramo, 1 solo pago) ---------- */
+let CART = [];
+try { CART = JSON.parse(localStorage.getItem("travesia-cart") || "[]"); } catch (e) { CART = []; }
+function saveCart() { try { localStorage.setItem("travesia-cart", JSON.stringify(CART)); } catch (e) {} }
+function cartTotal() { return CART.reduce((s, it) => s + it.price, 0); }
+
+function updateCartCount() {
+  const n = CART.length;
+  document.querySelectorAll("[data-cart-count]").forEach((el) => {
+    el.textContent = String(n);
+    el.classList.toggle("has-items", n > 0);
+  });
+}
+
+function addToCart(i, j, vkey) {
+  const p = ptPrice(i, j);
+  if (!p || p[vkey] == null) return;
+  const v = VEHICLES.find((x) => x.key === vkey);
+  CART.push({ i, j, from: ptName(i), to: ptName(j), vkey, vname: v.name, price: p[vkey] });
+  saveCart(); updateCartCount(); renderCart();
+  toast(t("cart.added"));
+  const badge = document.querySelector(".cart-btn");
+  if (badge) { badge.classList.remove("pulse"); void badge.offsetWidth; badge.classList.add("pulse"); }
+}
+
+function removeFromCart(idx) { CART.splice(idx, 1); saveCart(); updateCartCount(); renderCart(); }
+function clearCart() { CART = []; saveCart(); updateCartCount(); renderCart(); }
+
+function cartCheckoutHref() {
+  if (!CART.length) return wa("Hi Travesía!");
+  const lines = CART.map((it, n) => `${n + 1}) ${it.from}  ->  ${it.to} · ${it.vname} · $${it.price}`).join("\n");
+  const msg = `Hi Travesía! I'd like to book this trip:\n${lines}\n\nTotal: $${cartTotal()}\nDate(s) & passengers: `;
+  return wa(msg);
+}
+
+function renderCart() {
+  const list = document.getElementById("cartItems");
+  if (!list) return;
+  if (!CART.length) {
+    list.innerHTML = `<p class="cart-empty">${t("cart.empty")}</p>`;
+  } else {
+    list.innerHTML = CART.map((it, idx) => `
+      <div class="cart-item">
+        <div class="cart-item-main">
+          <div class="cart-route"><span>${it.from}</span> ${ARROW} <span>${it.to}</span></div>
+          <div class="cart-veh">${it.vname}</div>
+        </div>
+        <div class="cart-item-price">$${it.price}</div>
+        <button class="cart-remove" type="button" data-remove="${idx}" aria-label="${t("cart.remove")}" title="${t("cart.remove")}">&times;</button>
+      </div>`).join("");
+  }
+  const totalEl = document.getElementById("cartTotal");
+  if (totalEl) totalEl.textContent = "$" + cartTotal();
+  const checkout = document.getElementById("cartCheckout");
+  if (checkout) { checkout.href = cartCheckoutHref(); checkout.classList.toggle("is-disabled", !CART.length); }
+}
+
+function openCart() {
+  document.getElementById("cartDrawer")?.classList.add("open");
+  document.getElementById("cartOverlay")?.classList.add("show");
+  document.body.classList.add("no-scroll");
+}
+function closeCart() {
+  document.getElementById("cartDrawer")?.classList.remove("open");
+  document.getElementById("cartOverlay")?.classList.remove("show");
+  document.body.classList.remove("no-scroll");
+}
+
+/* Encadenar: el destino al que viajaste pasa a ser el nuevo origen */
+function continueFrom(j) {
+  const fromSel = document.getElementById("fromSel"), toSel = document.getElementById("toSel");
+  if (!fromSel || !toSel) return;
+  fromSel.value = String(j);
+  if (Number(toSel.value) === j) {
+    const alt = [...toSel.options].map((o) => Number(o.value)).find((v) => v !== j);
+    if (alt != null) toSel.value = String(alt);
+  }
+  renderFinder();
+  document.getElementById("finder").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+/* Aviso breve */
+function toast(msg) {
+  let el = document.getElementById("toast");
+  if (!el) { el = document.createElement("div"); el.id = "toast"; el.className = "toast"; document.body.appendChild(el); }
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove("show"), 1800);
 }
 
 function renderFleet() {
@@ -431,6 +550,7 @@ function applyLang(lang) {
   });
   if (document.getElementById("finderResult")) renderFinder(); // el buscador usa texto dinámico
   if (document.getElementById("faqList")) renderFAQ();          // las FAQ usan texto dinámico
+  if (document.getElementById("cartItems")) renderCart();       // el carrito usa texto dinámico
   try { localStorage.setItem("travesia-lang", currentLang); } catch (e) {}
 }
 
@@ -459,6 +579,31 @@ document.addEventListener("DOMContentLoaded", () => {
       renderFinder();
     });
   }
+
+  // Delegación de clics del buscador: agregar al carrito / encadenar
+  const finderEl = document.getElementById("finder");
+  if (finderEl) finderEl.addEventListener("click", (e) => {
+    const addBtn = e.target.closest("[data-add]");
+    if (addBtn) {
+      const [i, j, vkey] = addBtn.getAttribute("data-add").split("-");
+      addToCart(Number(i), Number(j), vkey);
+      return;
+    }
+    const contBtn = e.target.closest("[data-continue]");
+    if (contBtn) continueFrom(Number(contBtn.getAttribute("data-continue")));
+  });
+
+  // Carrito
+  renderCart();
+  updateCartCount();
+  document.getElementById("cartBtn")?.addEventListener("click", openCart);
+  document.getElementById("cartClose")?.addEventListener("click", closeCart);
+  document.getElementById("cartOverlay")?.addEventListener("click", closeCart);
+  document.getElementById("cartClear")?.addEventListener("click", clearCart);
+  document.getElementById("cartItems")?.addEventListener("click", (e) => {
+    const rm = e.target.closest("[data-remove]");
+    if (rm) removeFromCart(Number(rm.getAttribute("data-remove")));
+  });
 
   applyLang(currentLang);
 
