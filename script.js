@@ -52,9 +52,9 @@ function ptDuration(dur) {
 }
 
 const FLEET = [
-  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg" },
-  { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9,  img: "hiace.jpg"  },
-  { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12, img: "maxus.jpg"  },
+  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg", pos: "center 80%" },
+  { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9,  img: "hiace.jpg",  pos: "center 62%" },
+  { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12, img: "maxus.jpg",  pos: "center 60%" },
 ];
 
 /* ---------- TRANSLATIONS ---------- */
@@ -507,7 +507,7 @@ function renderFleet() {
     return `
       <article class="fleet-card" data-reveal>
         <div class="fleet-visual">
-          <img class="fleet-photo" src="assets/${f.img}" alt="${f.name} — Travesía Costa Rica private shuttle" loading="lazy" onerror="this.remove(); this.parentNode.classList.add('no-photo');" />
+          <img class="fleet-photo" src="assets/${f.img}" alt="${f.name} — Travesía Costa Rica private shuttle" loading="lazy" style="object-position:${f.pos || "center"}" onerror="this.remove(); this.parentNode.classList.add('no-photo');" />
           <span class="fleet-visual-icon">${ICON_VAN}</span>
         </div>
         <div class="fleet-body">
