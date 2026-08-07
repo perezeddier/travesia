@@ -52,7 +52,7 @@ function ptDuration(dur) {
 }
 
 const FLEET = [
-  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg", pos: "center 80%" },
+  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg", pos: "center 84%" },
   { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9,  img: "hiace.jpg",  pos: "center 62%" },
   { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12, img: "maxus.jpg",  pos: "center 60%" },
 ];
