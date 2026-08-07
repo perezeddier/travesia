@@ -67,6 +67,8 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 .header-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 18px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; }
 .brand-mark { border-radius: 8px; }
+.brand-logo { height: 50px; width: auto; display: block; }
+@media (max-width: 560px) { .brand-logo { height: 42px; } }
 .brand-text { font-family: var(--font-head); font-size: 1.28rem; letter-spacing: .3px; }
 .brand-sub { color: var(--gold); font-weight: 600; }
 .nav { display: flex; gap: 26px; margin-left: auto; }
@@ -360,7 +362,7 @@ body.no-scroll { overflow: hidden; }
 .site-footer { background: var(--bg-2); padding: 60px 0 26px; border-top: 1px solid var(--line); }
 .footer-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr; gap: 34px; }
 .footer-logo { display: inline-block; }
-.footer-logo img { width: 180px; height: auto; border-radius: 16px; display: block; box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.footer-logo img { width: 190px; height: auto; display: block; filter: drop-shadow(0 6px 16px rgba(0,0,0,.45)); }
 .footer-brand p { color: var(--muted); margin: 18px 0 0; max-width: 340px; font-size: .96rem; }
 .footer-col h3 { font-size: .82rem; text-transform: uppercase; letter-spacing: 1.4px; color: var(--gold); margin-bottom: 14px; }
 .footer-col a { display: block; color: var(--muted); padding: 5px 0; font-size: .96rem; transition: color .2s ease; }
