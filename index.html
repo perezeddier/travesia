@@ -3,13 +3,16 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Travesía Costa Rica — Private Transportation & Shuttles</title>
-  <meta name="description" content="Premium private transportation and shuttle service across Costa Rica. Airport transfers from SJO and LIR to La Fortuna, Tamarindo, Manuel Antonio, Monteverde and more." />
+  <title>Costa Rica Private Shuttles & Airport Transfers | Travesía</title>
+  <meta name="description" content="Private shuttles & door-to-door airport transfers across Costa Rica — SJO & Liberia to La Fortuna, Tamarindo, Manuel Antonio & more. Flat rates, book on WhatsApp." />
   <meta name="theme-color" content="#0d0f12" />
 
   <!-- Open Graph -->
-  <meta property="og:title" content="Travesía Costa Rica — Private Transportation" />
-  <meta property="og:description" content="Reliable private shuttle services across Costa Rica. Bilingual drivers, modern GPS-monitored fleet." />
+  <meta property="og:title" content="Costa Rica Private Shuttles & Airport Transfers | Travesía" />
+  <meta property="og:description" content="Door-to-door private transfers across Costa Rica. SJO & Liberia to La Fortuna, Tamarindo, Manuel Antonio & more. Flat rates, bilingual drivers, book on WhatsApp." />
+  <meta property="og:image" content="https://travesiacr.online/assets/hero.jpg" />
+  <meta property="og:site_name" content="Travesía Costa Rica" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta property="og:type" content="website" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:url" content="https://travesiacr.online/" />
@@ -24,13 +27,43 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Datos estructurados para Google (agencia de transporte / traslados) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "TravelAgency",
+    "name": "Travesía Costa Rica",
+    "description": "Private shuttles and door-to-door airport transfers across Costa Rica. Bilingual drivers, flat rates per vehicle, GPS-monitored fleet.",
+    "url": "https://travesiacr.online/",
+    "image": "https://travesiacr.online/assets/hero.jpg",
+    "logo": "https://travesiacr.online/assets/logo.svg",
+    "telephone": "+50685028476",
+    "email": "infotravesiacr@gmail.com",
+    "priceRange": "$$",
+    "areaServed": { "@type": "Country", "name": "Costa Rica" },
+    "knowsLanguage": ["en", "es"],
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+      "opens": "00:00",
+      "closes": "23:59"
+    },
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+50685028476",
+      "contactType": "reservations",
+      "availableLanguage": ["English", "Spanish"]
+    }
+  }
+  </script>
 </head>
 <body>
   <!-- ===================== HEADER ===================== -->
   <header class="site-header" id="header">
     <div class="container header-inner">
       <a href="#home" class="brand" aria-label="Travesía Costa Rica">
-        <img src="assets/logo.svg" alt="" class="brand-mark" width="34" height="34" />
+        <img src="assets/logo.svg" alt="Travesía Costa Rica — private shuttles & airport transfers" class="brand-mark" width="34" height="34" />
         <span class="brand-text">Travesía<span class="brand-sub"> Costa Rica</span></span>
       </a>
 
@@ -60,14 +93,14 @@
   <section class="hero" id="home">
     <div class="hero-bg" aria-hidden="true"></div>
     <div class="container hero-inner">
-      <p class="eyebrow" data-i18n="hero.eyebrow">Costa Rica · Private Transportation</p>
+      <p class="eyebrow" data-i18n="hero.eyebrow">Arrive relaxed · Travel in comfort</p>
       <h1 class="hero-title">
-        <span data-i18n="hero.title1">Arrive relaxed.</span><br />
-        <span class="accent" data-i18n="hero.title2">Travel in comfort.</span>
+        <span data-i18n="hero.title1">Costa Rica Private Shuttles</span><br />
+        <span class="accent" data-i18n="hero.title2">&amp; Airport Transfers</span>
       </h1>
       <p class="hero-sub" data-i18n="hero.sub">
-        Reliable private shuttle service across Costa Rica. Airport transfers, door-to-door,
-        with bilingual drivers and a modern GPS-monitored fleet.
+        Door-to-door private transfers from SJO and Liberia (LIR) airports to La Fortuna, Monteverde,
+        Tamarindo, Manuel Antonio and beyond. Flat rate per vehicle, bilingual drivers, GPS-monitored fleet.
       </p>
       <div class="hero-cta">
         <a class="btn btn-wa btn-lg" href="https://wa.me/50685028476?text=Hi%20Traves%C3%ADa!%20I%27d%20like%20a%20quote%20for%20a%20private%20transfer." target="_blank" rel="noopener">
@@ -89,7 +122,7 @@
   <section class="section" id="routes">
     <div class="container">
       <div class="section-head">
-        <p class="eyebrow" data-i18n="routes.eyebrow">Fares &amp; destinations</p>
+        <p class="eyebrow" data-i18n="routes.eyebrow">Shuttle routes &amp; fares</p>
         <h2 class="section-title" data-i18n="routes.title">Find your route &amp; price</h2>
         <p class="section-lead" data-i18n="routes.lead">
           Pick where you're coming from and where you're going — see the price instantly. Flat rate for the whole vehicle, not per person.
