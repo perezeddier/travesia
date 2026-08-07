@@ -431,6 +431,18 @@ body.no-scroll { overflow: hidden; }
 }
 .lightbox-close:hover { opacity: 1; }
 
+/* ===================== REVIEWS ===================== */
+.rev-rating { display: inline-flex; align-items: center; gap: 6px; }
+.rev-rating .stars, .review-stars { color: #fbbc05; letter-spacing: 2px; }
+.rev-rating strong { color: var(--text); font-family: var(--font-head); }
+.rev-link { color: var(--gold-2); text-decoration: underline; text-underline-offset: 3px; }
+.reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.review-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.review-card blockquote { margin: 0; color: var(--muted); font-size: .98rem; line-height: 1.6; font-style: italic; }
+.review-card figcaption { display: flex; flex-direction: column; margin-top: auto; }
+.review-card figcaption strong { color: var(--text); }
+.review-card figcaption span { color: var(--muted-2); font-size: .82rem; }
+
 /* ===================== FLEET ===================== */
 .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
 .fleet-card { background: var(--bg-3); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: transform .2s ease, border-color .2s ease; }

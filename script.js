@@ -79,6 +79,10 @@ const I18N = {
     "hero.ctaSecondary": "See routes & prices",
     "reviews.on": "on Google Reviews",
     "reviews.leave": "★ Leave us a review on Google",
+    "rev.eyebrow": "Reviews",
+    "rev.title": "What our guests say",
+    "rev.count": "95 reviews on Google",
+    "rev.all": "Read all on Google",
     "hero.trust1": "& LIR airport pickups",
     "hero.trust2": "WhatsApp support",
     "hero.trust3": "passenger vehicles",
@@ -178,6 +182,10 @@ const I18N = {
     "hero.ctaSecondary": "Ver rutas y precios",
     "reviews.on": "en reseñas de Google",
     "reviews.leave": "★ Déjanos una reseña en Google",
+    "rev.eyebrow": "Reseñas",
+    "rev.title": "Lo que dicen nuestros clientes",
+    "rev.count": "95 reseñas en Google",
+    "rev.all": "Ver todas en Google",
     "hero.trust1": "y recogidas en LIR",
     "hero.trust2": "soporte por WhatsApp",
     "hero.trust3": "vehículos de pasajeros",
@@ -302,6 +310,30 @@ function openLightbox(src, cap) {
 function closeLightbox() {
   document.getElementById("lightbox")?.classList.remove("open");
   document.body.classList.remove("no-scroll");
+}
+
+/* ---------- RESEÑAS reales de Google ---------- */
+const REVIEWS = [
+  { name: "Judith Berenstein", when: { es: "hace 4 meses", en: "4 months ago" },
+    text: "Excelente día pasamos entre amigas con Roy y Fabián! Roy nos guió de maravilla y conocimos lugares mágicos!! Súper recomendable! Destacamos el lugar del almuerzo, una experiencia inolvidable! Gracias" },
+  { name: "Odaly Castillo", when: { es: "hace 2 meses", en: "2 months ago" },
+    text: "Don Eddie y su equipo de conductores son los mejores, hacen de cada trayecto una experiencia única!" },
+  { name: "Carmen López", when: { es: "hace un año", en: "a year ago" },
+    text: "La experiencia con Carlos ha sido de 10, súper agradable, servicial y atento con todos nosotros. Sin duda, si volvemos a Costa Rica, volveremos a coincidir con él ☺️" },
+];
+
+function renderReviews() {
+  const grid = document.getElementById("reviewsGrid");
+  if (!grid) return;
+  grid.innerHTML = REVIEWS.map((r) => `
+    <figure class="review-card" data-reveal>
+      <div class="review-stars" aria-hidden="true">★★★★★</div>
+      <blockquote>${r.text}</blockquote>
+      <figcaption>
+        <strong>${r.name}</strong>
+        <span>${(r.when[currentLang] || r.when.en)} · Google</span>
+      </figcaption>
+    </figure>`).join("");
 }
 
 /* ---------- FAQ (bilingüe) ---------- */
@@ -756,6 +788,7 @@ function applyLang(lang) {
   if (document.getElementById("finderResult")) renderFinder(); // el buscador usa texto dinámico
   if (document.getElementById("faqList")) renderFAQ();          // las FAQ usan texto dinámico
   if (document.getElementById("galleryGrid")) renderGallery();  // la galería usa texto dinámico
+  if (document.getElementById("reviewsGrid")) renderReviews();  // las reseñas usan fecha dinámica
   if (document.getElementById("cartItems")) renderCart();       // el carrito usa texto dinámico
   if (document.getElementById("checkout")?.classList.contains("open")) renderCheckoutSummary();
   try { localStorage.setItem("travesia-lang", currentLang); } catch (e) {}
@@ -771,6 +804,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderFleet();
   renderWhy();
   renderGallery();
+  renderReviews();
   renderFAQ();
 
   // Galería: abrir lightbox al hacer clic
