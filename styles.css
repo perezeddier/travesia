@@ -506,6 +506,9 @@ body.no-scroll { overflow: hidden; }
 .svc-best strong { color: var(--text); text-transform: uppercase; letter-spacing: .5px; font-size: .74rem; font-weight: 800; }
 
 /* Conoce a Eddie (historia / confianza) */
+/* Menos espacio vacío entre "Why Travesía" y "Conoce a Eddie" */
+#why { padding-bottom: clamp(28px, 4vw, 48px); }
+#about { padding-top: clamp(28px, 4vw, 48px); }
 .about-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(24px, 4vw, 48px); align-items: center; }
 .about-photo img { width: 100%; height: 100%; max-height: 520px; object-fit: cover; object-position: center 35%; border-radius: var(--radius); border: 1px solid var(--line); box-shadow: var(--shadow); }
 .about-text .eyebrow, .about-text .section-title { text-align: left; }
