@@ -151,6 +151,7 @@ const I18N = {
     "route.view": "View route",
     "route.priceNote": "per vehicle",
     "finder.title": "Where are you heading?",
+    "finder.go": "See prices",
     "inc.title": "Every private transfer includes",
     "inc.1": "Airport meet & greet with a name sign",
     "inc.2": "We track your flight — we wait if it's delayed",
@@ -333,6 +334,7 @@ const I18N = {
     "route.view": "Ver ruta",
     "route.priceNote": "por vehículo",
     "finder.title": "¿A dónde te diriges?",
+    "finder.go": "Ver precios",
     "inc.title": "Todo transfer privado incluye",
     "inc.1": "Recibimiento en el aeropuerto con letrero",
     "inc.2": "Seguimos tu vuelo — esperamos si se atrasa",
@@ -718,8 +720,8 @@ function renderFinder() {
   const i = comboState("fromInput"), j = comboState("toInput");
 
   if (i == null || j == null) {
-    box.className = "finder-result state-msg";
-    box.innerHTML = `<p>${t("finder.pick")}</p>`;
+    box.className = "finder-result";
+    box.innerHTML = "";
     return;
   }
   if (i === j) {
@@ -1021,6 +1023,17 @@ document.addEventListener("DOMContentLoaded", () => {
       fromInput.value = toInput.value; fromInput.dataset.place = toInput.dataset.place;
       toInput.value = v; toInput.dataset.place = p;
       renderFinder();
+    });
+    // Botón "Ver precios": baja a los vehículos; si falta destino, abre el campo de destino
+    document.getElementById("finderGo")?.addEventListener("click", () => {
+      const i = comboState("fromInput"), j = comboState("toInput");
+      if (i == null || j == null || i === j) {
+        toInput.focus();
+        renderComboList("toInput", "toList");
+        return;
+      }
+      renderFinder();
+      document.getElementById("finderResult")?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   }
 
