@@ -529,6 +529,14 @@ body.no-scroll { overflow: hidden; }
 .wp-yes li { color: var(--text); }
 @media (max-width: 760px) { .wp-grid { grid-template-columns: 1fr; } }
 
+/* Redes sociales + TripAdvisor */
+.footer-social { display: flex; gap: 12px; margin-top: 18px; }
+.soc { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--muted); background: var(--surface); transition: color .2s ease, border-color .2s ease, transform .2s ease; }
+.soc:hover { color: var(--gold-2); border-color: var(--gold); transform: translateY(-2px); }
+.rev-also { margin: 14px 0 0; }
+.rev-also a { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-2); font-weight: 600; font-size: .95rem; }
+.rev-also a:hover { color: var(--gold); }
+
 /* ===================== FLEET ===================== */
 .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
 .fleet-card { background: var(--bg-3); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; transition: transform .2s ease, border-color .2s ease; }
