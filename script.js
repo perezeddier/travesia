@@ -71,7 +71,7 @@ const I18N = {
     "nav.book": "Book on WhatsApp",
     "tours.eyebrow": "Day tours",
     "tours.title": "Make it a full adventure",
-    "tours.lead": "More than a transfer — spend a whole day exploring La Fortuna with us.",
+    "tours.lead": "More than a transfer — turn a travel day into a full Costa Rica adventure with your own private guide.",
     "tours.name": "La Fortuna Full-Day Tour",
     "tours.desc": "Mistico hanging bridges, a volcano hike at El Silencio, tortilla-making, a traditional lunch and the La Fortuna Waterfall — with private transport and a private guide.",
     "tours.price": "From $192 / person",
@@ -165,6 +165,9 @@ const I18N = {
     "finder.notfound": "We don't have a set price for that pair yet — send it to us on WhatsApp and we'll quote it in minutes.",
     "finder.notfoundBtn": "Quote this route on WhatsApp",
     "finder.taxes": "Final price per vehicle · taxes included",
+    "finder.a1": "Free cancellation up to 24h",
+    "finder.a2": "We track your flight",
+    "finder.a3": "Instant WhatsApp confirmation",
     "finder.upto": "up to",
     "finder.pax": "passengers",
     "finder.book": "Book",
@@ -212,7 +215,7 @@ const I18N = {
     "co.empty": "Add at least one route to your trip first.",
     "fleet.eyebrow": "The fleet",
     "fleet.title": "Modern, comfortable vehicles",
-    "fleet.lead": "Air-conditioned, well-maintained and fully insured. Choose the size that fits your group and luggage.",
+    "fleet.lead": "Modern, air-conditioned and fully insured — and always private, just for you and your group. Pick the size that fits your party and luggage.",
     "fleet.pax": "passengers",
     "fleet.bags": "bags",
     "fleet.book": "Book this vehicle",
@@ -222,7 +225,7 @@ const I18N = {
     "why.eyebrow": "Why Travesía",
     "why.title": "More than a drive",
     "cta.title": "Ready when you are",
-    "cta.sub": "Send us your route, date and number of passengers — we'll confirm price and pickup in minutes.",
+    "cta.sub": "Send your route, date and passengers — we reply on WhatsApp in minutes with your price and pickup time.",
     "cta.button": "Chat on WhatsApp",
     "footer.tagline": "Premium private transportation across Costa Rica. Safe, punctual, and comfortable — every trip.",
     "footer.explore": "Explore",
@@ -249,7 +252,7 @@ const I18N = {
     "nav.book": "Reservar por WhatsApp",
     "tours.eyebrow": "Tours de un día",
     "tours.title": "Haz de tu viaje una aventura",
-    "tours.lead": "Más que un traslado — pasa un día completo explorando La Fortuna con nosotros.",
+    "tours.lead": "Más que un traslado — convierte un día de viaje en una aventura completa por Costa Rica con tu guía privado.",
     "tours.name": "Tour Full Day en La Fortuna",
     "tours.desc": "Puentes colgantes Mistico, caminata al volcán en El Silencio, hacer tortillas, almuerzo típico y la Catarata de La Fortuna — con transporte privado y guía privado.",
     "tours.price": "Desde $192 / persona",
@@ -343,6 +346,9 @@ const I18N = {
     "finder.notfound": "Aún no tenemos precio fijo para ese par — mándanoslo por WhatsApp y te cotizamos en minutos.",
     "finder.notfoundBtn": "Cotizar esta ruta por WhatsApp",
     "finder.taxes": "Precio final por vehículo · impuestos incluidos",
+    "finder.a1": "Cancelación gratis hasta 24 h",
+    "finder.a2": "Seguimos tu vuelo",
+    "finder.a3": "Confirmación inmediata por WhatsApp",
     "finder.upto": "hasta",
     "finder.pax": "pasajeros",
     "finder.book": "Reservar",
@@ -390,7 +396,7 @@ const I18N = {
     "co.empty": "Agrega al menos una ruta a tu viaje primero.",
     "fleet.eyebrow": "La flota",
     "fleet.title": "Vehículos modernos y cómodos",
-    "fleet.lead": "Con aire acondicionado, bien mantenidos y con seguro completo. Elige el tamaño ideal para tu grupo y equipaje.",
+    "fleet.lead": "Modernos, con aire acondicionado y con seguro completo — y siempre privados, solo para ti y tu grupo. Elige el tamaño ideal para tus pasajeros y equipaje.",
     "fleet.pax": "pasajeros",
     "fleet.bags": "maletas",
     "fleet.book": "Reservar este vehículo",
@@ -400,7 +406,7 @@ const I18N = {
     "why.eyebrow": "Por qué Travesía",
     "why.title": "Más que un traslado",
     "cta.title": "Listos cuando tú lo estés",
-    "cta.sub": "Envíanos tu ruta, fecha y número de pasajeros — confirmamos precio y recogida en minutos.",
+    "cta.sub": "Envía tu ruta, fecha y pasajeros — te respondemos por WhatsApp en minutos con tu precio y hora de recogida.",
     "cta.button": "Escríbenos por WhatsApp",
     "footer.tagline": "Transporte privado premium por toda Costa Rica. Seguro, puntual y cómodo — en cada viaje.",
     "footer.explore": "Explorar",
@@ -759,6 +765,11 @@ function renderFinder() {
       ${dur ? `<span class="finder-dur"><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>${dur}</span>` : ""}
     </div>
     <div class="veh-list">${rows}</div>
+    <div class="finder-assure">
+      <span>${t("finder.a1")}</span>
+      <span>${t("finder.a2")}</span>
+      <span>${t("finder.a3")}</span>
+    </div>
     <p class="finder-note">${t("finder.taxes")}</p>
     <button class="finder-continue" type="button" data-continue="${j}">
       <span>${t("finder.continue")} ${ptName(j)}</span>
