@@ -138,7 +138,7 @@
 
       <!-- BUSCADOR — lo primero que ve el cliente: ¿a dónde vas? -->
       <div class="finder finder-hero" id="finder">
-        <p class="finder-title" data-i18n="finder.title">Where are you going?</p>
+        <p class="finder-title" data-i18n="finder.title">Where are you heading?</p>
         <div class="finder-controls">
           <div class="finder-field">
             <label for="fromInput" data-i18n="finder.from">From</label>
@@ -311,16 +311,9 @@
       <div class="section-head">
         <p class="eyebrow" data-i18n="rev.eyebrow">Reviews</p>
         <h2 class="section-title" data-i18n="rev.title">What our guests say</h2>
-        <p class="section-lead">
-          <span class="rev-rating"><span class="stars">★★★★★</span> <strong>5.0</strong></span>
-          · <span data-i18n="rev.count">95 reviews on Google</span>
-          · <a class="rev-link" href="https://g.page/r/CXQCAbYUe76nEBM" target="_blank" rel="noopener" data-i18n="rev.all">Read all on Google</a>
-        </p>
       </div>
-      <div class="reviews-grid" id="reviewsGrid"><!-- injected by script.js --></div>
-      <div class="routes-foot">
-        <a class="btn btn-outline" href="https://g.page/r/CXQCAbYUe76nEBM/review" target="_blank" rel="noopener" data-i18n="reviews.leave">★ Leave us a review on Google</a>
-      </div>
+      <!-- Google Reviews en vivo (widget Elfsight, el mismo de travesiacr.online) -->
+      <div class="elfsight-app-e5138fd2-33bb-42c1-b6f6-a544156270bc" data-elfsight-app-lazy></div>
     </div>
   </section>
 
@@ -481,5 +474,7 @@
 
   <script src="routes-data.js"></script>
   <script src="script.js"></script>
+  <!-- Elfsight (widget de Google Reviews en vivo) -->
+  <script src="https://static.elfsight.com/platform/platform.js" async></script>
 </body>
 </html>
