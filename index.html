@@ -135,6 +135,32 @@
         <span data-i18n="hero.title1">Costa Rica Private Shuttles</span><br />
         <span class="accent" data-i18n="hero.title2">&amp; Airport Transfers</span>
       </h1>
+
+      <!-- BUSCADOR — lo primero que ve el cliente: ¿a dónde vas? -->
+      <div class="finder finder-hero" id="finder">
+        <p class="finder-title" data-i18n="finder.title">Where are you going?</p>
+        <div class="finder-controls">
+          <div class="finder-field">
+            <label for="fromInput" data-i18n="finder.from">From</label>
+            <div class="combo">
+              <input id="fromInput" class="finder-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" spellcheck="false" data-i18n-ph="finder.ph" placeholder="Destination or hotel…" />
+              <ul class="combo-list" id="fromList" role="listbox"></ul>
+            </div>
+          </div>
+          <button class="finder-swap" id="swapBtn" type="button" aria-label="Swap" title="Swap">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
+          </button>
+          <div class="finder-field">
+            <label for="toInput" data-i18n="finder.to">To</label>
+            <div class="combo">
+              <input id="toInput" class="finder-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" spellcheck="false" data-i18n-ph="finder.ph" placeholder="Destination or hotel…" />
+              <ul class="combo-list" id="toList" role="listbox"></ul>
+            </div>
+          </div>
+        </div>
+        <div class="finder-result" id="finderResult"><!-- injected by script.js --></div>
+      </div>
+
       <p class="hero-sub" data-i18n="hero.sub">
         Door-to-door private transfers from SJO and Liberia (LIR) airports to La Fortuna, Monteverde,
         Tamarindo, Manuel Antonio and beyond. Flat rate per vehicle, professional drivers, licensed &amp; insured.
@@ -172,31 +198,6 @@
         </p>
       </div>
 
-      <!-- ROUTE FINDER -->
-      <div class="finder" id="finder">
-        <div class="finder-controls">
-          <div class="finder-field">
-            <label for="fromInput" data-i18n="finder.from">From</label>
-            <div class="combo">
-              <input id="fromInput" class="finder-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" spellcheck="false" data-i18n-ph="finder.ph" placeholder="Destination or hotel…" />
-              <ul class="combo-list" id="fromList" role="listbox"></ul>
-            </div>
-          </div>
-          <button class="finder-swap" id="swapBtn" type="button" aria-label="Swap" title="Swap">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>
-          </button>
-          <div class="finder-field">
-            <label for="toInput" data-i18n="finder.to">To</label>
-            <div class="combo">
-              <input id="toInput" class="finder-input" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" autocomplete="off" spellcheck="false" data-i18n-ph="finder.ph" placeholder="Destination or hotel…" />
-              <ul class="combo-list" id="toList" role="listbox"></ul>
-            </div>
-          </div>
-        </div>
-        <div class="finder-result" id="finderResult"><!-- injected by script.js --></div>
-      </div>
-
-      <h3 class="routes-subhead" data-i18n="routes.popular">Most popular routes</h3>
       <div class="routes-grid" id="routesGrid"><!-- injected by script.js --></div>
       <div class="routes-foot">
         <a class="btn btn-outline" href="https://wa.me/50685028476?text=Hi%20Traves%C3%ADa!%20I%20need%20a%20custom%20route%20quote." target="_blank" rel="noopener" data-i18n="routes.custom">
