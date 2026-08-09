@@ -533,9 +533,12 @@ body.no-scroll { overflow: hidden; }
 .footer-social { display: flex; gap: 12px; margin-top: 18px; }
 .soc { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--muted); background: var(--surface); transition: color .2s ease, border-color .2s ease, transform .2s ease; }
 .soc:hover { color: var(--gold-2); border-color: var(--gold); transform: translateY(-2px); }
-.rev-also { margin: 14px 0 0; }
-.rev-also a { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-2); font-weight: 600; font-size: .95rem; }
-.rev-also a:hover { color: var(--gold); }
+.ta-badge { display: inline-flex; align-items: center; gap: 10px; margin: 16px auto 0; padding: 9px 18px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: var(--text); transition: border-color .2s ease, transform .2s ease; }
+.ta-badge:hover { border-color: #00aa6c; transform: translateY(-2px); }
+.ta-badge svg { color: #00aa6c; flex-shrink: 0; }
+.ta-badge-txt { font-size: .98rem; }
+.ta-badge-txt strong { font-size: 1.06rem; }
+.ta-stars { color: #00aa6c; letter-spacing: 1px; font-size: .8rem; vertical-align: middle; }
 
 /* ===================== FLEET ===================== */
 .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
