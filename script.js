@@ -160,7 +160,7 @@ const I18N = {
     "finder.from": "From",
     "finder.to": "To",
     "finder.ph": "Destination or hotel…",
-    "finder.pick": "Choose your pickup and destination to see the price.",
+    "finder.pick": "Choose your destination to see vehicles and prices.",
     "finder.same": "Pickup and destination can't be the same. Choose a different place.",
     "finder.notfound": "We don't have a set price for that pair yet — send it to us on WhatsApp and we'll quote it in minutes.",
     "finder.notfoundBtn": "Quote this route on WhatsApp",
@@ -338,7 +338,7 @@ const I18N = {
     "finder.from": "Desde",
     "finder.to": "Hasta",
     "finder.ph": "Destino u hotel…",
-    "finder.pick": "Elige tu punto de recogida y destino para ver el precio.",
+    "finder.pick": "Elige tu destino para ver los vehículos y precios.",
     "finder.same": "El origen y el destino no pueden ser iguales. Elige otro lugar.",
     "finder.notfound": "Aún no tenemos precio fijo para ese par — mándanoslo por WhatsApp y te cotizamos en minutos.",
     "finder.notfoundBtn": "Cotizar esta ruta por WhatsApp",
@@ -993,8 +993,8 @@ document.addEventListener("DOMContentLoaded", () => {
     buildComboOptions();
     setupCombo("fromInput", "fromList");
     setupCombo("toInput", "toList");
-    setComboValue("fromInput", 0);   // SJO por defecto
-    setComboValue("toInput", 2);     // La Fortuna por defecto
+    setComboValue("fromInput", 0);   // SJO por defecto (origen común)
+    // Destino vacío al inicio: se muestra solo el buscador; los vehículos aparecen al elegir destino.
     // Pre-llenado desde una página de ruta (?from=&to=)
     const qp = new URLSearchParams(location.search);
     const qf = qp.get("from"), qt = qp.get("to");
