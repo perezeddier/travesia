@@ -578,6 +578,12 @@ function chooseCombo(inputId, listId, placeIdx, label) {
   document.getElementById(listId)?.classList.remove("open");
   document.getElementById(inputId)?.setAttribute("aria-expanded", "false");
   renderFinder();
+  // Al elegir el destino, mostrar de una vez los vehículos (baja la vista, útil en móvil)
+  const i = comboState("fromInput"), j = comboState("toInput");
+  if (i != null && j != null && i !== j && window.innerWidth < 900) {
+    const res = document.getElementById("finderResult");
+    if (res) setTimeout(() => res.scrollIntoView({ behavior: "smooth", block: "center" }), 90);
+  }
 }
 
 function setupCombo(inputId, listId) {
