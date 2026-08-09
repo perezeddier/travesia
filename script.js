@@ -109,6 +109,13 @@ const I18N = {
     "route.view": "View route",
     "route.priceNote": "per vehicle",
     "finder.title": "Where are you heading?",
+    "inc.title": "Every private transfer includes",
+    "inc.1": "Airport meet & greet with a name sign",
+    "inc.2": "We track your flight — we wait if it's delayed",
+    "inc.3": "Free child seats on request",
+    "inc.4": "Courtesy stops for restroom & food",
+    "inc.5": "Bottled water & free WiFi on board",
+    "inc.6": "Free cancellation up to 24h before",
     "finder.from": "From",
     "finder.to": "To",
     "finder.ph": "Destination or hotel…",
@@ -239,6 +246,13 @@ const I18N = {
     "route.view": "Ver ruta",
     "route.priceNote": "por vehículo",
     "finder.title": "¿A dónde te diriges?",
+    "inc.title": "Todo transfer privado incluye",
+    "inc.1": "Recibimiento en el aeropuerto con letrero",
+    "inc.2": "Seguimos tu vuelo — esperamos si se atrasa",
+    "inc.3": "Sillas para niños gratis a solicitud",
+    "inc.4": "Paradas de cortesía para baño y comida",
+    "inc.5": "Agua embotellada y WiFi gratis a bordo",
+    "inc.6": "Cancelación gratis hasta 24 h antes",
     "finder.from": "Desde",
     "finder.to": "Hasta",
     "finder.ph": "Destino u hotel…",
@@ -431,8 +445,8 @@ const FAQ = [
   {
     q: { en: "Can I cancel my reservation?",
          es: "¿Puedo cancelar mi reserva?" },
-    a: { en: "Yes — we offer free cancellation up to 48 hours before your trip. Just message us on WhatsApp and we'll take care of it.",
-         es: "Sí — ofrecemos cancelación gratuita hasta 48 horas antes de tu viaje. Solo escríbenos por WhatsApp y nos encargamos." }
+    a: { en: "Yes — free cancellation up to 24 hours before your trip. Cancellations made less than 24 hours before pickup are non-refundable (100% charge). Just message us on WhatsApp and we'll take care of it.",
+         es: "Sí — cancelación gratuita hasta 24 horas antes de tu viaje. Las cancelaciones con menos de 24 horas de anticipación no son reembolsables (cargo del 100%). Solo escríbenos por WhatsApp y nos encargamos." }
   },
   {
     q: { en: "Do you provide child seats?",

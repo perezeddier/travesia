@@ -145,6 +145,14 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
 /* Buscador dentro del hero (lo primero que ve el cliente) */
 .finder-hero { margin: 28px 0 4px; }
 .finder-title { font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; margin: 0 0 16px; color: var(--text); }
+
+/* Franja "Todo incluye" (puntos de venta) */
+.included { background: var(--bg-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: clamp(22px, 3.5vw, 34px) 0; }
+.included-title { text-align: center; text-transform: uppercase; letter-spacing: 1.6px; font-size: .8rem; font-weight: 700; color: var(--gold); margin: 0 0 20px; }
+.included-grid { list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 28px; max-width: 900px; margin: 0 auto; padding: 0; }
+.included-grid li { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: .97rem; font-weight: 500; }
+.included-grid svg { color: var(--gold-2); flex-shrink: 0; }
+@media (max-width: 720px) { .included-grid { grid-template-columns: 1fr; max-width: 360px; gap: 13px; } }
 .finder-controls { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 14px; }
 .finder-field { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .finder-field label { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--gold); }
