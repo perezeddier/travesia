@@ -241,6 +241,10 @@ const I18N = {
     "why.3.d": "We pick you up at the airport or your hotel and take you exactly where you need to go.",
     "why.4.t": "Flat, honest pricing",
     "why.4.d": "One clear price per vehicle. No hidden fees, no surprises at the end of the ride.",
+    "why.5.t": "24/7 WhatsApp support",
+    "why.5.d": "Message us anytime — before, during or after your trip. We usually reply in minutes.",
+    "why.6.t": "Loved by travelers",
+    "why.6.d": "A perfect 5.0 on both Google and TripAdvisor — from 140+ real guest reviews.",
   },
   es: {
     "nav.routes": "Rutas",
@@ -424,6 +428,10 @@ const I18N = {
     "why.3.d": "Te recogemos en el aeropuerto o tu hotel y te llevamos justo a donde necesitas.",
     "why.4.t": "Precio claro y honesto",
     "why.4.d": "Un solo precio por vehículo. Sin cargos ocultos ni sorpresas al final del viaje.",
+    "why.5.t": "Soporte 24/7 por WhatsApp",
+    "why.5.d": "Escríbenos cuando quieras — antes, durante o después de tu viaje. Respondemos en minutos.",
+    "why.6.t": "Amado por los viajeros",
+    "why.6.d": "Un 5.0 perfecto en Google y TripAdvisor — de más de 140 reseñas reales.",
   },
 };
 
@@ -577,6 +585,8 @@ const WHY = [
   { key: "2", icon: '<path d="M12 2 4 5v6c0 5 3.4 9.1 8 11 4.6-1.9 8-6 8-11V5l-8-3Zm-1 14-4-4 1.4-1.4L11 13.2l4.6-4.6L17 10l-6 6Z"/>' },
   { key: "3", icon: '<path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/>' },
   { key: "4", icon: '<path d="M12 1 3 5v6c0 5.6 3.8 10.7 9 12 5.2-1.3 9-6.4 9-12V5l-9-4Zm1.5 15h-3v-2h3v2Zm0-4h-3V7h3v5Z"/>' },
+  { key: "5", icon: '<path d="M4 4h16a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H8l-4 4V5a1 1 0 0 1 1-1Zm3 5v2h10V9H7Zm0 4v2h7v-2H7Z"/>' },
+  { key: "6", icon: '<path d="M12 2l3 6.5 7 .6-5.3 4.6L18.3 21 12 17.3 5.7 21l1.6-7.3L2 9.1l7-.6L12 2Z"/>' },
 ];
 
 /* ---------- SVG bits ---------- */
