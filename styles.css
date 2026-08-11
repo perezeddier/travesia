@@ -165,6 +165,32 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
 .included-grid li { display: flex; align-items: center; gap: 10px; color: var(--text); font-size: .97rem; font-weight: 500; }
 .included-grid svg { color: var(--gold-2); flex-shrink: 0; }
 @media (max-width: 720px) { .included-grid { grid-template-columns: 1fr; max-width: 360px; gap: 13px; } }
+
+/* Cómo funciona (4 pasos) */
+.how-grid { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; padding: 0; margin: 0; }
+.how-step { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 38px 22px 24px; }
+.how-num { position: absolute; top: -16px; left: 22px; width: 40px; height: 40px; border-radius: 50%; background: var(--gold); color: #241c05; font-family: var(--font-head); font-weight: 800; font-size: 1.15rem; display: grid; place-items: center; }
+.how-step h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 600; margin: 0 0 8px; }
+.how-step p { color: var(--muted); font-size: .95rem; margin: 0; line-height: 1.55; }
+@media (max-width: 860px) { .how-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .how-grid { grid-template-columns: 1fr; } }
+
+/* Paradas gratis en el camino */
+.stops-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.stop-card { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px 22px; color: inherit; transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+a.stop-card:hover { transform: translateY(-4px); border-color: rgba(224,123,31,.5); box-shadow: var(--shadow); }
+.stop-emoji { font-size: 1.9rem; display: block; margin-bottom: 10px; }
+.stop-card h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 600; margin: 0 0 8px; }
+.stop-card p { color: var(--muted); font-size: .95rem; margin: 0; line-height: 1.55; }
+.stops-note { text-align: center; color: var(--muted-2); font-size: .92rem; margin: 22px auto 0; max-width: 660px; }
+@media (max-width: 760px) { .stops-grid { grid-template-columns: 1fr; } }
+
+/* Viaja con tranquilidad */
+.pm-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.pm-card { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--radius-sm); padding: 22px; }
+.pm-card h3 { font-size: 1.03rem; font-weight: 700; margin: 0 0 8px; color: var(--text); }
+.pm-card p { color: var(--muted); font-size: .95rem; margin: 0; line-height: 1.6; }
+@media (max-width: 760px) { .pm-grid { grid-template-columns: 1fr; } }
 .finder-controls { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 10px; }
 .finder-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .finder-field label { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px; color: var(--gold); }
