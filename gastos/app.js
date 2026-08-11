@@ -118,8 +118,16 @@ function fmtMoney(n, moneda){
 const State = {
   tab: 'inicio',
   month: todayISO().slice(0,7),
+  year: todayISO().slice(0,4),
+  period: 'mes',            // 'mes' | 'año'
   masView: 'vehiculos',
 };
+// Filtra por el período elegido (mes o año) en la pantalla de Inicio
+function inPeriod(arr){
+  if(State.period==='año') return arr.filter(x => (x.fecha||'').slice(0,4)===State.year);
+  return arr.filter(x => monthOf(x.fecha)===State.month);
+}
+const periodLabel = () => State.period==='año' ? State.year : fmtMonth(State.month);
 
 /* ---------------- Arranque ---------------- */
 document.addEventListener('DOMContentLoaded', () => {
@@ -199,7 +207,7 @@ function onFab(){
   }
   else openViajeForm(); // inicio y viajes -> nuevo viaje
 }
-function updateMonthLabel(){ $('#monthLabel').textContent = fmtMonth(State.month); }
+function updateMonthLabel(){ $('#monthLabel').textContent = periodLabel(); }
 
 /* ==========================================================================
    RENDER PRINCIPAL
@@ -222,17 +230,18 @@ const nombreProveedor= (id)=> DB.get('proveedores',id)?.nombre || '—';
 
 /* ---------------- INICIO (dashboard) ---------------- */
 function renderInicio(){
-  const viajes = inMonth(DB.all('viajes'));
-  const gastos = inMonth(DB.all('gastos'));
-  const comis  = inMonth(DB.all('comisiones'));
+  const viajes = inPeriod(DB.all('viajes'));
+  const gastos = inPeriod(DB.all('gastos'));
+  const comis  = inPeriod(DB.all('comisiones'));
   const ingViajes = viajes.reduce((s,v)=> s + toBase(v.precio, v.moneda), 0);
   const ingComis  = comis.reduce((s,c)=> s + toBase(c.monto, c.moneda), 0);
   const gasto   = gastos.reduce((s,g)=> s + toBase(g.monto, g.moneda), 0);
-  const ganancia = ingViajes + ingComis - gasto;
+  const ingreso = ingViajes + ingComis;
+  const ganancia = ingreso - gasto;
   const pend = viajes.filter(v=>v.estado==='pendiente').reduce((s,v)=> s + toBase(v.precio, v.moneda), 0)
              + comis.filter(c=>c.estado==='pendiente').reduce((s,c)=> s + toBase(c.monto, c.moneda), 0);
 
-  // por vehículo
+  // por vehículo (unidad)
   const porVeh = DB.all('vehiculos').map(v=>{
     const ing = viajes.filter(t=>t.vehiculoId===v.id).reduce((s,t)=>s+toBase(t.precio,t.moneda),0);
     const gas = gastos.filter(g=>g.vehiculoId===v.id).reduce((s,g)=>s+toBase(g.monto,g.moneda),0);
@@ -245,16 +254,52 @@ function renderInicio(){
   const cats = Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
   const maxCat = cats.length ? cats[0][1] : 1;
 
+  // comisiones por proveedor
+  const porProv = {};
+  comis.forEach(c=>{ const k=c.proveedorId||'_'; porProv[k]=(porProv[k]||0)+toBase(c.monto,c.moneda); });
+  const provs = Object.entries(porProv).sort((a,b)=>b[1]-a[1]);
+
+  const esAno = State.period==='año';
   let h = `
-  <div class="screen-head"><h2>Resumen</h2>
+  <div class="seg" style="margin-bottom:14px">
+    <button class="${!esAno?'on':''}" onclick="setPeriod('mes')">📅 Mes</button>
+    <button class="${esAno?'on':''}" onclick="setPeriod('año')">📆 Año</button>
+  </div>
+  <div class="screen-head"><h2>${esAno?'Balance '+State.year:'Resumen'}</h2>
     <span class="count">${viajes.length} viaje${viajes.length!==1?'s':''} · ${comis.length} comis. · ${gastos.length} gasto${gastos.length!==1?'s':''}</span></div>
   <div class="kpi-grid">
     <div class="kpi income"><span class="bar"></span><div class="label">🚌 Viajes</div><div class="value small pos">${fmtMoney(ingViajes)}</div></div>
     <div class="kpi commission"><span class="bar"></span><div class="label">🤝 Comisiones</div><div class="value small pos">${fmtMoney(ingComis)}</div></div>
     <div class="kpi expense"><span class="bar"></span><div class="label">💸 Gastos</div><div class="value small neg">${fmtMoney(gasto)}</div></div>
     <div class="kpi profit ${ganancia>=0?'pos':'neg'}"><span class="bar"></span><div class="label">📈 Ganancia</div><div class="value small">${fmtMoney(ganancia)}</div></div>
-    ${pend>0?`<div class="kpi wide" style="padding:12px 15px"><div class="label" style="margin:0;color:var(--gold-2)">⏳ Por cobrar: ${fmtMoney(pend)}</div></div>`:''}
+    <div class="kpi wide" style="padding:12px 15px"><div class="label" style="margin:0">💰 Ingresos ${esAno?'del año':'del mes'}: <b style="color:var(--green)">${fmtMoney(ingreso)}</b>${pend>0?` &nbsp;·&nbsp; <span style="color:var(--gold-2)">⏳ Por cobrar: ${fmtMoney(pend)}</span>`:''}</div></div>
   </div>`;
+
+  // En modo Año: balance mes por mes
+  if(esAno){
+    const meses = [];
+    for(let m=1;m<=12;m++){
+      const ym = `${State.year}-${String(m).padStart(2,'0')}`;
+      const vi = DB.all('viajes').filter(x=>monthOf(x.fecha)===ym).reduce((s,x)=>s+toBase(x.precio,x.moneda),0);
+      const co = DB.all('comisiones').filter(x=>monthOf(x.fecha)===ym).reduce((s,x)=>s+toBase(x.monto,x.moneda),0);
+      const ga = DB.all('gastos').filter(x=>monthOf(x.fecha)===ym).reduce((s,x)=>s+toBase(x.monto,x.moneda),0);
+      meses.push({ym, m, ing:vi+co, gas:ga, net:vi+co-ga});
+    }
+    const activos = meses.filter(x=> x.ing||x.gas);
+    if(activos.length){
+      const maxN = Math.max(...activos.map(x=>Math.abs(x.net)),1);
+      h += `<div class="section-label">Mes por mes</div><div class="bd">`;
+      activos.forEach(x=>{
+        h += `<div class="bd-row" onclick="verMes('${x.ym}')" style="cursor:pointer">
+          <div class="nm"><div class="t" style="text-transform:capitalize">${MESES[x.m-1]}</div>
+            <div class="s"><span style="color:var(--green)">▲ ${fmtMoney(x.ing)}</span> &nbsp;<span style="color:var(--red)">▼ ${fmtMoney(x.gas)}</span></div>
+            <div class="mini-bar"><span style="width:${Math.max(6,Math.abs(x.net)/maxN*100)}%;background:${x.net>=0?'var(--green)':'var(--red)'}"></span></div></div>
+          <div class="amt ${x.net>=0?'pos':'neg'}">${fmtMoney(x.net)} ›</div>
+        </div>`;
+      });
+      h += `</div>`;
+    }
+  }
 
   if(porVeh.length){
     h += `<div class="section-label">Por unidad (vehículo)</div><div class="bd">`;
@@ -266,6 +311,16 @@ function renderInicio(){
           <div class="s"><span style="color:var(--green)">▲ ${fmtMoney(x.ing)}</span> &nbsp;<span style="color:var(--red)">▼ ${fmtMoney(x.gas)}</span> &nbsp;· ${x.n} viaje${x.n!==1?'s':''}</div></div>
         <div class="amt ${x.net>=0?'pos':'neg'}">${fmtMoney(x.net)} ›</div>
       </div>`;
+    });
+    h += `</div>`;
+  }
+
+  if(provs.length){
+    h += `<div class="section-label">Comisiones por proveedor</div><div class="bd">`;
+    provs.forEach(([id,val])=>{
+      h += `<div class="bd-row"><div class="ic">🤝</div>
+        <div class="nm"><div class="t">${esc(id==='_'?'Sin proveedor':nombreProveedor(id))}</div></div>
+        <div class="amt pos">${fmtMoney(val)}</div></div>`;
     });
     h += `</div>`;
   }
@@ -286,22 +341,24 @@ function renderInicio(){
 
   if(!viajes.length && !gastos.length && !comis.length){
     h += `<div class="empty"><div class="em">📊</div>
-      <p>Aún no hay movimientos en <b>${fmtMonth(State.month)}</b>.<br>Tocá el botón <b>＋</b> para agregar tu primer viaje o gasto.</p>
+      <p>Aún no hay movimientos en <b>${periodLabel()}</b>.<br>Tocá el botón <b>＋</b> para agregar tu primer viaje o gasto.</p>
       <button class="btn primary" onclick="openViajeForm()">＋ Nuevo viaje</button></div>`;
   }
   $('#scr-inicio').innerHTML = h;
 }
+function setPeriod(p){ State.period=p; updateMonthLabel(); renderInicio(); }
+function verMes(ym){ State.period='mes'; State.month=ym; updateMonthLabel(); renderInicio(); }
 
 /* ---------------- Detalle por unidad (vehículo) ---------------- */
 function openUnidad(id){
   const v = DB.get('vehiculos', id); if(!v) return;
-  const viajes = inMonth(DB.all('viajes')).filter(t=>t.vehiculoId===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
-  const gastos = inMonth(DB.all('gastos')).filter(g=>g.vehiculoId===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const viajes = inPeriod(DB.all('viajes')).filter(t=>t.vehiculoId===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const gastos = inPeriod(DB.all('gastos')).filter(g=>g.vehiculoId===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
   const ing = viajes.reduce((s,t)=>s+toBase(t.precio,t.moneda),0);
   const gas = gastos.reduce((s,g)=>s+toBase(g.monto,g.moneda),0);
   const sub = v.placa && v.nombre ? `<span style="font-weight:400;color:var(--muted);font-size:.82rem">${esc(v.nombre)}</span>` : '';
   let h = `<h3>🚐 ${esc(v.placa||v.nombre)} ${sub}</h3>
-    <div style="color:var(--muted);font-size:.82rem;margin:-8px 0 14px">${fmtMonth(State.month)}</div>
+    <div style="color:var(--muted);font-size:.82rem;margin:-8px 0 14px">${periodLabel()}</div>
     <div class="kpi-grid">
       <div class="kpi income"><span class="bar"></span><div class="label">Ingresos</div><div class="value small pos">${fmtMoney(ing)}</div></div>
       <div class="kpi expense"><span class="bar"></span><div class="label">Gastos</div><div class="value small neg">${fmtMoney(gas)}</div></div>
@@ -311,12 +368,12 @@ function openUnidad(id){
   if(viajes.length){ h+=`<div class="bd">`; viajes.forEach(t=>{
     h+=`<div class="bd-row" onclick="closeSheet();openViajeForm('${t.id}')" style="cursor:pointer"><div class="nm"><div class="t">${esc(t.origen||'?')} → ${esc(t.destino||'?')}</div><div class="s">${fmtDate(t.fecha)}${t.estado==='pendiente'?' · ⏳ por cobrar':''}</div></div><div class="amt pos">${fmtMoney(toBase(t.precio,t.moneda))}</div></div>`;
   }); h+=`</div>`; }
-  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin viajes este mes.</div>`;
+  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin viajes en ${periodLabel()}.</div>`;
   h += `<div class="section-label">Gastos (${gastos.length})</div>`;
   if(gastos.length){ h+=`<div class="bd">`; gastos.forEach(g=>{ const c=catOf(g.categoria);
     h+=`<div class="bd-row" onclick="closeSheet();openGastoForm('${g.id}')" style="cursor:pointer"><div class="ic">${c.em}</div><div class="nm"><div class="t">${esc(c.nom)}</div><div class="s">${fmtDate(g.fecha)}${g.notas?' · '+esc(g.notas):''}</div></div><div class="amt neg">${fmtMoney(toBase(g.monto,g.moneda))}</div></div>`;
   }); h+=`</div>`; }
-  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin gastos este mes.</div>`;
+  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin gastos en ${periodLabel()}.</div>`;
   h += `<div class="form-actions"><button class="btn ghost block" onclick="closeSheet()">Cerrar</button></div>`;
   openSheet(h);
 }
@@ -752,6 +809,7 @@ function chipClick(wrapId){
    SELECTOR DE MES
    ========================================================================== */
 function openMonthPicker(){
+  if(State.period==='año'){ openYearPicker(); return; }
   const now = new Date();
   let opts='';
   for(let i=0;i<18;i++){
@@ -763,6 +821,16 @@ function openMonthPicker(){
     <div class="form-actions"><button class="btn ghost block" onclick="closeSheet()">Cerrar</button></div>`);
 }
 function pickMonth(ym){ State.month=ym; closeSheet(); render(); }
+function openYearPicker(){
+  const y = +todayISO().slice(0,4);
+  let opts='';
+  for(let i=0;i<6;i++){ const yr=String(y-i);
+    opts += `<button class="chip ${yr===State.year?'on':''}" style="margin:4px" onclick="pickYear('${yr}')">${yr}</button>`;
+  }
+  openSheet(`<h3>Elegí el año</h3><div class="chips" style="gap:8px">${opts}</div>
+    <div class="form-actions"><button class="btn ghost block" onclick="closeSheet()">Cerrar</button></div>`);
+}
+function pickYear(yr){ State.year=yr; closeSheet(); render(); }
 
 /* ==========================================================================
    PIN SETUP  (desde ajustes)
