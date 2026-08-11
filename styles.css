@@ -573,6 +573,21 @@ body.no-scroll { overflow: hidden; }
 .wp-yes li { color: var(--text); }
 @media (max-width: 760px) { .wp-grid { grid-template-columns: 1fr; } }
 
+/* Tabla comparativa "¿Por qué privado?" */
+.wp-table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
+.wp-table { width: 100%; min-width: 640px; border-collapse: collapse; background: var(--surface); }
+.wp-table th, .wp-table td { padding: 13px 14px; text-align: center; border-bottom: 1px solid var(--line); font-size: .95rem; }
+.wp-table tr:last-child th, .wp-table tr:last-child td { border-bottom: none; }
+.wp-table thead th { font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--text); }
+.wp-table tbody th { text-align: left; color: var(--text); font-weight: 500; }
+.wp-table .wp-you { background: rgba(224,123,31,.10); }
+.wp-table thead th.wp-you { color: var(--gold-2); }
+.wp-table .yes { color: var(--gold-2); font-weight: 800; font-size: 1.05rem; }
+.wp-table .no { color: #d9705a; font-weight: 700; }
+.wp-table .mid { color: var(--muted-2); font-weight: 700; }
+.wp-stress th, .wp-stress td { font-weight: 700; }
+.wp-legend { text-align: center; color: var(--muted-2); font-size: .86rem; margin: 14px 0 0; }
+
 /* Redes sociales + TripAdvisor */
 .footer-social { display: flex; gap: 12px; margin-top: 18px; }
 .soc { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--line); color: var(--muted); background: var(--surface); transition: color .2s ease, border-color .2s ease, transform .2s ease; }
