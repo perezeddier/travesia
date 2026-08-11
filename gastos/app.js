@@ -48,21 +48,40 @@ const DB = {
     // asegurar campos
     this.data.settings = Object.assign({moneda:'$', tc:510, pin:'', totalMoneda:'$'}, this.data.settings||{});
     ['vehiculos','choferes','proveedores','viajes','gastos','comisiones'].forEach(k=> this.data[k] = this.data[k]||[]);
+    this._migrateFleet();
     return this.data;
   },
   save(){ localStorage.setItem(this.KEY, JSON.stringify(this.data)); },
   _seed(){
     return {
-      settings:{moneda:'$', tc:510, pin:'', totalMoneda:'$'},
-      vehiculos:[
-        {id:uid(), nombre:'Staria', placa:'', capacidad:5, notas:''},
-        {id:uid(), nombre:'Hiace',  placa:'', capacidad:9, notas:''},
-        {id:uid(), nombre:'Maxus',  placa:'', capacidad:12, notas:''},
-      ],
+      settings:{moneda:'$', tc:510, pin:'', totalMoneda:'$', fleetV2:true},
+      vehiculos: this._fleet(),
       choferes:[ {id:uid(), nombre:'Eddie', telefono:'85028476', notas:'Dueño'} ],
       proveedores:[],
       viajes:[], gastos:[], comisiones:[],
     };
+  },
+  // Flota real de Eddie
+  _fleet(){
+    return [
+      {id:uid(), nombre:'Staria',       placa:'AB8168', capacidad:5,  notas:''},
+      {id:uid(), nombre:'Techo bajo',   placa:'AB8791', capacidad:'', notas:''},
+      {id:uid(), nombre:'Techo alto 1', placa:'AB8993', capacidad:'', notas:''},
+      {id:uid(), nombre:'Techo alto 2', placa:'',       capacidad:'', notas:'Nueva'},
+    ];
+  },
+  // Si la app trae los vehículos viejos de ejemplo (sin usar), los cambia por la flota real
+  _migrateFleet(){
+    const s = this.data.settings;
+    if(s.fleetV2) return;
+    const v = this.data.vehiculos;
+    const fresh = !this.data.viajes.length && !this.data.gastos.length
+               && !this.data.comisiones.length && !this.data.proveedores.length;
+    const oldDefault = v.length===3 && v.every(x=>!x.placa)
+               && ['Staria','Hiace','Maxus'].every(n=> v.some(x=>x.nombre===n));
+    if(fresh && oldDefault) this.data.vehiculos = this._fleet();
+    s.fleetV2 = true;
+    this.save();
   },
   // colecciones
   all(col){ return this.data[col] || []; },
@@ -238,12 +257,14 @@ function renderInicio(){
   </div>`;
 
   if(porVeh.length){
-    h += `<div class="section-label">Por vehículo</div><div class="bd">`;
+    h += `<div class="section-label">Por unidad (vehículo)</div><div class="bd">`;
     porVeh.forEach(x=>{
-      h += `<div class="bd-row">
+      const sub = esc(x.v.placa && x.v.nombre ? x.v.nombre : '');
+      h += `<div class="bd-row" onclick="openUnidad('${x.v.id}')" style="cursor:pointer">
         <div class="ic">🚐</div>
-        <div class="nm"><div class="t">${esc(x.v.placa||x.v.nombre)}</div><div class="s">${x.n} viaje${x.n!==1?'s':''} · gasto ${fmtMoney(x.gas)}</div></div>
-        <div class="amt ${x.net>=0?'pos':'neg'}">${fmtMoney(x.net)}</div>
+        <div class="nm"><div class="t">${esc(x.v.placa||x.v.nombre)}${sub?` <span style="color:var(--muted-2);font-weight:400;font-size:.78rem">${sub}</span>`:''}</div>
+          <div class="s"><span style="color:var(--green)">▲ ${fmtMoney(x.ing)}</span> &nbsp;<span style="color:var(--red)">▼ ${fmtMoney(x.gas)}</span> &nbsp;· ${x.n} viaje${x.n!==1?'s':''}</div></div>
+        <div class="amt ${x.net>=0?'pos':'neg'}">${fmtMoney(x.net)} ›</div>
       </div>`;
     });
     h += `</div>`;
@@ -269,6 +290,35 @@ function renderInicio(){
       <button class="btn primary" onclick="openViajeForm()">＋ Nuevo viaje</button></div>`;
   }
   $('#scr-inicio').innerHTML = h;
+}
+
+/* ---------------- Detalle por unidad (vehículo) ---------------- */
+function openUnidad(id){
+  const v = DB.get('vehiculos', id); if(!v) return;
+  const viajes = inMonth(DB.all('viajes')).filter(t=>t.vehiculoId===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const gastos = inMonth(DB.all('gastos')).filter(g=>g.vehiculoId===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const ing = viajes.reduce((s,t)=>s+toBase(t.precio,t.moneda),0);
+  const gas = gastos.reduce((s,g)=>s+toBase(g.monto,g.moneda),0);
+  const sub = v.placa && v.nombre ? `<span style="font-weight:400;color:var(--muted);font-size:.82rem">${esc(v.nombre)}</span>` : '';
+  let h = `<h3>🚐 ${esc(v.placa||v.nombre)} ${sub}</h3>
+    <div style="color:var(--muted);font-size:.82rem;margin:-8px 0 14px">${fmtMonth(State.month)}</div>
+    <div class="kpi-grid">
+      <div class="kpi income"><span class="bar"></span><div class="label">Ingresos</div><div class="value small pos">${fmtMoney(ing)}</div></div>
+      <div class="kpi expense"><span class="bar"></span><div class="label">Gastos</div><div class="value small neg">${fmtMoney(gas)}</div></div>
+      <div class="kpi profit wide ${ing-gas>=0?'pos':'neg'}"><span class="bar"></span><div class="label">Ganancia de esta unidad</div><div class="value small">${fmtMoney(ing-gas)}</div></div>
+    </div>
+    <div class="section-label">Viajes (${viajes.length})</div>`;
+  if(viajes.length){ h+=`<div class="bd">`; viajes.forEach(t=>{
+    h+=`<div class="bd-row" onclick="closeSheet();openViajeForm('${t.id}')" style="cursor:pointer"><div class="nm"><div class="t">${esc(t.origen||'?')} → ${esc(t.destino||'?')}</div><div class="s">${fmtDate(t.fecha)}${t.estado==='pendiente'?' · ⏳ por cobrar':''}</div></div><div class="amt pos">${fmtMoney(toBase(t.precio,t.moneda))}</div></div>`;
+  }); h+=`</div>`; }
+  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin viajes este mes.</div>`;
+  h += `<div class="section-label">Gastos (${gastos.length})</div>`;
+  if(gastos.length){ h+=`<div class="bd">`; gastos.forEach(g=>{ const c=catOf(g.categoria);
+    h+=`<div class="bd-row" onclick="closeSheet();openGastoForm('${g.id}')" style="cursor:pointer"><div class="ic">${c.em}</div><div class="nm"><div class="t">${esc(c.nom)}</div><div class="s">${fmtDate(g.fecha)}${g.notas?' · '+esc(g.notas):''}</div></div><div class="amt neg">${fmtMoney(toBase(g.monto,g.moneda))}</div></div>`;
+  }); h+=`</div>`; }
+  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin gastos este mes.</div>`;
+  h += `<div class="form-actions"><button class="btn ghost block" onclick="closeSheet()">Cerrar</button></div>`;
+  openSheet(h);
 }
 
 /* ---------------- VIAJES ---------------- */
