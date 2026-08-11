@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<base href="/gastos/">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
 <meta name="theme-color" content="#0d0f12">
 <title>Travesía · Control</title>
@@ -39,17 +40,14 @@
       <div class="sub">Panel de Eddie</div>
     </div>
     <button class="month-pill" id="monthPill">📅 <span id="monthLabel">—</span></button>
+    <button class="gear-btn" id="gearBtn" aria-label="Ajustes">⚙️</button>
   </header>
 
-  <!-- INICIO -->
   <section class="screen active" id="scr-inicio"></section>
-  <!-- VIAJES -->
   <section class="screen" id="scr-viajes"></section>
-  <!-- GASTOS -->
   <section class="screen" id="scr-gastos"></section>
-  <!-- FLOTA -->
-  <section class="screen" id="scr-flota"></section>
-  <!-- AJUSTES -->
+  <section class="screen" id="scr-comisiones"></section>
+  <section class="screen" id="scr-mas"></section>
   <section class="screen" id="scr-ajustes"></section>
 
   <button class="fab" id="fab">＋</button>
@@ -58,8 +56,8 @@
     <button data-tab="inicio" class="active"><span class="ico">🏠</span>Inicio</button>
     <button data-tab="viajes"><span class="ico">🚌</span>Viajes</button>
     <button data-tab="gastos"><span class="ico">💸</span>Gastos</button>
-    <button data-tab="flota"><span class="ico">🚐</span>Flota</button>
-    <button data-tab="ajustes"><span class="ico">⚙️</span>Ajustes</button>
+    <button data-tab="comisiones"><span class="ico">🤝</span>Comisiones</button>
+    <button data-tab="mas"><span class="ico">📋</span>Más</button>
   </nav>
 </div>
 

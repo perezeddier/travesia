@@ -47,7 +47,7 @@ const DB = {
     if(!this.data) this.data = this._seed();
     // asegurar campos
     this.data.settings = Object.assign({moneda:'$', tc:510, pin:'', totalMoneda:'$'}, this.data.settings||{});
-    ['vehiculos','choferes','viajes','gastos'].forEach(k=> this.data[k] = this.data[k]||[]);
+    ['vehiculos','choferes','proveedores','viajes','gastos','comisiones'].forEach(k=> this.data[k] = this.data[k]||[]);
     return this.data;
   },
   save(){ localStorage.setItem(this.KEY, JSON.stringify(this.data)); },
@@ -60,7 +60,8 @@ const DB = {
         {id:uid(), nombre:'Maxus',  placa:'', capacidad:12, notas:''},
       ],
       choferes:[ {id:uid(), nombre:'Eddie', telefono:'85028476', notas:'Dueño'} ],
-      viajes:[], gastos:[],
+      proveedores:[],
+      viajes:[], gastos:[], comisiones:[],
     };
   },
   // colecciones
@@ -98,7 +99,7 @@ function fmtMoney(n, moneda){
 const State = {
   tab: 'inicio',
   month: todayISO().slice(0,7),
-  flotaView: 'vehiculos',
+  masView: 'vehiculos',
 };
 
 /* ---------------- Arranque ---------------- */
@@ -153,6 +154,7 @@ function wireChrome(){
     const b = e.target.closest('button'); if(!b) return;
     goTab(b.dataset.tab);
   };
+  $('#gearBtn').onclick = ()=> goTab('ajustes');
   $('#fab').onclick = ()=> onFab();
   $('#monthPill').onclick = ()=> openMonthPicker();
   $('#sheetBack').onclick = (e)=>{ if(e.target.id==='sheetBack') closeSheet(); };
@@ -160,6 +162,7 @@ function wireChrome(){
 function goTab(tab){
   State.tab = tab;
   $$('#tabbar button').forEach(b=> b.classList.toggle('active', b.dataset.tab===tab));
+  $('#gearBtn').classList.toggle('active', tab==='ajustes');
   $$('.screen').forEach(s=> s.classList.remove('active'));
   $('#scr-'+tab).classList.add('active');
   // el FAB no aplica en ajustes
@@ -169,7 +172,12 @@ function goTab(tab){
 }
 function onFab(){
   if(State.tab==='gastos') openGastoForm();
-  else if(State.tab==='flota') (State.flotaView==='choferes'? openChoferForm() : openVehiculoForm());
+  else if(State.tab==='comisiones') openComisionForm();
+  else if(State.tab==='mas'){
+    if(State.masView==='choferes') openChoferForm();
+    else if(State.masView==='proveedores') openProveedorForm();
+    else openVehiculoForm();
+  }
   else openViajeForm(); // inicio y viajes -> nuevo viaje
 }
 function updateMonthLabel(){ $('#monthLabel').textContent = fmtMonth(State.month); }
@@ -182,23 +190,28 @@ function render(){
   if(State.tab==='inicio') renderInicio();
   else if(State.tab==='viajes') renderViajes();
   else if(State.tab==='gastos') renderGastos();
-  else if(State.tab==='flota') renderFlota();
+  else if(State.tab==='comisiones') renderComisiones();
+  else if(State.tab==='mas') renderMas();
   else if(State.tab==='ajustes') renderAjustes();
 }
 
 const inMonth = (arr) => arr.filter(x => monthOf(x.fecha) === State.month);
-const nombreVehiculo = (id)=> DB.get('vehiculos',id)?.nombre || '—';
+// El vehículo se identifica por su PLACA (si no tiene, usa el nombre)
+const nombreVehiculo = (id)=>{ const v=DB.get('vehiculos',id); return v ? (v.placa || v.nombre) : '—'; };
 const nombreChofer   = (id)=> DB.get('choferes',id)?.nombre || '—';
+const nombreProveedor= (id)=> DB.get('proveedores',id)?.nombre || '—';
 
 /* ---------------- INICIO (dashboard) ---------------- */
 function renderInicio(){
   const viajes = inMonth(DB.all('viajes'));
   const gastos = inMonth(DB.all('gastos'));
-  const ingreso = viajes.reduce((s,v)=> s + toBase(v.precio, v.moneda), 0);
+  const comis  = inMonth(DB.all('comisiones'));
+  const ingViajes = viajes.reduce((s,v)=> s + toBase(v.precio, v.moneda), 0);
+  const ingComis  = comis.reduce((s,c)=> s + toBase(c.monto, c.moneda), 0);
   const gasto   = gastos.reduce((s,g)=> s + toBase(g.monto, g.moneda), 0);
-  const ganancia = ingreso - gasto;
-  const pend = viajes.filter(v=>v.estado==='pendiente')
-                     .reduce((s,v)=> s + toBase(v.precio, v.moneda), 0);
+  const ganancia = ingViajes + ingComis - gasto;
+  const pend = viajes.filter(v=>v.estado==='pendiente').reduce((s,v)=> s + toBase(v.precio, v.moneda), 0)
+             + comis.filter(c=>c.estado==='pendiente').reduce((s,c)=> s + toBase(c.monto, c.moneda), 0);
 
   // por vehículo
   const porVeh = DB.all('vehiculos').map(v=>{
@@ -213,18 +226,15 @@ function renderInicio(){
   const cats = Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
   const maxCat = cats.length ? cats[0][1] : 1;
 
-  const s = DB.data.settings;
   let h = `
   <div class="screen-head"><h2>Resumen</h2>
-    <span class="count">${viajes.length} viaje${viajes.length!==1?'s':''} · ${gastos.length} gasto${gastos.length!==1?'s':''}</span></div>
+    <span class="count">${viajes.length} viaje${viajes.length!==1?'s':''} · ${comis.length} comis. · ${gastos.length} gasto${gastos.length!==1?'s':''}</span></div>
   <div class="kpi-grid">
-    <div class="kpi income"><span class="bar"></span><div class="label">Ingresos</div><div class="value pos">${fmtMoney(ingreso)}</div></div>
-    <div class="kpi expense"><span class="bar"></span><div class="label">Gastos</div><div class="value neg">${fmtMoney(gasto)}</div></div>
-    <div class="kpi profit wide ${ganancia>=0?'pos':'neg'}"><span class="bar"></span>
-      <div class="label">Ganancia del mes</div>
-      <div class="value">${fmtMoney(ganancia)}</div>
-      ${pend>0?`<div class="label" style="margin-top:8px;color:var(--gold-2)">⏳ Por cobrar: ${fmtMoney(pend)}</div>`:''}
-    </div>
+    <div class="kpi income"><span class="bar"></span><div class="label">🚌 Viajes</div><div class="value small pos">${fmtMoney(ingViajes)}</div></div>
+    <div class="kpi commission"><span class="bar"></span><div class="label">🤝 Comisiones</div><div class="value small pos">${fmtMoney(ingComis)}</div></div>
+    <div class="kpi expense"><span class="bar"></span><div class="label">💸 Gastos</div><div class="value small neg">${fmtMoney(gasto)}</div></div>
+    <div class="kpi profit ${ganancia>=0?'pos':'neg'}"><span class="bar"></span><div class="label">📈 Ganancia</div><div class="value small">${fmtMoney(ganancia)}</div></div>
+    ${pend>0?`<div class="kpi wide" style="padding:12px 15px"><div class="label" style="margin:0;color:var(--gold-2)">⏳ Por cobrar: ${fmtMoney(pend)}</div></div>`:''}
   </div>`;
 
   if(porVeh.length){
@@ -232,7 +242,7 @@ function renderInicio(){
     porVeh.forEach(x=>{
       h += `<div class="bd-row">
         <div class="ic">🚐</div>
-        <div class="nm"><div class="t">${esc(x.v.nombre)}</div><div class="s">${x.n} viaje${x.n!==1?'s':''} · gasto ${fmtMoney(x.gas)}</div></div>
+        <div class="nm"><div class="t">${esc(x.v.placa||x.v.nombre)}</div><div class="s">${x.n} viaje${x.n!==1?'s':''} · gasto ${fmtMoney(x.gas)}</div></div>
         <div class="amt ${x.net>=0?'pos':'neg'}">${fmtMoney(x.net)}</div>
       </div>`;
     });
@@ -253,7 +263,7 @@ function renderInicio(){
     h += `</div>`;
   }
 
-  if(!viajes.length && !gastos.length){
+  if(!viajes.length && !gastos.length && !comis.length){
     h += `<div class="empty"><div class="em">📊</div>
       <p>Aún no hay movimientos en <b>${fmtMonth(State.month)}</b>.<br>Tocá el botón <b>＋</b> para agregar tu primer viaje o gasto.</p>
       <button class="btn primary" onclick="openViajeForm()">＋ Nuevo viaje</button></div>`;
@@ -314,34 +324,73 @@ function renderGastos(){
   $('#scr-gastos').innerHTML = h;
 }
 
-/* ---------------- FLOTA (vehículos + choferes) ---------------- */
-function renderFlota(){
-  const vv = DB.all('vehiculos'), cc = DB.all('choferes');
-  let h = `<div class="screen-head"><h2>Flota</h2></div>
+/* ---------------- COMISIONES ---------------- */
+function renderComisiones(){
+  const comis = inMonth(DB.all('comisiones')).sort((a,b)=> b.fecha.localeCompare(a.fecha) || b.id.localeCompare(a.id));
+  const total = comis.reduce((s,c)=> s + toBase(c.monto,c.moneda), 0);
+  let h = `<div class="screen-head"><h2>Comisiones</h2><span class="count">${fmtMoney(total)}</span></div>`;
+  if(!DB.all('proveedores').length && !comis.length){
+    h += `<div class="empty"><div class="em">🤝</div>
+      <p>Acá anotás las <b>comisiones</b> que ganás cuando pasás un servicio a otro proveedor (tours, rafting, hoteles…).</p>
+      <button class="btn primary" onclick="openComisionForm()">＋ Nueva comisión</button>
+      <div style="margin-top:12px"><button class="btn ghost" onclick="openProveedorForm()">Primero agregar un proveedor</button></div></div>`;
+  }else if(!comis.length){
+    h += emptyBox('🤝','No hay comisiones este mes.','＋ Nueva comisión','openComisionForm()');
+  }else{
+    h += `<div class="list">`; let lastDay='';
+    comis.forEach(c=>{
+      if(c.fecha!==lastDay){ h += `<div class="day-head">${fmtDate(c.fecha)}</div>`; lastDay=c.fecha; }
+      const meta = [nombreProveedor(c.proveedorId), c.cliente?esc(c.cliente):''].filter(Boolean).join(' · ');
+      const tag = c.estado==='pendiente'
+        ? `<span class="tag pending">Por cobrar</span>` : `<span class="tag paid">Cobrada</span>`;
+      h += `<div class="item" onclick="openComisionForm('${c.id}')">
+        <div class="ic">🤝</div>
+        <div class="body">
+          <div class="top"><span class="title">${esc(c.servicio||'Comisión')}</span><span class="amt pos">${fmtMoney(toBase(c.monto,c.moneda))}</span></div>
+          <div class="meta">${meta} ${tag}</div>
+        </div></div>`;
+    });
+    h += `</div>`;
+  }
+  $('#scr-comisiones').innerHTML = h;
+}
+
+/* ---------------- MÁS (vehículos + choferes + proveedores) ---------------- */
+function renderMas(){
+  const vv = DB.all('vehiculos'), cc = DB.all('choferes'), pp = DB.all('proveedores');
+  let h = `<div class="screen-head"><h2>Más</h2></div>
     <div class="seg" style="margin-bottom:16px">
-      <button class="${State.flotaView==='vehiculos'?'on':''}" onclick="setFlota('vehiculos')">🚐 Vehículos (${vv.length})</button>
-      <button class="${State.flotaView==='choferes'?'on':''}" onclick="setFlota('choferes')">👤 Choferes (${cc.length})</button>
+      <button class="${State.masView==='vehiculos'?'on':''}" onclick="setMas('vehiculos')">🚐 Vehículos</button>
+      <button class="${State.masView==='choferes'?'on':''}" onclick="setMas('choferes')">👤 Choferes</button>
+      <button class="${State.masView==='proveedores'?'on':''}" onclick="setMas('proveedores')">🤝 Proveedores</button>
     </div>`;
-  if(State.flotaView==='vehiculos'){
+  if(State.masView==='vehiculos'){
     if(!vv.length) h += emptyBox('🚐','No hay vehículos.','＋ Agregar vehículo','openVehiculoForm()');
     else{ h += `<div class="list">`; vv.forEach(v=>{
-      const cap = v.capacidad?`${v.capacidad} pax`:'';
-      const meta = [cap, v.placa?`Placa ${esc(v.placa)}`:''].filter(Boolean).join(' · ');
+      const meta = [v.nombre?esc(v.nombre):'', v.capacidad?`${v.capacidad} pax`:''].filter(Boolean).join(' · ');
       h += `<div class="item" onclick="openVehiculoForm('${v.id}')"><div class="ic">🚐</div>
-        <div class="body"><div class="top"><span class="title">${esc(v.nombre)}</span></div>
+        <div class="body"><div class="top"><span class="title">${esc(v.placa||v.nombre||'Vehículo')}</span></div>
         <div class="meta">${meta||'Sin datos'}</div></div></div>`;
     }); h += `</div>`; }
-  }else{
+  }else if(State.masView==='choferes'){
     if(!cc.length) h += emptyBox('👤','No hay choferes.','＋ Agregar chofer','openChoferForm()');
     else{ h += `<div class="list">`; cc.forEach(c=>{
       h += `<div class="item" onclick="openChoferForm('${c.id}')"><div class="ic">👤</div>
         <div class="body"><div class="top"><span class="title">${esc(c.nombre)}</span></div>
         <div class="meta">${c.telefono?esc(c.telefono):'Sin teléfono'}</div></div></div>`;
     }); h += `</div>`; }
+  }else{
+    if(!pp.length) h += emptyBox('🤝','No hay proveedores.','＋ Agregar proveedor','openProveedorForm()');
+    else{ h += `<div class="list">`; pp.forEach(p=>{
+      const meta = [p.servicio?esc(p.servicio):'', p.telefono?esc(p.telefono):''].filter(Boolean).join(' · ');
+      h += `<div class="item" onclick="openProveedorForm('${p.id}')"><div class="ic">🤝</div>
+        <div class="body"><div class="top"><span class="title">${esc(p.nombre)}</span></div>
+        <div class="meta">${meta||'Sin datos'}</div></div></div>`;
+    }); h += `</div>`; }
   }
-  $('#scr-flota').innerHTML = h;
+  $('#scr-mas').innerHTML = h;
 }
-function setFlota(v){ State.flotaView=v; renderFlota(); }
+function setMas(v){ State.masView=v; renderMas(); }
 
 /* ---------------- AJUSTES ---------------- */
 function renderAjustes(){
@@ -501,10 +550,10 @@ function openVehiculoForm(id){
   const del = id ? `<button class="del" onclick="delItem('vehiculos','${id}')">🗑 Borrar</button>` : '';
   openSheet(`
     <h3>${id?'Editar vehículo':'Nuevo vehículo'} ${del}</h3>
-    <div class="field"><label>Nombre</label><input id="v_nombre" value="${esc(v.nombre||'')}" placeholder="Ej: Staria, Hiace"></div>
+    <div class="field"><label>Placa</label><input id="v_placa" value="${esc(v.placa||'')}" placeholder="Ej: CL 123456"></div>
     <div class="field row2">
+      <div><label>Nombre / modelo</label><input id="v_nombre" value="${esc(v.nombre||'')}" placeholder="Staria, Hiace…"></div>
       <div><label>Capacidad (pax)</label><input type="number" id="v_cap" value="${v.capacidad||''}" placeholder="5"></div>
-      <div><label>Placa</label><input id="v_placa" value="${esc(v.placa||'')}" placeholder="CRC-000"></div>
     </div>
     <div class="field"><label>Notas</label><textarea id="v_notas" placeholder="Color, año, detalles…">${esc(v.notas||'')}</textarea></div>
     <div class="form-actions">
@@ -513,9 +562,10 @@ function openVehiculoForm(id){
     </div>`);
 }
 function saveVehiculo(id){
+  const placa = $('#v_placa').value.trim();
   const nombre = $('#v_nombre').value.trim();
-  if(!nombre){ toast('Escribí el nombre'); return; }
-  DB.upsert('vehiculos', {id:id||undefined, nombre, capacidad:$('#v_cap').value?+$('#v_cap').value:'', placa:$('#v_placa').value.trim(), notas:$('#v_notas').value.trim()});
+  if(!placa && !nombre){ toast('Escribí la placa o el nombre'); return; }
+  DB.upsert('vehiculos', {id:id||undefined, placa, nombre, capacidad:$('#v_cap').value?+$('#v_cap').value:'', notas:$('#v_notas').value.trim()});
   closeSheet(); toast(id?'Vehículo actualizado':'Vehículo guardado ✅'); render();
 }
 
@@ -540,9 +590,85 @@ function saveChofer(id){
   closeSheet(); toast(id?'Chofer actualizado':'Chofer guardado ✅'); render();
 }
 
+/* ----- Proveedor ----- */
+function openProveedorForm(id){
+  const p = id ? Object.assign({}, DB.get('proveedores',id)) : {};
+  const del = id ? `<button class="del" onclick="delItem('proveedores','${id}')">🗑 Borrar</button>` : '';
+  openSheet(`
+    <h3>${id?'Editar proveedor':'Nuevo proveedor'} ${del}</h3>
+    <div class="field"><label>Nombre</label><input id="p_nombre" value="${esc(p.nombre||'')}" placeholder="Ej: Tours El Volcán"></div>
+    <div class="field"><label>Servicio que ofrece</label><input id="p_servicio" value="${esc(p.servicio||'')}" placeholder="Ej: Rafting, Tours, Hotel"></div>
+    <div class="field"><label>Teléfono</label><input id="p_tel" inputmode="tel" value="${esc(p.telefono||'')}" placeholder="8888 8888"></div>
+    <div class="field"><label>Notas</label><textarea id="p_notas" placeholder="Comisión acordada, contacto…">${esc(p.notas||'')}</textarea></div>
+    <div class="form-actions">
+      <button class="btn ghost" onclick="closeSheet()">Cancelar</button>
+      <button class="btn primary" onclick="saveProveedor('${id||''}')">Guardar</button>
+    </div>`);
+}
+function saveProveedor(id){
+  const nombre = $('#p_nombre').value.trim();
+  if(!nombre){ toast('Escribí el nombre'); return; }
+  DB.upsert('proveedores', {id:id||undefined, nombre, servicio:$('#p_servicio').value.trim(), telefono:$('#p_tel').value.trim(), notas:$('#p_notas').value.trim()});
+  closeSheet(); toast(id?'Proveedor actualizado':'Proveedor guardado ✅'); render();
+}
+function provOptions(sel){
+  const list = DB.all('proveedores');
+  return `<option value="">— Sin proveedor —</option>`+list.map(p=>`<option value="${p.id}" ${p.id===sel?'selected':''}>${esc(p.nombre)}</option>`).join('');
+}
+
+/* ----- Comisión ----- */
+function openComisionForm(id){
+  const c = id ? Object.assign({}, DB.get('comisiones',id)) : {fecha:todayISO(), moneda:DB.data.settings.moneda, estado:'cobrada'};
+  const del = id ? `<button class="del" onclick="delItem('comisiones','${id}')">🗑 Borrar</button>` : '';
+  const sinProv = !DB.all('proveedores').length;
+  openSheet(`
+    <h3>${id?'Editar comisión':'Nueva comisión'} ${del}</h3>
+    <div class="field"><label>Servicio pasado</label><input id="k_servicio" value="${esc(c.servicio||'')}" placeholder="Ej: Tour volcán, Rafting, Canopy"></div>
+    <div class="field"><label>Comisión ganada</label>
+      <div class="amount-wrap">
+        <select id="k_moneda">${monedaOpts(c.moneda)}</select>
+        <input type="number" id="k_monto" inputmode="decimal" value="${c.monto??''}" placeholder="0.00" style="flex:1">
+      </div>
+    </div>
+    <div class="field"><label>Proveedor</label>
+      <select id="k_prov">${provOptions(c.proveedorId)}</select>
+      ${sinProv?`<div style="margin-top:8px"><button type="button" class="btn sm ghost" onclick="closeSheet();openProveedorForm()">＋ Crear proveedor</button></div>`:''}
+    </div>
+    <div class="field row2">
+      <div><label>Fecha</label><input type="date" id="k_fecha" value="${c.fecha||todayISO()}"></div>
+      <div><label>Cliente (opcional)</label><input id="k_cliente" value="${esc(c.cliente||'')}" placeholder="Nombre"></div>
+    </div>
+    <div class="field"><label>Estado de pago</label>
+      <div class="seg" id="k_estado">
+        <button type="button" class="${c.estado!=='pendiente'?'on':''}" data-v="cobrada">✅ Cobrada</button>
+        <button type="button" class="${c.estado==='pendiente'?'on':''}" data-v="pendiente">⏳ Por cobrar</button>
+      </div></div>
+    <div class="field"><label>Notas (opcional)</label><textarea id="k_notas" placeholder="Detalles…">${esc(c.notas||'')}</textarea></div>
+    <div class="form-actions">
+      <button class="btn ghost" onclick="closeSheet()">Cancelar</button>
+      <button class="btn primary" onclick="saveComision('${id||''}')">Guardar</button>
+    </div>`);
+  segClick('k_estado');
+}
+function saveComision(id){
+  const monto = parseFloat($('#k_monto').value);
+  if(isNaN(monto)){ toast('Escribí la comisión'); return; }
+  const obj = {
+    id:id||undefined,
+    fecha: $('#k_fecha').value || todayISO(),
+    servicio: $('#k_servicio').value.trim(),
+    monto, moneda: $('#k_moneda').value,
+    proveedorId: $('#k_prov').value,
+    cliente: $('#k_cliente').value.trim(),
+    estado: $('#k_estado').dataset.val || 'cobrada',
+    notas: $('#k_notas').value.trim(),
+  };
+  DB.upsert('comisiones', obj); closeSheet(); toast(id?'Comisión actualizada':'Comisión guardada ✅'); render();
+}
+
 /* ----- Borrar (con confirmación) ----- */
 function delItem(col,id){
-  const labels = {viajes:'este viaje', gastos:'este gasto', vehiculos:'este vehículo', choferes:'este chofer'};
+  const labels = {viajes:'este viaje', gastos:'este gasto', vehiculos:'este vehículo', choferes:'este chofer', proveedores:'este proveedor', comisiones:'esta comisión'};
   if(confirm(`¿Seguro que querés borrar ${labels[col]}? No se puede deshacer.`)){
     DB.remove(col,id); closeSheet(); toast('Borrado'); render();
   }
