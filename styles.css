@@ -106,12 +106,14 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
   background-size: 46px 46px; mask-image: radial-gradient(700px 400px at 50% 20%, #000, transparent 75%);
 }
 .hero-inner { position: relative; z-index: 1; max-width: 760px; }
-/* Portada en 2 columnas en pantalla ancha: texto a la izquierda, buscador a la derecha */
+/* Portada en 2 columnas en pantalla ancha: texto a la izquierda, buscador a la derecha.
+   En celular se apila: título+descripción → buscador → botones/estrellas. */
 @media (min-width: 900px) {
-  .hero-inner { max-width: var(--maxw); display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(32px, 5vw, 60px); align-items: center; }
-  .hero-copy { max-width: 640px; }
-  .hero-copy .hero-sub { margin-bottom: 26px; }
-  .finder-hero { margin: 0; align-self: center; }
+  .hero-inner { max-width: var(--maxw); display: grid; grid-template-columns: 1.05fr 0.95fr; grid-template-areas: "top finder" "bottom finder"; column-gap: clamp(32px, 5vw, 60px); row-gap: 0; align-items: start; }
+  .hero-copy-top { grid-area: top; max-width: 640px; }
+  .hero-copy-bottom { grid-area: bottom; max-width: 640px; }
+  .hero-copy-top .hero-sub { margin-bottom: 8px; }
+  .finder-hero { grid-area: finder; align-self: center; margin: 0; }
 }
 .eyebrow { text-transform: uppercase; letter-spacing: 2.4px; font-size: .76rem; font-weight: 700; color: var(--gold); margin: 0 0 16px; }
 .hero-title { font-family: var(--font-head); font-weight: 600; font-size: clamp(2.5rem, 6.4vw, 4.4rem); letter-spacing: -.5px; }
