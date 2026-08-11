@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="theme-color" content="#0d0f12">
+<title>Travesía · Control</title>
+<meta name="description" content="Control de gastos, viajes, vehículos y choferes — Travesía Costa Rica">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Travesía Control">
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ===== PIN gate ===== -->
+<div class="gate" id="gate">
+  <div class="logo-lg">T</div>
+  <h2 id="gateTitle">Ingresá tu PIN</h2>
+  <p id="gateSub">Control de Travesía</p>
+  <div class="pin-dots" id="pinDots"><span></span><span></span><span></span><span></span></div>
+  <div class="keypad" id="keypad">
+    <button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button>
+    <button data-k="4">4</button><button data-k="5">5</button><button data-k="6">6</button>
+    <button data-k="7">7</button><button data-k="8">8</button><button data-k="9">9</button>
+    <button class="blank"></button><button data-k="0">0</button><button data-k="del">⌫</button>
+  </div>
+</div>
+
+<!-- ===== App ===== -->
+<div id="app" class="hidden">
+  <header class="appbar">
+    <div class="logo">T</div>
+    <div class="titles">
+      <h1>Travesía · Control</h1>
+      <div class="sub">Panel de Eddie</div>
+    </div>
+    <button class="month-pill" id="monthPill">📅 <span id="monthLabel">—</span></button>
+  </header>
+
+  <!-- INICIO -->
+  <section class="screen active" id="scr-inicio"></section>
+  <!-- VIAJES -->
+  <section class="screen" id="scr-viajes"></section>
+  <!-- GASTOS -->
+  <section class="screen" id="scr-gastos"></section>
+  <!-- FLOTA -->
+  <section class="screen" id="scr-flota"></section>
+  <!-- AJUSTES -->
+  <section class="screen" id="scr-ajustes"></section>
+
+  <button class="fab" id="fab">＋</button>
+
+  <nav class="tabbar" id="tabbar">
+    <button data-tab="inicio" class="active"><span class="ico">🏠</span>Inicio</button>
+    <button data-tab="viajes"><span class="ico">🚌</span>Viajes</button>
+    <button data-tab="gastos"><span class="ico">💸</span>Gastos</button>
+    <button data-tab="flota"><span class="ico">🚐</span>Flota</button>
+    <button data-tab="ajustes"><span class="ico">⚙️</span>Ajustes</button>
+  </nav>
+</div>
+
+<!-- ===== Sheet (modal) ===== -->
+<div class="sheet-back" id="sheetBack">
+  <div class="sheet" id="sheet"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
