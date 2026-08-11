@@ -98,7 +98,7 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
   background:
     linear-gradient(90deg, rgba(13,15,18,.80) 0%, rgba(13,15,18,.50) 45%, rgba(13,15,18,.12) 100%),
     linear-gradient(180deg, rgba(13,15,18,.10) 0%, rgba(13,15,18,.32) 70%, var(--bg) 100%),
-    url("assets/hero.jpg") center 40% / cover no-repeat;
+    url("assets/hero-arenal.jpg") center 40% / cover no-repeat;
 }
 .hero-bg::after {
   content: ""; position: absolute; inset: 0;
