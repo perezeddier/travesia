@@ -364,6 +364,13 @@ function renderMas(){
       <button class="${State.masView==='choferes'?'on':''}" onclick="setMas('choferes')">👤 Choferes</button>
       <button class="${State.masView==='proveedores'?'on':''}" onclick="setMas('proveedores')">🤝 Proveedores</button>
     </div>`;
+  // botón "Agregar" siempre visible según el apartado
+  const addBtn = {
+    vehiculos:['＋ Agregar vehículo','openVehiculoForm()'],
+    choferes:['＋ Agregar chofer','openChoferForm()'],
+    proveedores:['＋ Agregar proveedor','openProveedorForm()'],
+  }[State.masView];
+  h += `<button class="btn primary block" style="margin-bottom:14px" onclick="${addBtn[1]}">${addBtn[0]}</button>`;
   if(State.masView==='vehiculos'){
     if(!vv.length) h += emptyBox('🚐','No hay vehículos.','＋ Agregar vehículo','openVehiculoForm()');
     else{ h += `<div class="list">`; vv.forEach(v=>{
