@@ -157,6 +157,9 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
 .finder-title { font-family: var(--font-head); font-weight: 600; font-size: 1.2rem; margin: 0 0 12px; color: var(--text); }
 .finder-go { width: 100%; margin-top: 12px; padding: 14px 16px; border: none; border-radius: var(--radius-sm); background: var(--gold); color: #241c05; font-family: var(--font-body); font-weight: 800; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background .2s ease, transform .2s ease; }
 .finder-go:hover { background: var(--gold-2); transform: translateY(-1px); }
+.finder-trust { text-align: center; margin: 12px 0 0; font-size: .82rem; color: var(--muted); line-height: 1.4; }
+.finder-trust .ts-stars { color: #f5b301; letter-spacing: 1px; font-size: .78rem; }
+.finder-trust strong { color: var(--text); }
 
 /* Trust strip (señales de confianza, justo bajo el hero) */
 .trust-strip { background: var(--bg-2); border-bottom: 1px solid var(--line); }
