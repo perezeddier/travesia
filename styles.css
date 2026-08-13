@@ -672,6 +672,8 @@ body.no-scroll { overflow: hidden; }
 .footer-col a { display: block; color: var(--muted); padding: 5px 0; font-size: .96rem; transition: color .2s ease; }
 .footer-col a:hover { color: var(--text); }
 .footer-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--line); color: var(--muted-2); font-size: .88rem; }
+.footer-bottom a { color: var(--gold-2); font-weight: 600; text-decoration: none; }
+.footer-bottom a:hover { text-decoration: underline; }
 
 /* ===================== FLOATING WA ===================== */
 .fab-wa {
