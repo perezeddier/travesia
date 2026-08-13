@@ -305,6 +305,7 @@ const I18N = {
     "footer.rights": "All rights reserved.",
     "footer.terms": "Terms & Conditions",
     "footer.privacy": "Privacy Policy",
+    "sticky.cta": "Get your price",
     "why.1.t": "Professional drivers",
     "why.1.d": "Professional local drivers who know every route — English-speaking drivers available on request, guaranteed with Travesía VIP.",
     "why.2.t": "Licensed & insured",
@@ -564,6 +565,7 @@ const I18N = {
     "footer.rights": "Todos los derechos reservados.",
     "footer.terms": "Términos y Condiciones",
     "footer.privacy": "Política de Privacidad",
+    "sticky.cta": "Ver mi precio",
     "why.1.t": "Choferes profesionales",
     "why.1.d": "Choferes profesionales que conocen cada ruta — con chofer que habla inglés a solicitud, garantizado con Travesía VIP.",
     "why.2.t": "Con seguro y permisos",
@@ -1263,4 +1265,21 @@ document.addEventListener("DOMContentLoaded", () => {
     entries.forEach((e) => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
   }, { threshold: 0.12 });
   document.querySelectorAll("[data-reveal]").forEach((el) => io.observe(el));
+
+  // Mobile sticky "Get your price" CTA — shows once the hero finder scrolls out of view
+  const stickyCta = document.getElementById("stickyCta");
+  const finderEl = document.getElementById("finder");
+  if (stickyCta && finderEl && "IntersectionObserver" in window) {
+    const ctaIo = new IntersectionObserver((entries) => {
+      entries.forEach((e) => stickyCta.classList.toggle("show", !e.isIntersecting));
+    }, { threshold: 0 });
+    ctaIo.observe(finderEl);
+  }
+  if (stickyCta) {
+    stickyCta.addEventListener("click", (ev) => {
+      ev.preventDefault();
+      document.getElementById("home")?.scrollIntoView({ behavior: "smooth" });
+      setTimeout(() => document.getElementById("toInput")?.focus(), 450);
+    });
+  }
 });
