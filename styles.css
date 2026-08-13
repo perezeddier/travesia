@@ -160,6 +160,7 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
 .finder-trust { text-align: center; margin: 12px 0 0; font-size: .82rem; color: var(--muted); line-height: 1.4; }
 .finder-trust .ts-stars { color: #f5b301; letter-spacing: 1px; font-size: .78rem; }
 .finder-trust strong { color: var(--text); }
+.finder-guar { text-align: center; margin: 6px 0 0; font-size: .8rem; color: var(--muted-2); line-height: 1.4; }
 
 /* Trust strip (señales de confianza, justo bajo el hero) */
 .trust-strip { background: var(--bg-2); border-bottom: 1px solid var(--line); }
@@ -624,6 +625,11 @@ body.no-scroll { overflow: hidden; }
 .ta-badge-txt { font-size: .98rem; }
 .ta-badge-txt strong { font-size: 1.06rem; }
 .ta-stars { color: #00aa6c; letter-spacing: 1px; font-size: .8rem; vertical-align: middle; }
+/* Reseña destacada (texto fijo, carga al instante) */
+.rev-featured { max-width: 720px; margin: 0 auto 24px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: 24px 26px; text-align: center; }
+.rev-featured-stars { color: #f5b301; letter-spacing: 2px; font-size: 1rem; }
+.rev-featured blockquote { margin: 12px 0 10px; font-size: 1.1rem; line-height: 1.6; color: var(--text); font-style: italic; }
+.rev-featured figcaption { color: var(--muted); font-size: .9rem; }
 
 /* ===================== FLEET ===================== */
 .fleet-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
