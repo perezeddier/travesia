@@ -1268,12 +1268,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Mobile sticky "Get your price" CTA — shows once the hero finder scrolls out of view
   const stickyCta = document.getElementById("stickyCta");
-  const finderEl = document.getElementById("finder");
-  if (stickyCta && finderEl && "IntersectionObserver" in window) {
+  const stickyFinder = document.getElementById("finder");
+  if (stickyCta && stickyFinder && "IntersectionObserver" in window) {
     const ctaIo = new IntersectionObserver((entries) => {
       entries.forEach((e) => stickyCta.classList.toggle("show", !e.isIntersecting));
     }, { threshold: 0 });
-    ctaIo.observe(finderEl);
+    ctaIo.observe(stickyFinder);
   }
   if (stickyCta) {
     stickyCta.addEventListener("click", (ev) => {
