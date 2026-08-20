@@ -744,6 +744,41 @@
           <label class="co-field"><span data-i18n="co.email">Email</span><input type="email" name="email" required></label>
           <label class="co-field"><span data-i18n="co.phone">WhatsApp / phone</span><input type="tel" name="phone" required></label>
         </div>
+        <div class="co-grid">
+          <label class="co-field"><span data-i18n="co.country">Card billing country</span>
+            <select name="country" required>
+              <option value="US" selected>United States</option>
+              <option value="CA">Canada</option>
+              <option value="MX">Mexico</option>
+              <option value="GB">United Kingdom</option>
+              <option value="DE">Germany</option>
+              <option value="FR">France</option>
+              <option value="ES">Spain</option>
+              <option value="IT">Italy</option>
+              <option value="NL">Netherlands</option>
+              <option value="CH">Switzerland</option>
+              <option value="AT">Austria</option>
+              <option value="BE">Belgium</option>
+              <option value="SE">Sweden</option>
+              <option value="NO">Norway</option>
+              <option value="DK">Denmark</option>
+              <option value="IE">Ireland</option>
+              <option value="PT">Portugal</option>
+              <option value="AU">Australia</option>
+              <option value="NZ">New Zealand</option>
+              <option value="BR">Brazil</option>
+              <option value="AR">Argentina</option>
+              <option value="CL">Chile</option>
+              <option value="CO">Colombia</option>
+              <option value="PA">Panama</option>
+              <option value="IL">Israel</option>
+              <option value="JP">Japan</option>
+              <option value="CR">Costa Rica</option>
+              <option value="OTHER">Other</option>
+            </select>
+          </label>
+          <label class="co-field"><span data-i18n="co.zip">Card ZIP / postal code</span><input type="text" name="zip" required></label>
+        </div>
         <label class="co-field"><span data-i18n="co.notes">Notes (optional)</span><textarea name="notes" rows="2"></textarea></label>
         <button type="submit" class="btn btn-primary btn-lg co-pay" data-i18n="co.pay">Reserve now</button>
         <p class="co-secure"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> <span data-i18n="co.secure">We confirm your trip and send a secure payment link on WhatsApp · Free cancellation up to 48h before · Taxes included, prices in USD</span></p>

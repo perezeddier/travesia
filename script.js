@@ -268,6 +268,8 @@ const I18N = {
     "co.name": "Full name",
     "co.email": "Email",
     "co.phone": "WhatsApp / phone",
+    "co.country": "Card billing country",
+    "co.zip": "Card ZIP / postal code",
     "co.notes": "Notes (optional)",
     "co.pay": "Reserve &amp; pay by card",
     "co.choose": "Choose your service",
@@ -528,6 +530,8 @@ const I18N = {
     "co.name": "Nombre completo",
     "co.email": "Correo electrónico",
     "co.phone": "WhatsApp / teléfono",
+    "co.country": "País de la tarjeta",
+    "co.zip": "Código postal de la tarjeta",
     "co.notes": "Notas (opcional)",
     "co.pay": "Reservar y pagar con tarjeta",
     "co.choose": "Elige tu servicio",
@@ -1073,6 +1077,8 @@ function pagarPayload(d) {
   const base = reservaPayload(d);
   base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey }));
   base.vip = d.experience === "1";
+  base.country = d.country || "";   // país de la tarjeta (ISO) — mejora aceptación (AVS)
+  base.zip = d.zip || "";           // código postal de la tarjeta
   return base;
 }
 

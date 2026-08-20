@@ -67,6 +67,14 @@ export default async function handler(req, res) {
     const phone = String(d.phone || '').replace(/[^0-9]/g, '') || '00000000';
     const tier = vip ? 'Travesía VIP' : 'Travesía Standard';
 
+    // Dirección de facturación de la tarjeta (mejora la aceptación / AVS en tarjetas extranjeras)
+    const rawCountry = String(d.country || '').toUpperCase();
+    const country = /^[A-Z]{2}$/.test(rawCountry) ? rawCountry : 'CR';   // "OTHER"/vacío -> CR
+    const zip = String(d.zip || '').trim().slice(0, 12) || (country === 'CR' ? '21007' : '00000');
+    const state = country === 'CR' ? 'CR-A' : 'NA';
+    const city = country === 'CR' ? 'La Fortuna' : 'NA';
+    const address = String(d.pickup || 'NA').slice(0, 60);
+
     // datos de la reserva que viajan (base64) y vuelven para enviar el correo al aprobar
     const booking = {
       name: d.name, email: d.email, phone: d.phone || '',
@@ -87,22 +95,22 @@ export default async function handler(req, res) {
       capture: '1',
       billToFirstName: firstName,
       billToLastName: lastName,
-      billToAddress: d.pickup || 'La Fortuna',
+      billToAddress: address,
       billToAddress2: 'N/A',
-      billToCity: 'La Fortuna',
-      billToState: 'CR-A',
-      billToZipPostCode: '21007',
-      billToCountry: 'CR',
+      billToCity: city,
+      billToState: state,
+      billToZipPostCode: zip,
+      billToCountry: country,
       billToTelephone: phone,
       billToEmail: d.email,
       shipToFirstName: firstName,
       shipToLastName: lastName,
-      shipToAddress: d.pickup || 'La Fortuna',
+      shipToAddress: address,
       shipToAddress2: 'N/A',
-      shipToCity: 'La Fortuna',
-      shipToState: 'CR-A',
-      shipToZipPostCode: '21007',
-      shipToCountry: 'CR',
+      shipToCity: city,
+      shipToState: state,
+      shipToZipPostCode: zip,
+      shipToCountry: country,
       shipToTelephone: phone,
       subscription: '0',
       platform: 'travesiacr-web',
