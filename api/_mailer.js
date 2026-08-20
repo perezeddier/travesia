@@ -150,7 +150,26 @@ async function sendEmail(to, subject, html, replyTo) {
   return r.json();
 }
 
-// Envía los 2 correos (cliente + Eddie). paid=true = pago confirmado.
+// Guarda la reserva en la hoja de Google (si está configurada). No rompe si falla.
+async function logToSheet(d, paid) {
+  const url = process.env.SHEETS_WEBHOOK_URL;
+  if (!url) return;
+  try {
+    await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        estado: paid ? 'Pagado' : 'Solicitud',
+        nombre: d.name || '', email: d.email || '', telefono: d.phone || '',
+        ruta: d.summary || '', fecha: d.date || '', hora: d.time || '', pax: d.pax || '',
+        recogida: d.pickup || '', vuelo: d.flight || '', servicio: d.tier || '',
+        total: d.total || '', orden: d.orderNumber || '', notas: d.notes || '',
+      }),
+    });
+  } catch (e) { /* la hoja es un extra: si falla, no afecta correo ni pago */ }
+}
+
+// Envía los 2 correos (cliente + Eddie) y guarda en la hoja. paid=true = pago confirmado.
 export async function sendReservation(d, paid) {
   if (!process.env.BREVO_API_KEY) throw new Error('no-brevo-key');
   const lang = d.lang === 'es' ? 'es' : 'en';
@@ -158,4 +177,5 @@ export async function sendReservation(d, paid) {
   await sendEmail(d.email, c.subject, c.html, OWNER);
   const o = ownerEmail(d, !!paid);
   await sendEmail(OWNER, o.subject, o.html, d.email);
+  await logToSheet(d, !!paid);
 }
