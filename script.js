@@ -804,6 +804,15 @@ function setComboValue(inputId, placeIdx, label) {
   input.value = label != null ? label : ptName(placeIdx);
   input.dataset.place = String(placeIdx);
 }
+/* Etiqueta específica que el cliente eligió: si escribió un HOTEL (Tabacón),
+   muestra "Tabacón (La Fortuna)"; si eligió la zona, muestra solo la zona. */
+function comboLabel(inputId, placeIdx) {
+  const input = document.getElementById(inputId);
+  const val = input && input.value ? input.value.trim() : "";
+  const zone = ptName(placeIdx);
+  if (!val || normTxt(val) === normTxt(zone)) return zone;
+  return `${val} (${zone})`;
+}
 
 function filterCombo(query) {
   const q = normTxt(query.trim());
@@ -955,7 +964,7 @@ function addToCart(i, j, vkey) {
   const p = ptPrice(i, j);
   if (!p || p[vkey] == null) return;
   const v = VEHICLES.find((x) => x.key === vkey);
-  CART.push({ i, j, from: ptName(i), to: ptName(j), vkey, vname: v.name, price: p[vkey] });
+  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey] });
   saveCart(); updateCartCount(); renderCart();
   toast(t("cart.added"));
   const badge = document.querySelector(".cart-btn");
