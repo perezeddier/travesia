@@ -21,28 +21,48 @@ function esc(s) {
 }
 
 /* --------- plantillas de correo --------- */
-function row(label, value) {
+// fila con icono: 📅 | etiqueta | valor
+function irow(icon, label, value) {
   if (!value) return '';
   return `<tr>
-    <td style="padding:6px 12px 6px 0;color:#6b7280;font-size:13px;white-space:nowrap;vertical-align:top">${esc(label)}</td>
-    <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600">${esc(value)}</td>
+    <td style="padding:9px 0;border-bottom:1px solid #eef1f5;width:24px;font-size:15px;vertical-align:top">${icon}</td>
+    <td style="padding:9px 10px;border-bottom:1px solid #eef1f5;color:#8a94a3;font-size:13px;vertical-align:top;white-space:nowrap">${esc(label)}</td>
+    <td style="padding:9px 0;border-bottom:1px solid #eef1f5;color:#1a1d23;font-size:14px;font-weight:600;text-align:right">${esc(value)}</td>
   </tr>`;
 }
 
-function shell(title, bodyHtml) {
-  return `<!doctype html><html><body style="margin:0;background:#f3f4f6;font-family:Segoe UI,Arial,sans-serif">
-  <div style="max-width:560px;margin:0 auto;padding:24px 16px">
-    <div style="background:#0d0f12;border-radius:16px 16px 0 0;padding:22px 24px">
-      <div style="color:#ff9e4d;font-weight:800;font-size:20px">Travesía <span style="color:#fff">Costa Rica</span></div>
-      <div style="color:#9aa4b2;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-top:2px">Private Shuttles &amp; Transfers</div>
+function routeCard(label, route) {
+  return `<div style="background:#fff8f1;border:1px solid #f6d9b8;border-radius:12px;padding:15px 16px;margin:0 0 16px;text-align:center">
+    <div style="font-size:11px;color:#b06a1a;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px">${esc(label)}</div>
+    <div style="font-size:17px;font-weight:800;color:#1a1d23;line-height:1.3">${esc(route || '')}</div>
+  </div>`;
+}
+
+function waBtn(phone, text) {
+  const num = String(phone || '').replace(/[^0-9]/g, '');
+  if (!num) return '';
+  return `<table role="presentation" style="border-collapse:collapse;margin:2px 0 4px"><tr><td style="border-radius:10px;background:#25d366">
+    <a href="https://wa.me/${num}" style="display:inline-block;color:#fff;text-decoration:none;font-weight:700;padding:13px 22px;font-size:14px;border-radius:10px">💬 ${esc(text)}</a>
+  </td></tr></table>`;
+}
+
+function shell(bodyHtml, preheader) {
+  return `<!doctype html><html><body style="margin:0;background:#eef1f5;font-family:'Segoe UI',Arial,sans-serif;color:#1a1d23">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preheader || '')}</div>
+  <div style="max-width:560px;margin:0 auto;padding:20px 14px">
+    <div style="background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #e6e9ee">
+      <div style="text-align:center;padding:26px 24px 12px">
+        <img src="https://travesiacr.online/assets/logo-travesia.png" alt="Travesía Costa Rica" width="118" style="width:118px;max-width:60%;height:auto;display:inline-block">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#e07b1f;font-weight:700;margin-top:8px">Private Shuttles &amp; Transfers</div>
+      </div>
+      <div style="height:4px;background:linear-gradient(90deg,#e07b1f,#ff9e4d)"></div>
+      <div style="padding:24px">${bodyHtml}</div>
+      <div style="background:#f6f8fa;border-top:1px solid #e6e9ee;padding:18px 24px;text-align:center;color:#8a94a3;font-size:12px;line-height:1.7">
+        <b style="color:#5a6472">Travesía Costa Rica</b> · La Fortuna, Arenal<br>
+        WhatsApp +506 8502 8476 · <a href="https://travesiacr.online" style="color:#e07b1f;text-decoration:none">travesiacr.online</a><br>
+        ★ 5.0 Google · TripAdvisor Travelers' Choice 2025
+      </div>
     </div>
-    <div style="background:#fff;border-radius:0 0 16px 16px;padding:24px;border:1px solid #e5e7eb;border-top:none">
-      <h1 style="font-size:19px;margin:0 0 14px;color:#111827">${title}</h1>
-      ${bodyHtml}
-    </div>
-    <p style="text-align:center;color:#9ca3af;font-size:12px;margin:16px 0 0">
-      Travesía Costa Rica · La Fortuna · WhatsApp +506 8502 8476<br>travesiacr.online
-    </p>
   </div></body></html>`;
 }
 
@@ -50,56 +70,58 @@ function clientEmail(d, lang) {
   const en = lang !== 'es';
   const t = en ? {
     subj: 'We received your booking request — Travesía Costa Rica',
-    title: 'Thank you! We received your request 🚐',
-    intro: `Hi ${esc(d.name || '')}, thank you for choosing Travesía. We have received your trip request and <b>our team will confirm availability and the final details shortly</b> by email or WhatsApp.`,
-    details: 'Your trip', wa: 'Message us on WhatsApp', note: 'This is a request, not a final confirmation. We will contact you shortly to confirm.'
+    badge: '✓ Request received', hi: `Thank you, ${esc(d.name || '')}!`,
+    intro: 'We received your trip request. Our team will confirm availability and the final details with you shortly.',
+    route: 'Your route', wa: 'Message us on WhatsApp',
+    L: { date: 'Date', time: 'Time', pax: 'Passengers', pickup: 'Pickup', flight: 'Flight', service: 'Service', price: 'Price' },
+    note: 'This is a request, not a final confirmation. We will contact you shortly to confirm your trip.'
   } : {
     subj: 'Recibimos tu solicitud de reserva — Travesía Costa Rica',
-    title: '¡Gracias! Recibimos tu solicitud 🚐',
-    intro: `Hola ${esc(d.name || '')}, gracias por elegir Travesía. Recibimos tu solicitud de viaje y <b>nuestro equipo te confirmará disponibilidad y los detalles finales en breve</b> por correo o WhatsApp.`,
-    details: 'Tu viaje', wa: 'Escríbenos por WhatsApp', note: 'Esta es una solicitud, no una confirmación final. Te contactaremos en breve para confirmar.'
+    badge: '✓ Solicitud recibida', hi: `¡Gracias, ${esc(d.name || '')}!`,
+    intro: 'Recibimos tu solicitud de viaje. Nuestro equipo te confirmará la disponibilidad y los detalles finales en breve.',
+    route: 'Tu ruta', wa: 'Escríbenos por WhatsApp',
+    L: { date: 'Fecha', time: 'Hora', pax: 'Pasajeros', pickup: 'Recogida', flight: 'Vuelo', service: 'Servicio', price: 'Precio' },
+    note: 'Esta es una solicitud, no una confirmación final. Te contactaremos en breve para confirmar tu viaje.'
   };
   const body = `
-    <p style="color:#374151;font-size:14px;line-height:1.6;margin:0 0 16px">${t.intro}</p>
-    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin:0 0 16px">
-      <div style="font-size:12px;font-weight:700;color:#e07b1f;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">${t.details}</div>
-      <table style="width:100%;border-collapse:collapse">
-        ${row(en ? 'Route' : 'Ruta', d.summary)}
-        ${row(en ? 'Date' : 'Fecha', d.date)}
-        ${row(en ? 'Time' : 'Hora', d.time)}
-        ${row(en ? 'Passengers' : 'Pasajeros', d.pax)}
-        ${row(en ? 'Pickup' : 'Recogida', d.pickup)}
-        ${row(en ? 'Flight' : 'Vuelo', d.flight)}
-        ${row(en ? 'Service' : 'Servicio', d.tier)}
-        ${row('Total', d.total)}
-      </table>
-    </div>
-    <a href="https://wa.me/${WA}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;font-size:14px">${t.wa}</a>
-    <p style="color:#9ca3af;font-size:12px;line-height:1.5;margin:16px 0 0">${t.note}</p>`;
-  return { subject: t.subj, html: shell(t.title, body) };
+    <div style="display:inline-block;background:#e8f9ef;color:#0f9d58;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;margin-bottom:14px">${t.badge}</div>
+    <h1 style="font-size:21px;margin:0 0 8px;color:#1a1d23">${t.hi}</h1>
+    <p style="color:#4b5563;font-size:14px;line-height:1.6;margin:0 0 18px">${t.intro}</p>
+    ${routeCard(t.route, d.summary)}
+    <table style="width:100%;border-collapse:collapse;margin:0 0 18px">
+      ${irow('📅', t.L.date, d.date)}
+      ${irow('🕐', t.L.time, d.time)}
+      ${irow('👥', t.L.pax, d.pax)}
+      ${irow('📍', t.L.pickup, d.pickup)}
+      ${irow('✈️', t.L.flight, d.flight)}
+      ${irow('🚐', t.L.service, d.tier)}
+      ${irow('💵', t.L.price, d.total)}
+    </table>
+    ${waBtn(WA, t.wa)}
+    <p style="color:#9ca3af;font-size:12px;line-height:1.5;margin:14px 0 0">${t.note}</p>`;
+  return { subject: t.subj, html: shell(body, t.intro) };
 }
 
 function ownerEmail(d) {
   const body = `
-    <p style="color:#374151;font-size:14px;margin:0 0 16px">Entró una <b>nueva solicitud de reserva</b> desde el sitio web:</p>
-    <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:14px 16px;margin:0 0 16px">
-      <table style="width:100%;border-collapse:collapse">
-        ${row('Cliente', d.name)}
-        ${row('Email', d.email)}
-        ${row('Teléfono', d.phone)}
-        ${row('Ruta', d.summary)}
-        ${row('Fecha', d.date)}
-        ${row('Hora', d.time)}
-        ${row('Pasajeros', d.pax)}
-        ${row('Recogida', d.pickup)}
-        ${row('Vuelo', d.flight)}
-        ${row('Servicio', d.tier)}
-        ${row('Total', d.total)}
-        ${row('Notas', d.notes)}
-      </table>
-    </div>
-    ${d.phone ? `<a href="https://wa.me/${esc(String(d.phone).replace(/[^0-9]/g, ''))}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;font-weight:700;padding:12px 20px;border-radius:10px;font-size:14px">Escribir al cliente por WhatsApp</a>` : ''}`;
-  return { subject: `🚐 Nueva reserva: ${d.name || 'cliente'} — ${d.summary || ''}`, html: shell('Nueva reserva entrante', body) };
+    <div style="display:inline-block;background:#fff1e3;color:#c9721c;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;margin-bottom:12px">🚐 Nueva reserva</div>
+    <h1 style="font-size:21px;margin:0 0 4px;color:#1a1d23">${esc(d.name || 'Cliente')}</h1>
+    <p style="color:#8a94a3;font-size:13px;margin:0 0 16px">Entró una nueva solicitud desde el sitio web.</p>
+    ${routeCard('Ruta', d.summary)}
+    <table style="width:100%;border-collapse:collapse;margin:0 0 18px">
+      ${irow('📞', 'Teléfono', d.phone)}
+      ${irow('✉️', 'Email', d.email)}
+      ${irow('📅', 'Fecha', d.date)}
+      ${irow('🕐', 'Hora', d.time)}
+      ${irow('👥', 'Pasajeros', d.pax)}
+      ${irow('📍', 'Recogida', d.pickup)}
+      ${irow('✈️', 'Vuelo', d.flight)}
+      ${irow('🚐', 'Servicio', d.tier)}
+      ${irow('💵', 'Total', d.total)}
+      ${irow('📝', 'Notas', d.notes)}
+    </table>
+    ${waBtn(d.phone, 'Escribir al cliente por WhatsApp')}`;
+  return { subject: `🚐 Nueva reserva: ${d.name || 'cliente'} — ${d.summary || ''}`, html: shell(body, `${d.name || ''} · ${d.summary || ''}`) };
 }
 
 async function sendEmail(to, subject, html, replyTo) {
