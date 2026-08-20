@@ -143,3 +143,8 @@ const PT_HOTELS = [
   // Alajuela / cerca aeropuerto (45)
   { name: "Xandari Resort & Spa", place: 45 },
 ];
+
+/* Exportar datos para el servidor (Node/Vercel). En el navegador, "module" no existe y se ignora. */
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { PT_PLACES: PT_PLACES, PT_ROWS: PT_ROWS };
+}

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0d0f12">
+<title>Gracias — Travesía Costa Rica</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/assets/logo-travesia.png">
+<style>
+  :root{--bg:#0d0f12;--card:#171b22;--line:#262c37;--text:#eef1f5;--muted:#9aa4b2;--gold:#e07b1f;--gold2:#ff9e4d;--green:#25d366}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,Arial,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;max-width:440px;width:100%;padding:34px 28px;text-align:center}
+  .logo{width:88px;height:auto;margin:0 auto 18px;display:block}
+  .badge{width:74px;height:74px;border-radius:50%;display:grid;place-items:center;margin:0 auto 18px;font-size:2.3rem}
+  .ok .badge{background:rgba(37,211,102,.15);color:var(--green)}
+  .no .badge{background:rgba(255,92,92,.15);color:#ff5c5c}
+  h1{font-size:1.5rem;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:.95rem;margin:0 0 8px}
+  .en{color:var(--muted);font-size:.86rem;margin:0 0 20px;font-style:italic}
+  .order{font-size:.8rem;color:var(--muted);background:#0d0f12;border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:inline-block;margin-bottom:22px}
+  .btns{display:flex;flex-direction:column;gap:10px}
+  a.btn{display:block;text-decoration:none;font-weight:700;padding:14px 18px;border-radius:12px;font-size:1rem}
+  .btn-primary{background:var(--gold);color:#241c05}
+  .btn-wa{background:var(--green);color:#fff}
+  .btn-ghost{background:transparent;color:var(--gold2);border:1px solid var(--line)}
+  .foot{margin-top:22px;color:#6b7688;font-size:.78rem}
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <img class="logo" src="/assets/logo-travesia.png" alt="Travesía Costa Rica">
+    <div class="badge" id="badge">✓</div>
+    <h1 id="title">¡Pago recibido!</h1>
+    <p class="sub" id="sub">Tu reserva quedó confirmada. Te enviamos un correo con los detalles.</p>
+    <p class="en" id="en">Payment received — your booking is confirmed. We've emailed you the details.</p>
+    <div class="order" id="order" style="display:none"></div>
+    <div class="btns" id="btns"></div>
+    <div class="foot">Travesía Costa Rica · La Fortuna, Arenal · WhatsApp +506 8502 8476</div>
+  </div>
+<script>
+  (function(){
+    var p = new URLSearchParams(location.search);
+    var ok = p.get('ok') === '1';
+    var order = p.get('o') || '';
+    var card = document.getElementById('card');
+    var badge = document.getElementById('badge');
+    var title = document.getElementById('title');
+    var sub = document.getElementById('sub');
+    var en = document.getElementById('en');
+    var btns = document.getElementById('btns');
+    var wa = 'https://wa.me/50685028476';
+    if (ok) {
+      card.className = 'card ok'; badge.textContent = '✓';
+      title.textContent = '¡Pago recibido!';
+      sub.textContent = 'Tu reserva quedó confirmada. Te enviamos un correo con los detalles. ¡Nos vemos pronto!';
+      en.textContent = "Payment received — your booking is confirmed. We've emailed you the details.";
+      btns.innerHTML = '<a class="btn btn-primary" href="/">Volver al inicio / Back home</a>' +
+        '<a class="btn btn-wa" href="' + wa + '">Escríbenos por WhatsApp</a>';
+    } else {
+      card.className = 'card no'; badge.textContent = '!';
+      title.textContent = 'El pago no se completó';
+      sub.textContent = 'No se realizó ningún cobro. Podés intentar de nuevo o escribirnos por WhatsApp y te ayudamos.';
+      en.textContent = "Payment was not completed. No charge was made. Try again or message us on WhatsApp.";
+      btns.innerHTML = '<a class="btn btn-primary" href="/#home">Intentar de nuevo / Try again</a>' +
+        '<a class="btn btn-wa" href="' + wa + '">Escríbenos por WhatsApp</a>';
+    }
+    if (order) { var o = document.getElementById('order'); o.style.display = 'inline-block'; o.textContent = 'Orden: ' + order; }
+  })();
+</script>
+<script defer src="/analytics.js"></script>
+</body>
+</html>
