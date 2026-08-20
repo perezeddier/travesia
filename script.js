@@ -1058,6 +1058,15 @@ function postReserva(payload) {
   } catch (e) {}
 }
 
+/* Pago con tarjeta (Tilopay): manda cart (i,j,vkey) para que el SERVIDOR
+   recalcule el precio, más los datos de la reserva (sin tarjeta). */
+function pagarPayload(d) {
+  const base = reservaPayload(d);
+  base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey }));
+  base.vip = d.experience === "1";
+  return base;
+}
+
 function openCart() {
   document.getElementById("cartDrawer")?.classList.add("open");
   document.getElementById("cartOverlay")?.classList.add("show");
@@ -1251,16 +1260,30 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("checkoutOverlay")?.addEventListener("click", closeCheckout);
   document.getElementById("coForm")?.addEventListener("change", (e) => { if (e.target.name === "experience") renderCheckoutSummary(); });
   const coForm = document.getElementById("coForm");
-  if (coForm) coForm.addEventListener("submit", (e) => {
+  if (coForm) coForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!coForm.reportValidity()) return;
     const data = Object.fromEntries(new FormData(coForm).entries());
-    // Enviar la reserva por correo (al cliente + a Eddie), sin tarjeta y sin bloquear.
-    postReserva(reservaPayload(data));
-    // TODO Tilopay: aquí se creará el cobro con tarjeta (función serverless en Vercel).
-    // Además, abrir WhatsApp con la reserva completa (respaldo / confirmación directa).
-    window.open(wa(checkoutOrderMessage(data)), "_blank");
-    toast(currentLang === "es" ? "¡Reserva enviada! Te enviamos un correo de confirmación." : "Booking sent! We've emailed you a confirmation.");
+    const btn = coForm.querySelector('[type="submit"]');
+    const label = btn ? btn.innerHTML : "";
+    if (btn) { btn.disabled = true; btn.textContent = currentLang === "es" ? "Redirigiendo al pago seguro…" : "Redirecting to secure payment…"; }
+    try {
+      // Crear el cobro en Tilopay (el SERVIDOR recalcula el precio) y redirigir a su página segura.
+      const r = await fetch("/api/pagar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pagarPayload(data)),
+      });
+      const j = await r.json();
+      if (j && j.ok && j.url) { window.location.href = j.url; return; }
+      throw new Error((j && j.error) || "pago");
+    } catch (err) {
+      // Respaldo: si no se pudo crear el pago, enviamos por correo + abrimos WhatsApp (como antes).
+      if (btn) { btn.disabled = false; btn.innerHTML = label; }
+      postReserva(reservaPayload(data));
+      window.open(wa(checkoutOrderMessage(data)), "_blank");
+      toast(currentLang === "es" ? "Te abrimos WhatsApp para completar tu reserva." : "We opened WhatsApp to complete your booking.");
+    }
   });
 
   applyLang(currentLang);
