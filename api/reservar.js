@@ -93,7 +93,7 @@ function clientEmail(d, lang) {
       ${irow('🕐', t.L.time, d.time)}
       ${irow('👥', t.L.pax, d.pax)}
       ${irow('📍', t.L.pickup, d.pickup)}
-      ${irow('✈️', t.L.flight, d.flight)}
+      ${irow('🛫', t.L.flight, d.flight)}
       ${irow('🚐', t.L.service, d.tier)}
       ${irow('💵', t.L.price, d.total)}
     </table>
@@ -112,12 +112,12 @@ function ownerEmail(d) {
     ${routeCard('Ruta', d.summary)}
     <table style="width:100%;border-collapse:collapse;margin:0 0 18px">
       ${irow('📞', 'Teléfono', d.phone)}
-      ${irow('✉️', 'Email', d.email)}
+      ${irow('📧', 'Email', d.email)}
       ${irow('📅', 'Fecha', d.date)}
       ${irow('🕐', 'Hora', d.time)}
       ${irow('👥', 'Pasajeros', d.pax)}
       ${irow('📍', 'Recogida', d.pickup)}
-      ${irow('✈️', 'Vuelo', d.flight)}
+      ${irow('🛫', 'Vuelo', d.flight)}
       ${irow('🚐', 'Servicio', d.tier)}
       ${irow('💵', 'Total', d.total)}
       ${irow('📝', 'Notas', d.notes)}
