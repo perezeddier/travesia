@@ -1032,6 +1032,30 @@ function checkoutOrderMessage(d) {
     `Pickup: ${d.pickup}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
 }
 
+/* Reserva por correo: arma los datos (SIN tarjeta) y los envía a la función serverless */
+function reservaPayload(d) {
+  const route = CART.map((it) => `${it.from} → ${it.to} (${it.vname})`).join("  +  ");
+  const es = currentLang === "es";
+  const kids = d.children && +d.children > 0 ? (es ? `, ${d.children} niños` : `, ${d.children} children`) : "";
+  const pax = `${d.adults || ""}${es ? " adultos" : " adults"}${kids}`;
+  const tier = d.experience === "1" ? "Travesía VIP" : "Travesía Standard";
+  return {
+    name: d.name, email: d.email, phone: d.phone,
+    summary: route, date: d.date, time: d.time, pax,
+    pickup: d.pickup, flight: d.flight, tier,
+    total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
+  };
+}
+function postReserva(payload) {
+  try {
+    fetch("/api/reservar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  } catch (e) {}
+}
+
 function openCart() {
   document.getElementById("cartDrawer")?.classList.add("open");
   document.getElementById("cartOverlay")?.classList.add("show");
@@ -1229,9 +1253,12 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     if (!coForm.reportValidity()) return;
     const data = Object.fromEntries(new FormData(coForm).entries());
+    // Enviar la reserva por correo (al cliente + a Eddie), sin tarjeta y sin bloquear.
+    postReserva(reservaPayload(data));
     // TODO Tilopay: aquí se creará el cobro con tarjeta (función serverless en Vercel).
-    // Interino: enviar la reserva completa por WhatsApp para confirmar y cobrar.
+    // Además, abrir WhatsApp con la reserva completa (respaldo / confirmación directa).
     window.open(wa(checkoutOrderMessage(data)), "_blank");
+    toast(currentLang === "es" ? "¡Reserva enviada! Te enviamos un correo de confirmación." : "Booking sent! We've emailed you a confirmation.");
   });
 
   applyLang(currentLang);
