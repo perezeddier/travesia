@@ -21,14 +21,13 @@ function esc(s) {
 }
 
 /* --------- plantillas de correo --------- */
-// fila con icono: 📅 | etiqueta | valor
+// fila apilada (mobile-safe): etiqueta arriba, valor abajo (nunca se corta)
 function irow(icon, label, value) {
   if (!value) return '';
-  return `<tr>
-    <td style="padding:9px 0;border-bottom:1px solid #eef1f5;width:24px;font-size:15px;vertical-align:top">${icon}</td>
-    <td style="padding:9px 10px;border-bottom:1px solid #eef1f5;color:#8a94a3;font-size:13px;vertical-align:top;white-space:nowrap">${esc(label)}</td>
-    <td style="padding:9px 0;border-bottom:1px solid #eef1f5;color:#1a1d23;font-size:14px;font-weight:600;text-align:right">${esc(value)}</td>
-  </tr>`;
+  return `<tr><td style="padding:10px 0;border-bottom:1px solid #eef1f5">
+    <div style="color:#8a94a3;font-size:12px;margin-bottom:2px">${icon}&nbsp;${esc(label)}</div>
+    <div style="color:#1a1d23;font-size:15px;font-weight:600;line-height:1.35;word-break:break-word">${esc(value)}</div>
+  </td></tr>`;
 }
 
 function routeCard(label, route) {
@@ -38,11 +37,12 @@ function routeCard(label, route) {
   </div>`;
 }
 
-function waBtn(phone, text) {
+function waBtn(phone, text, msg) {
   const num = String(phone || '').replace(/[^0-9]/g, '');
   if (!num) return '';
-  return `<table role="presentation" style="border-collapse:collapse;margin:2px 0 4px"><tr><td style="border-radius:10px;background:#25d366">
-    <a href="https://wa.me/${num}" style="display:inline-block;color:#fff;text-decoration:none;font-weight:700;padding:13px 22px;font-size:14px;border-radius:10px">💬 ${esc(text)}</a>
+  const q = msg ? '?text=' + encodeURIComponent(msg) : '';
+  return `<table role="presentation" width="100%" style="border-collapse:collapse;margin:2px 0 4px"><tr><td style="border-radius:10px;background:#25d366;text-align:center">
+    <a href="https://wa.me/${num}${q}" style="display:block;color:#fff;text-decoration:none;font-weight:700;padding:14px 18px;font-size:15px;border-radius:10px">💬 ${esc(text)}</a>
   </td></tr></table>`;
 }
 
@@ -97,7 +97,9 @@ function clientEmail(d, lang) {
       ${irow('🚐', t.L.service, d.tier)}
       ${irow('💵', t.L.price, d.total)}
     </table>
-    ${waBtn(WA, t.wa)}
+    ${waBtn(WA, t.wa, en
+      ? `Hi Travesía, I'm ${d.name || ''}. I just submitted a booking request: ${d.summary || ''}${d.date ? ' on ' + d.date : ''}. I'd like to confirm.`
+      : `Hola Travesía, soy ${d.name || ''}. Acabo de enviar una solicitud de reserva: ${d.summary || ''}${d.date ? ' el ' + d.date : ''}. Quisiera confirmar.`)}
     <p style="color:#9ca3af;font-size:12px;line-height:1.5;margin:14px 0 0">${t.note}</p>`;
   return { subject: t.subj, html: shell(body, t.intro) };
 }
@@ -120,7 +122,9 @@ function ownerEmail(d) {
       ${irow('💵', 'Total', d.total)}
       ${irow('📝', 'Notas', d.notes)}
     </table>
-    ${waBtn(d.phone, 'Escribir al cliente por WhatsApp')}`;
+    ${waBtn(d.phone, 'Escribir al cliente por WhatsApp', d.lang !== 'es'
+      ? `Hi ${d.name || ''}, thank you for your booking request with Travesía Costa Rica! About your trip ${d.summary || ''}${d.date ? ' on ' + d.date : ''} — I'd love to confirm the details with you.`
+      : `Hola ${d.name || ''}, ¡gracias por tu reserva con Travesía Costa Rica! Sobre tu viaje ${d.summary || ''}${d.date ? ' el ' + d.date : ''}, me encantaría confirmar los detalles con vos.`)}`;
   return { subject: `🚐 Nueva reserva: ${d.name || 'cliente'} — ${d.summary || ''}`, html: shell(body, `${d.name || ''} · ${d.summary || ''}`) };
 }
 
