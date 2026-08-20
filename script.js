@@ -1036,8 +1036,10 @@ function checkoutOrderMessage(d) {
 function reservaPayload(d) {
   const route = CART.map((it) => `${it.from} → ${it.to} (${it.vname})`).join("  +  ");
   const es = currentLang === "es";
-  const kids = d.children && +d.children > 0 ? (es ? `, ${d.children} niños` : `, ${d.children} children`) : "";
-  const pax = `${d.adults || ""}${es ? " adultos" : " adults"}${kids}`;
+  const nA = +d.adults || 0, nC = +d.children || 0;
+  const aWord = es ? (nA === 1 ? "adulto" : "adultos") : (nA === 1 ? "adult" : "adults");
+  const cWord = es ? (nC === 1 ? "niño" : "niños") : (nC === 1 ? "child" : "children");
+  const pax = `${nA} ${aWord}${nC > 0 ? `, ${nC} ${cWord}` : ""}`;
   const tier = d.experience === "1" ? "Travesía VIP" : "Travesía Standard";
   return {
     name: d.name, email: d.email, phone: d.phone,
