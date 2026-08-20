@@ -21,19 +21,21 @@ function esc(s) {
 }
 
 /* --------- plantillas de correo --------- */
-// fila apilada (mobile-safe): etiqueta arriba, valor abajo (nunca se corta)
-function irow(icon, label, value) {
+// fila apilada (mobile-safe, SIN emojis): etiqueta gris arriba, valor abajo
+function irow(_icon, label, value) {
   if (!value) return '';
   return `<tr><td style="padding:10px 0;border-bottom:1px solid #eef1f5">
-    <div style="color:#8a94a3;font-size:12px;margin-bottom:2px">${icon}&nbsp;${esc(label)}</div>
+    <div style="color:#98a1af;font-size:11px;text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:3px">${esc(label)}</div>
     <div style="color:#1a1d23;font-size:15px;font-weight:600;line-height:1.35;word-break:break-word">${esc(value)}</div>
   </td></tr>`;
 }
 
 function routeCard(label, route) {
+  // separadores seguros: convierte flechas raras en un guion que se ve en todo celular
+  const clean = String(route || '').replace(/\s*(→|->|›|»|⟶|—|–|=>)\s*/g, ' - ');
   return `<div style="background:#fff8f1;border:1px solid #f6d9b8;border-radius:12px;padding:15px 16px;margin:0 0 16px;text-align:center">
     <div style="font-size:11px;color:#b06a1a;text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:4px">${esc(label)}</div>
-    <div style="font-size:17px;font-weight:800;color:#1a1d23;line-height:1.3">${esc(route || '')}</div>
+    <div style="font-size:17px;font-weight:800;color:#1a1d23;line-height:1.3">${esc(clean)}</div>
   </div>`;
 }
 
@@ -42,7 +44,7 @@ function waBtn(phone, text, msg) {
   if (!num) return '';
   const q = msg ? '?text=' + encodeURIComponent(msg) : '';
   return `<table role="presentation" width="100%" style="border-collapse:collapse;margin:2px 0 4px"><tr><td style="border-radius:10px;background:#25d366;text-align:center">
-    <a href="https://wa.me/${num}${q}" style="display:block;color:#fff;text-decoration:none;font-weight:700;padding:14px 18px;font-size:15px;border-radius:10px">💬 ${esc(text)}</a>
+    <a href="https://wa.me/${num}${q}" style="display:block;color:#fff;text-decoration:none;font-weight:700;padding:14px 18px;font-size:15px;border-radius:10px">${esc(text)}</a>
   </td></tr></table>`;
 }
 
@@ -60,7 +62,7 @@ function shell(bodyHtml, preheader) {
       <div style="background:#f6f8fa;border-top:1px solid #e6e9ee;padding:18px 24px;text-align:center;color:#8a94a3;font-size:12px;line-height:1.7">
         <b style="color:#5a6472">Travesía Costa Rica</b> · La Fortuna, Arenal<br>
         WhatsApp +506 8502 8476 · <a href="https://travesiacr.online" style="color:#e07b1f;text-decoration:none">travesiacr.online</a><br>
-        ★ 5.0 Google · TripAdvisor Travelers' Choice 2025
+        5.0 en Google · TripAdvisor Travelers' Choice 2025
       </div>
     </div>
   </div></body></html>`;
@@ -70,14 +72,14 @@ function clientEmail(d, lang) {
   const en = lang !== 'es';
   const t = en ? {
     subj: 'We received your booking request — Travesía Costa Rica',
-    badge: '✓ Request received', hi: `Thank you, ${esc(d.name || '')}!`,
+    badge: 'Request received', hi: `Thank you, ${esc(d.name || '')}!`,
     intro: 'We received your trip request. Our team will confirm availability and the final details with you shortly.',
     route: 'Your route', wa: 'Message us on WhatsApp',
     L: { date: 'Date', time: 'Time', pax: 'Passengers', pickup: 'Pickup', flight: 'Flight', service: 'Service', price: 'Price' },
     note: 'This is a request, not a final confirmation. We will contact you shortly to confirm your trip.'
   } : {
     subj: 'Recibimos tu solicitud de reserva — Travesía Costa Rica',
-    badge: '✓ Solicitud recibida', hi: `¡Gracias, ${esc(d.name || '')}!`,
+    badge: 'Solicitud recibida', hi: `¡Gracias, ${esc(d.name || '')}!`,
     intro: 'Recibimos tu solicitud de viaje. Nuestro equipo te confirmará la disponibilidad y los detalles finales en breve.',
     route: 'Tu ruta', wa: 'Escríbenos por WhatsApp',
     L: { date: 'Fecha', time: 'Hora', pax: 'Pasajeros', pickup: 'Recogida', flight: 'Vuelo', service: 'Servicio', price: 'Precio' },
@@ -106,7 +108,7 @@ function clientEmail(d, lang) {
 
 function ownerEmail(d) {
   const body = `
-    <div style="display:inline-block;background:#fff1e3;color:#c9721c;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;margin-bottom:12px">🚐 Nueva reserva</div>
+    <div style="display:inline-block;background:#fff1e3;color:#c9721c;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;margin-bottom:12px">Nueva reserva</div>
     <h1 style="font-size:21px;margin:0 0 4px;color:#1a1d23">${esc(d.name || 'Cliente')}</h1>
     <p style="color:#8a94a3;font-size:13px;margin:0 0 16px">Entró una nueva solicitud desde el sitio web.</p>
     ${routeCard('Ruta', d.summary)}
@@ -125,7 +127,7 @@ function ownerEmail(d) {
     ${waBtn(d.phone, 'Escribir al cliente por WhatsApp', d.lang !== 'es'
       ? `Hi ${d.name || ''}, thank you for your booking request with Travesía Costa Rica! About your trip ${d.summary || ''}${d.date ? ' on ' + d.date : ''} — I'd love to confirm the details with you.`
       : `Hola ${d.name || ''}, ¡gracias por tu reserva con Travesía Costa Rica! Sobre tu viaje ${d.summary || ''}${d.date ? ' el ' + d.date : ''}, me encantaría confirmar los detalles con vos.`)}`;
-  return { subject: `🚐 Nueva reserva: ${d.name || 'cliente'} — ${d.summary || ''}`, html: shell(body, `${d.name || ''} · ${d.summary || ''}`) };
+  return { subject: `Nueva reserva: ${d.name || 'cliente'} - ${d.summary || ''}`, html: shell(body, `${d.name || ''} - ${d.summary || ''}`) };
 }
 
 async function sendEmail(to, subject, html, replyTo) {
