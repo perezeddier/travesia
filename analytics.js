@@ -20,8 +20,8 @@
   }
 
   // ---------- Microsoft Clarity ----------
-  // Cuando Eddie cree la cuenta en clarity.microsoft.com, pegar aquí el ID del proyecto.
-  var CLARITY_ID = '';
+  // Microsoft Clarity — proyecto "Travesía" (clarity.microsoft.com)
+  var CLARITY_ID = 'y5ccd6f9pa';
   if (CLARITY_ID) {
     (function (c, l, a, r, i, t, y) {
       c[a] = c[a] || function () { (c[a].q = c[a].q || []).push(arguments); };
