@@ -7,6 +7,11 @@
 
 const WA = "50685028476"; // WhatsApp number, no + or spaces
 
+/* ---------- Analytics: eventos de conversión (no rompe nada si GA no cargó) ---------- */
+function gaEvent(name, params) {
+  try { if (typeof window.gtag === "function") window.gtag("event", name, params || {}); } catch (e) {}
+}
+
 /* ---------- WhatsApp helper ---------- */
 function wa(text) {
   return `https://wa.me/${WA}?text=${encodeURIComponent(text)}`;
@@ -973,6 +978,7 @@ function addToCart(i, j, vkey) {
   CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey], vip: false });
   saveCart(); updateCartCount(); renderCart();
   toast(t("cart.added"));
+  gaEvent("add_to_cart", { currency: "USD", value: p[vkey], vehicle: v.name, route: `${comboLabel("fromInput", i)} -> ${comboLabel("toInput", j)}` });
   const badge = document.querySelector(".cart-btn");
   if (badge) { badge.classList.remove("pulse"); void badge.offsetWidth; badge.classList.add("pulse"); }
 }
@@ -1036,6 +1042,7 @@ function openCheckout() {
   document.getElementById("checkout")?.classList.add("open");
   document.getElementById("checkoutOverlay")?.classList.add("show");
   document.body.classList.add("no-scroll");
+  gaEvent("begin_checkout", { currency: "USD", value: cartTotal(), items: CART.length });
 }
 function closeCheckout() {
   document.getElementById("checkout")?.classList.remove("open");
@@ -1310,7 +1317,10 @@ document.addEventListener("DOMContentLoaded", () => {
         body: JSON.stringify(pagarPayload(data)),
       });
       const j = await r.json();
-      if (j && j.ok && j.url) { window.location.href = j.url; return; }
+      if (j && j.ok && j.url) {
+        gaEvent("add_payment_info", { currency: "USD", value: j.amount || cartTotal(), order_number: j.orderNumber });
+        window.location.href = j.url; return;
+      }
       throw new Error((j && j.error) || "pago");
     } catch (err) {
       // Respaldo: si no se pudo crear el pago, enviamos por correo + abrimos WhatsApp (como antes).
@@ -1318,6 +1328,7 @@ document.addEventListener("DOMContentLoaded", () => {
       postReserva(reservaPayload(data));
       window.open(wa(checkoutOrderMessage(data)), "_blank");
       toast(currentLang === "es" ? "Te abrimos WhatsApp para completar tu reserva." : "We opened WhatsApp to complete your booking.");
+      gaEvent("checkout_fallback_whatsapp", {});
     }
   });
 

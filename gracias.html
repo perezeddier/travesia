@@ -67,6 +67,21 @@
         '<a class="btn btn-wa" href="' + wa + '">Escríbenos por WhatsApp</a>';
     }
     if (order) { var o = document.getElementById('order'); o.style.display = 'inline-block'; o.textContent = 'Orden: ' + order; }
+
+    // Registrar la venta en Analytics (espera a que /analytics.js cargue, con reintentos).
+    if (ok) {
+      var value = parseFloat(p.get('v') || '0') || 0;
+      var tries = 0;
+      var sendPurchase = function () {
+        if (typeof window.gtag === 'function') {
+          window.gtag('event', 'purchase', {
+            transaction_id: order || ('TVCR-' + Date.now()),
+            currency: 'USD', value: value,
+          });
+        } else if (tries++ < 20) { setTimeout(sendPurchase, 250); }
+      };
+      sendPurchase();
+    }
   })();
 </script>
 <script defer src="/analytics.js"></script>

@@ -14,6 +14,7 @@ export default async function handler(req, res) {
   const approved = String(q.code) === '1';
   const order = q.order || q.orderNumber || '';
 
+  let amount = '';
   if (approved) {
     try {
       let booking = {};
@@ -24,11 +25,15 @@ export default async function handler(req, res) {
       if (booking && booking.email && booking.summary) {
         if (q.auth) booking.orderNumber = booking.orderNumber || order;
         await sendReservation(booking, true);
+        const m = String(booking.total || '').match(/[\d.]+/);
+        if (m) amount = m[0];
       }
     } catch (e) { /* no bloquear el regreso del cliente si el correo falla */ }
   }
 
-  const to = 'https://travesiacr.online/gracias?ok=' + (approved ? '1' : '0') + (order ? '&o=' + encodeURIComponent(order) : '');
+  const to = 'https://travesiacr.online/gracias?ok=' + (approved ? '1' : '0')
+    + (order ? '&o=' + encodeURIComponent(order) : '')
+    + (amount ? '&v=' + encodeURIComponent(amount) : '');
   res.writeHead(302, { Location: to });
   res.end();
 }
