@@ -1334,6 +1334,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   applyLang(currentLang);
 
+  // Adivinar el país del visitante para el checkout (menos fricción, el cliente lo puede cambiar).
+  fetch("/api/geo").then((r) => r.json()).then((g) => {
+    const sel = document.querySelector('#coForm [name="country"]');
+    if (sel && g && g.country && sel.querySelector(`option[value="${g.country}"]`)) sel.value = g.country;
+  }).catch(() => {});
+
   document.getElementById("year").textContent = "2026";
 
   // Language toggle

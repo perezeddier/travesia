@@ -116,7 +116,8 @@ export default async function handler(req, res) {
       amount: amount.toFixed(2),
       currency: 'USD',
       orderNumber,
-      capture: '1',
+      capture: '0',   // autorizar SOLAMENTE aquí; el cobro real se captura en /api/retorno, con una llamada
+                       // segura de servidor a servidor a Tilopay. Así nadie puede fingir un "pago recibido".
       billToFirstName: firstName,
       billToLastName: lastName,
       billToAddress: address,
