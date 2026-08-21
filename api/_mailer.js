@@ -40,6 +40,10 @@ function waBtn(phone, text, msg) {
   </td></tr></table>`;
 }
 
+function linkBtn(url, text, bg, fg) {
+  return `<table role="presentation" width="100%" style="border-collapse:collapse;margin:2px 0 10px"><tr><td style="border-radius:10px;background:${bg}"><a href="${url}" style="display:block;color:${fg};text-decoration:none;font-weight:700;padding:13px 18px;font-size:14px;border-radius:10px;text-align:center">${esc(text)}</a></td></tr></table>`;
+}
+
 function shell(bodyHtml, preheader) {
   return `<!doctype html><html><body style="margin:0;background:#eef1f5;font-family:'Segoe UI',Arial,sans-serif;color:#1a1d23">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0">${esc(preheader || '')}</div>
@@ -127,6 +131,31 @@ function ownerEmail(d, paid) {
       ? `Hi ${d.name || ''}, thank you for booking with Travesía Costa Rica! About your trip ${d.summary || ''}${d.date ? ' on ' + d.date : ''} — I'd love to confirm the details with you.`
       : `Hola ${d.name || ''}, ¡gracias por reservar con Travesía Costa Rica! Sobre tu viaje ${d.summary || ''}${d.date ? ' el ' + d.date : ''}, me encantaría confirmar los detalles con vos.`)}`;
   return { subject: `${tag}: ${d.name || 'cliente'} - ${d.summary || ''}`, html: shell(body, `${d.name || ''} - ${d.summary || ''}`) };
+}
+
+// Correo "¿cómo estuvo tu viaje?" pidiendo reseña — bilingüe (no sabemos el idioma
+// del cliente en este punto), con Google como link principal y TripAdvisor como extra.
+const GOOGLE_REVIEW_URL = 'https://g.page/r/CXQCAbYUe76nEBM/review';
+const TRIPADVISOR_REVIEW_URL = 'https://www.tripadvisor.es/Attraction_Review-g309226-d26527142-Reviews-Travesia_Costa_Rica-La_Fortuna_de_San_Carlos_Arenal_Volcano_National_Park_Provin.html';
+
+function reviewEmail(nombre) {
+  const body = `
+    <h1 style="font-size:20px;margin:0 0 8px;color:#1a1d23">Thank you, ${esc(nombre || '')}!</h1>
+    <p style="color:#4b5563;font-size:14px;line-height:1.6;margin:0 0 16px">We hope you had a great time in Costa Rica! If you enjoyed your ride with us, a quick review helps other travelers find Travesía — it only takes a minute.</p>
+    ${linkBtn(GOOGLE_REVIEW_URL, 'Leave a Google review', '#e07b1f', '#241c05')}
+    <p style="color:#9ca3af;font-size:12px;margin:0 0 26px">Also on TripAdvisor? <a href="${TRIPADVISOR_REVIEW_URL}" style="color:#e07b1f">Leave a review there too</a>.</p>
+    <hr style="border:none;border-top:1px solid #eef1f5;margin:0 0 22px">
+    <h1 style="font-size:20px;margin:0 0 8px;color:#1a1d23">¡Gracias, ${esc(nombre || '')}!</h1>
+    <p style="color:#4b5563;font-size:14px;line-height:1.6;margin:0 0 16px">¡Esperamos que hayas disfrutado tu viaje por Costa Rica! Si te gustó tu traslado con nosotros, una reseña rapidita ayuda a que más viajeros nos encuentren — toma solo un minuto.</p>
+    ${linkBtn(GOOGLE_REVIEW_URL, 'Dejar una reseña en Google', '#e07b1f', '#241c05')}
+    <p style="color:#9ca3af;font-size:12px;margin:0">¿También usás TripAdvisor? <a href="${TRIPADVISOR_REVIEW_URL}" style="color:#e07b1f">Dejanos una reseña ahí también</a>.</p>`;
+  return { subject: 'How was your trip? / ¿Cómo estuvo tu viaje? — Travesía Costa Rica', html: shell(body, 'Gracias por viajar con Travesía') };
+}
+
+export async function sendReviewRequest(nombre, email) {
+  if (!process.env.BREVO_API_KEY) throw new Error('no-brevo-key');
+  const r = reviewEmail(nombre);
+  await sendEmail(email, r.subject, r.html);
 }
 
 async function sendEmail(to, subject, html, replyTo) {
