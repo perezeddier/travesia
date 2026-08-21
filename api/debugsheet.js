@@ -9,7 +9,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({ action: 'nextOrder' }),
     });
     const text = await r.text();
-    res.status(200).json({ hasUrl: true, urlHost: new URL(url).host, status: r.status, body: text.slice(0, 500) });
+    const u = new URL(url);
+    res.status(200).json({ hasUrl: true, urlHost: u.host, urlPathStart: u.pathname.slice(0, 35), status: r.status, body: text.slice(0, 500) });
   } catch (e) {
     res.status(200).json({ hasUrl: true, error: String(e && e.message || e) });
   }
