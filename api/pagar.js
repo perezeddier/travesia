@@ -26,6 +26,27 @@ function legPrice(i, j, vkey) {
 }
 
 const TB = 'https://app.tilopay.com/api/v1';
+
+// Pide el siguiente número de orden (1347, 1348, ...) a la hoja de Google (contador ahí).
+// Si falla o tarda, devuelve null y el que llama usa un respaldo — nunca bloquea el pago.
+async function nextOrderNumber() {
+  const url = process.env.SHEETS_WEBHOOK_URL;
+  if (!url) return null;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 4000);
+    const r = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'nextOrder' }),
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    const j = await r.json();
+    if (j && j.ok && j.order) return 'TCR-' + j.order;
+  } catch (e) { /* respaldo abajo */ }
+  return null;
+}
 const REDIRECT = 'https://travesiacr.online/api/retorno';
 
 export default async function handler(req, res) {
@@ -60,7 +81,9 @@ export default async function handler(req, res) {
     if (!login.access_token) { res.status(502).json({ ok: false, error: 'login-failed', detail: login }); return; }
 
     // ---- Datos para el cobro ----
-    const orderNumber = 'TVCR-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+    // Número de orden corto y consecutivo (TCR-1347, TCR-1348...) usando la hoja de Google
+    // como contador. Si la hoja no responde, cae a un número único de respaldo (nunca bloquea el pago).
+    const orderNumber = (await nextOrderNumber()) || ('TVCR-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 4).toUpperCase());
     const nameParts = String(d.name || 'Cliente').trim().split(/\s+/);
     const firstName = nameParts[0] || 'Cliente';
     const lastName = nameParts.slice(1).join(' ') || firstName;
