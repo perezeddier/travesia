@@ -29,13 +29,27 @@ $meta[7]  = @{ n = "Brasilito"; slug = "brasilito" }
 $meta[8]  = @{ n = "Papagayo"; slug = "papagayo" }
 $meta[9]  = @{ n = "Puerto Viejo"; slug = "puerto-viejo" }
 $meta[10] = @{ n = "Santa Teresa"; slug = "santa-teresa" }
+$meta[11] = @{ n = "Jaco"; slug = "jaco" }
+$meta[12] = @{ n = "Playas del Coco"; slug = "playas-del-coco" }
 $meta[13] = @{ n = "Playa Flamingo"; slug = "playa-flamingo" }
+$meta[14] = @{ n = "Playa Hermosa (Guanacaste)"; slug = "playa-hermosa" }
+$meta[16] = @{ n = "Playa Potrero"; slug = "playa-potrero" }
+$meta[18] = @{ n = "Ocotal"; slug = "ocotal" }
+$meta[19] = @{ n = "Dominical"; slug = "dominical" }
 $meta[20] = @{ n = "Uvita"; slug = "uvita" }
 $meta[23] = @{ n = "Herradura / Los Suenos"; slug = "los-suenos" }
+$meta[30] = @{ n = "Rincon de la Vieja"; slug = "rincon-de-la-vieja" }
+$meta[38] = @{ n = "Montezuma"; slug = "montezuma" }
 $meta[39] = @{ n = "Nosara"; slug = "nosara" }
 $meta[40] = @{ n = "Samara"; slug = "samara" }
+$meta[41] = @{ n = "Puerto Jimenez"; slug = "puerto-jimenez" }
+$meta[42] = @{ n = "Rio Celeste"; slug = "rio-celeste" }
 $meta[44] = @{ n = "San Jose (city)"; slug = "san-jose-city" }
 $meta[45] = @{ n = "Alajuela"; slug = "alajuela" }
+
+# Zonas que YA tienen su propia pagina /shuttle/... generada por genroutes.ps1
+# (para no linkear a una pagina de ruta que no existe)
+$routeCovered = @(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,19,20,23,30,32,36,39,40,42,44,45)
 
 # --- Precio directo entre dos zonas (Staria + duracion) ---
 $LOOKUP = @{}
@@ -91,8 +105,10 @@ foreach ($h in $hotels) {
     $rel += "<a href='/hotel/$slug2'><div class='r-route'>$($h2.name)</div><div class='r-price'>$($zone.n)</div></a>"
     $count++
   }
-  $routeSlug = "$($zone.slug)-to-san-jose-airport"
-  $rel += "<a href='/shuttle/$routeSlug'><div class='r-route'>$($zone.n) &rarr; San Jose Airport</div><div class='r-price'>All routes</div></a>"
+  if ($routeCovered -contains $h.place) {
+    $routeSlug = "$($zone.slug)-to-san-jose-airport"
+    $rel += "<a href='/shuttle/$routeSlug'><div class='r-route'>$($zone.n) &rarr; San Jose Airport</div><div class='r-price'>All routes</div></a>"
+  }
 
   $waMsg = "Hi Travesia! I'd like a private transfer to/from $($h.name). Date & passengers: "
   $waHref = "https://wa.me/$WA" + "?text=" + [uri]::EscapeDataString($waMsg)

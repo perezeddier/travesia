@@ -90,6 +90,7 @@ const PT_HOTELS = [
   // La Fortuna / Arenal (2)
   { name: "Tabacón Thermal Resort", place: 2 },
   { name: "Nayara Springs / Nayara Gardens", place: 2 },
+  { name: "Nayara Tented Camp", place: 2 },
   { name: "The Springs Resort & Spa", place: 2 },
   { name: "Arenal Springs Resort", place: 2 },
   { name: "Hotel Arenal Kioro", place: 2 },
@@ -97,12 +98,20 @@ const PT_HOTELS = [
   { name: "Volcano Lodge & Springs", place: 2 },
   { name: "Arenal Manoa", place: 2 },
   { name: "Los Lagos Hotel", place: 2 },
+  { name: "The Royal Corin Thermal Water Spa & Resort", place: 2 },
+  { name: "Arenal Observatory Lodge & Trails", place: 2 },
+  { name: "Lost Iguana Resort & Spa", place: 2 },
+  { name: "Arenal Paraiso Resort & Spa", place: 2 },
+  { name: "Hotel El Silencio del Campo", place: 2 },
+  { name: "Rancho Margot", place: 2 },
   // Monteverde (3)
   { name: "Hotel Belmar", place: 3 },
   { name: "Monteverde Lodge & Gardens", place: 3 },
   { name: "El Establo Mountain Hotel", place: 3 },
   { name: "Senda Monteverde", place: 3 },
   { name: "Hotel Fonda Vela", place: 3 },
+  { name: "Trapp Family Lodge", place: 3 },
+  { name: "Hotel Poco a Poco", place: 3 },
   // Manuel Antonio / Quepos (4)
   { name: "Si Como No Resort", place: 4 },
   { name: "Tulemar Resort", place: 4 },
@@ -110,10 +119,17 @@ const PT_HOTELS = [
   { name: "Arenas del Mar", place: 4 },
   { name: "Hotel Costa Verde", place: 4 },
   { name: "Gaia Hotel & Reserve", place: 4 },
+  { name: "Makanda by the Sea", place: 4 },
+  { name: "Hotel La Mariposa", place: 4 },
+  { name: "Shana by the Beach", place: 4 },
+  { name: "Karahe Beach Hotel", place: 4 },
   // Tamarindo (5)
   { name: "Tamarindo Diriá", place: 5 },
   { name: "Wyndham Tamarindo", place: 5 },
   { name: "Hotel Capitán Suizo", place: 5 },
+  { name: "Cala Luna Boutique Hotel", place: 5 },
+  { name: "Jardín del Edén Boutique Hotel", place: 5 },
+  { name: "The Coast Beachfront Hotel", place: 5 },
   // Papagayo (8)
   { name: "Four Seasons Papagayo", place: 8 },
   { name: "Andaz Peninsula Papagayo", place: 8 },
@@ -125,23 +141,76 @@ const PT_HOTELS = [
   { name: "W Costa Rica (Reserva Conchal)", place: 6 },
   // Flamingo (13)
   { name: "Margaritaville Beach Resort", place: 13 },
+  { name: "Flamingo Beach Resort", place: 13 },
+  { name: "Flamingo Marina Resort", place: 13 },
   // Nosara (39)
   { name: "The Harmony Hotel", place: 39 },
   { name: "Bodhi Tree Yoga Resort", place: 39 },
+  { name: "Lagarta Lodge", place: 39 },
   // Santa Teresa (10)
   { name: "Hotel Nantipa", place: 10 },
   { name: "Florblanca Resort", place: 10 },
+  { name: "Hotel Casa Chameleon", place: 10 },
+  { name: "Pranamar Villas & Yoga Retreat", place: 10 },
+  { name: "Tropico Latino", place: 10 },
   // Herradura / Los Sueños (23)
   { name: "Los Sueños Marriott", place: 23 },
   // Puerto Viejo (9)
   { name: "Le Caméléon Boutique Hotel", place: 9 },
+  { name: "Hotel Banana Azul", place: 9 },
+  { name: "Cariblue Beach & Jungle Resort", place: 9 },
+  { name: "Tree House Lodge", place: 9 },
   // Uvita (20)
   { name: "Kurà Design Villas", place: 20 },
+  { name: "Cristal Ballena Boutique Hotel & Spa", place: 20 },
+  { name: "Rancho Pacifico", place: 20 },
+  // Jaco (11)
+  { name: "Croc's Resort & Casino", place: 11 },
+  { name: "Best Western Jaco Beach Resort", place: 11 },
+  { name: "Club del Mar Oceanfront Resort", place: 11 },
+  { name: "DoceLunas Hotel", place: 11 },
+  // Playas del Coco (12)
+  { name: "Café de Playa Beachfront Hotel", place: 12 },
+  { name: "Bahia Pez Vela", place: 12 },
+  // Playa Hermosa, Guanacaste (14)
+  { name: "Hotel Bosque del Mar", place: 14 },
+  { name: "Villas Sol Beach Resort", place: 14 },
+  { name: "Condovac La Costa", place: 14 },
+  // Playa Potrero (16)
+  { name: "Bahía del Sol Beachfront Boutique Hotel", place: 16 },
+  // Ocotal (18)
+  { name: "Ocotal Beach Resort", place: 18 },
+  // Dominical (19)
+  { name: "Hacienda Barú", place: 19 },
+  // Montezuma (38)
+  { name: "Ylang Ylang Beach Resort", place: 38 },
+  { name: "Hotel Amor de Mar", place: 38 },
+  // Samara (40)
+  { name: "Villas Playa Samara", place: 40 },
+  // Puerto Jimenez / Osa (41)
+  { name: "Lapa Rios Lodge", place: 41 },
+  { name: "Crocodile Bay Resort", place: 41 },
+  // Rincon de la Vieja (30)
+  { name: "Hacienda Guachipelín", place: 30 },
+  { name: "Borinquen Thermal Resort", place: 30 },
+  { name: "Blue River Resort & Hot Springs", place: 30 },
+  // Rio Celeste (42)
+  { name: "Celeste Mountain Lodge", place: 42 },
+  { name: "Rio Celeste Hideaway", place: 42 },
+  // Liberia / LIR (1)
+  { name: "Hilton Garden Inn Liberia Airport", place: 1 },
+  { name: "Hampton by Hilton Guanacaste Airport", place: 1 },
+  // San José Aeropuerto / SJO (0)
+  { name: "Hampton by Hilton San José Airport", place: 0 },
+  { name: "Courtyard by Marriott San José Airport", place: 0 },
   // San José centro (44)
   { name: "Gran Hotel Costa Rica", place: 44 },
   { name: "Hotel Grano de Oro", place: 44 },
+  { name: "Hotel Presidente", place: 44 },
+  { name: "Barceló San José", place: 44 },
   // Alajuela / cerca aeropuerto (45)
   { name: "Xandari Resort & Spa", place: 45 },
+  { name: "Costa Rica Marriott Hotel Hacienda Belén", place: 45 },
 ];
 
 /* Exportar datos para el servidor (Node/Vercel). En el navegador, "module" no existe y se ignora. */
