@@ -41,13 +41,13 @@ export default async function handler(req, res) {
 
     // ---- RECALCULAR el precio en el servidor ----
     let amount = 0;
+    let vipCount = 0;
     for (const it of cart) {
       const p = legPrice(+it.i, +it.j, it.vkey);
       if (p == null) { res.status(400).json({ ok: false, error: 'bad-leg' }); return; }
       amount += p;
+      if (it.vip === true || it.vip === '1' || it.vip === 1) { amount += 80; vipCount++; }  // VIP por tramo
     }
-    const vip = d.vip === true || d.vip === '1' || d.vip === 1;
-    if (vip) amount += 80;
     if (!(amount > 0)) { res.status(400).json({ ok: false, error: 'bad-amount' }); return; }
 
     // ---- 1) Login en Tilopay ----
@@ -65,7 +65,8 @@ export default async function handler(req, res) {
     const firstName = nameParts[0] || 'Cliente';
     const lastName = nameParts.slice(1).join(' ') || firstName;
     const phone = String(d.phone || '').replace(/[^0-9]/g, '') || '00000000';
-    const tier = vip ? 'Travesía VIP' : 'Travesía Standard';
+    const tier = vipCount === 0 ? 'Travesía Standard'
+      : (vipCount === cart.length ? 'Travesía VIP' : `VIP en ${vipCount} de ${cart.length}`);
 
     // Dirección de facturación de la tarjeta (mejora la aceptación / AVS en tarjetas extranjeras)
     const rawCountry = String(d.country || '').toUpperCase();

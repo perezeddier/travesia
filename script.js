@@ -284,6 +284,7 @@ const I18N = {
     "co.vip3": "1–2h of tourist stops",
     "co.vip4": "Welcome kit: snacks & drinks",
     "co.addon": "Travesía VIP",
+    "co.vipAdd": "Add Travesía VIP",
     "co.secure": "Pay securely by card on Tilopay's protected page — your card never touches our site · Free cancellation up to 48h before · Taxes included, prices in USD",
     "co.back": "Back to trip",
     "co.empty": "Add at least one route to your trip first.",
@@ -546,6 +547,7 @@ const I18N = {
     "co.vip3": "1–2 h de paradas turísticas",
     "co.vip4": "Kit de bienvenida: snacks y bebidas",
     "co.addon": "Travesía VIP",
+    "co.vipAdd": "Agregar Travesía VIP",
     "co.secure": "Pagá seguro con tarjeta en la página protegida de Tilopay — tu tarjeta nunca pasa por nuestro sitio · Cancelación gratis hasta 48 h antes · Impuestos incluidos, precios en USD",
     "co.back": "Volver al viaje",
     "co.empty": "Agrega al menos una ruta a tu viaje primero.",
@@ -954,7 +956,7 @@ function renderFinder() {
 let CART = [];
 try { CART = JSON.parse(localStorage.getItem("travesia-cart") || "[]"); } catch (e) { CART = []; }
 function saveCart() { try { localStorage.setItem("travesia-cart", JSON.stringify(CART)); } catch (e) {} }
-function cartTotal() { return CART.reduce((s, it) => s + it.price, 0); }
+function cartTotal() { return CART.reduce((s, it) => s + it.price + (it.vip ? 80 : 0), 0); }
 
 function updateCartCount() {
   const n = CART.length;
@@ -968,7 +970,7 @@ function addToCart(i, j, vkey) {
   const p = ptPrice(i, j);
   if (!p || p[vkey] == null) return;
   const v = VEHICLES.find((x) => x.key === vkey);
-  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey] });
+  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey], vip: false });
   saveCart(); updateCartCount(); renderCart();
   toast(t("cart.added"));
   const badge = document.querySelector(".cart-btn");
@@ -995,9 +997,9 @@ function renderCart() {
       <div class="cart-item">
         <div class="cart-item-main">
           <div class="cart-route"><span>${it.from}</span> ${ARROW} <span>${it.to}</span></div>
-          <div class="cart-veh">${it.vname}</div>
+          <div class="cart-veh">${it.vname}${it.vip ? ' · <b style="color:var(--gold-2)">Travesía VIP</b>' : ''}</div>
         </div>
-        <div class="cart-item-price">$${it.price}</div>
+        <div class="cart-item-price">$${it.price + (it.vip ? 80 : 0)}</div>
         <button class="cart-remove" type="button" data-remove="${idx}" aria-label="${t("cart.remove")}" title="${t("cart.remove")}">&times;</button>
       </div>`).join("");
   }
@@ -1009,22 +1011,27 @@ function renderCart() {
 
 /* ---------- CHECKOUT (reserva + pago) ---------- */
 function checkoutHasExperience() {
-  return document.querySelector('#coForm [name="experience"]:checked')?.value === "1";
+  return CART.some((it) => it.vip);
 }
 function checkoutTotal() {
-  return cartTotal() + (checkoutHasExperience() ? 80 : 0);
+  return cartTotal();
 }
 function renderCheckoutSummary() {
   const box = document.getElementById("coSummary");
   if (!box) return;
-  const exp = checkoutHasExperience();
   box.innerHTML = `
-    <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${checkoutTotal()}</strong></div>
-    ${CART.map((it) => `<div class="co-sum-row"><span>${it.from} → ${it.to}</span><span>${it.vname} · $${it.price}</span></div>`).join("")}
-    ${exp ? `<div class="co-sum-row co-sum-addon"><span>+ ${t("co.addon")}</span><span>$80</span></div>` : ""}`;
+    <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${cartTotal()}</strong></div>
+    ${CART.map((it, idx) => `
+      <div class="co-sum-leg">
+        <div class="co-sum-row"><span>${it.from} → ${it.to} · ${it.vname}</span><span>$${it.price + (it.vip ? 80 : 0)}</span></div>
+        <label class="co-sum-vip"><input type="checkbox" data-vip="${idx}" ${it.vip ? "checked" : ""}> <span>${t("co.vipAdd")} <b>+$80</b></span></label>
+      </div>`).join("")}`;
 }
 function openCheckout() {
   if (!CART.length) { toast(t("co.empty")); return; }
+  const anyVip = CART.some((it) => it.vip);
+  const r = document.querySelector(`#coForm [name="experience"][value="${anyVip ? "1" : "0"}"]`);
+  if (r) r.checked = true;
   renderCheckoutSummary();
   document.getElementById("checkout")?.classList.add("open");
   document.getElementById("checkoutOverlay")?.classList.add("show");
@@ -1037,23 +1044,25 @@ function closeCheckout() {
 }
 /* Mensaje de reserva completo (interino por WhatsApp; luego lo cobra Tilopay) */
 function checkoutOrderMessage(d) {
-  const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname} · $${it.price}`).join("\n");
-  const exp = d.experience === "1" ? "\n+ Travesía VIP (guaranteed bilingual guide + 1-2h tourist stops + welcome kit w/ snacks & drinks): $80" : "";
-  const total = cartTotal() + (d.experience === "1" ? 80 : 0);
-  return `Hi Travesía! New booking:\n${legs}${exp}\nTotal: $${total}\n\n` +
+  const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · Travesía VIP (+$80)" : ""} · $${it.price + (it.vip ? 80 : 0)}`).join("\n");
+  const total = cartTotal();
+  return `Hi Travesía! New booking:\n${legs}\nTotal: $${total}\n\n` +
     `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
     `Pickup: ${d.pickup}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
 }
 
 /* Reserva por correo: arma los datos (SIN tarjeta) y los envía a la función serverless */
 function reservaPayload(d) {
-  const route = CART.map((it) => `${it.from} → ${it.to} (${it.vname})`).join("  +  ");
   const es = currentLang === "es";
+  const route = CART.map((it) => `${it.from} → ${it.to} (${it.vname}${it.vip ? " · VIP" : ""})`).join("  +  ");
   const nA = +d.adults || 0, nC = +d.children || 0;
   const aWord = es ? (nA === 1 ? "adulto" : "adultos") : (nA === 1 ? "adult" : "adults");
   const cWord = es ? (nC === 1 ? "niño" : "niños") : (nC === 1 ? "child" : "children");
   const pax = `${nA} ${aWord}${nC > 0 ? `, ${nC} ${cWord}` : ""}`;
-  const tier = d.experience === "1" ? "Travesía VIP" : "Travesía Standard";
+  const vipCount = CART.filter((it) => it.vip).length;
+  const tier = vipCount === 0
+    ? "Travesía Standard"
+    : (vipCount === CART.length ? "Travesía VIP" : (es ? `VIP en ${vipCount} de ${CART.length}` : `VIP on ${vipCount} of ${CART.length}`));
   return {
     name: d.name, email: d.email, phone: d.phone,
     summary: route, date: d.date, time: d.time, pax,
@@ -1075,8 +1084,7 @@ function postReserva(payload) {
    recalcule el precio, más los datos de la reserva (sin tarjeta). */
 function pagarPayload(d) {
   const base = reservaPayload(d);
-  base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey }));
-  base.vip = d.experience === "1";
+  base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey, vip: !!it.vip }));  // VIP por tramo
   base.country = d.country || "";   // país de la tarjeta (ISO) — mejora aceptación (AVS)
   base.zip = d.zip || "";           // código postal de la tarjeta
   return base;
@@ -1273,7 +1281,19 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("checkoutClose")?.addEventListener("click", closeCheckout);
   document.getElementById("checkoutBack")?.addEventListener("click", () => { closeCheckout(); openCart(); });
   document.getElementById("checkoutOverlay")?.addEventListener("click", closeCheckout);
-  document.getElementById("coForm")?.addEventListener("change", (e) => { if (e.target.name === "experience") renderCheckoutSummary(); });
+  document.getElementById("checkout")?.addEventListener("change", (e) => {
+    const el = e.target;
+    if (el.name === "experience") {
+      // Elegir VIP marca TODOS los servicios; Standard los desmarca.
+      const all = el.value === "1";
+      CART.forEach((it) => { it.vip = all; });
+      saveCart(); renderCheckoutSummary(); renderCart();
+    } else if (el.dataset && el.dataset.vip != null) {
+      // Destildar/marcar el VIP de un servicio específico.
+      const idx = +el.dataset.vip;
+      if (CART[idx]) { CART[idx].vip = el.checked; saveCart(); renderCheckoutSummary(); renderCart(); }
+    }
+  });
   const coForm = document.getElementById("coForm");
   if (coForm) coForm.addEventListener("submit", async (e) => {
     e.preventDefault();
