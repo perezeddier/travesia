@@ -768,9 +768,13 @@ function renderRoutes() {
     const msg = `Hi Travesía! I'd like to book a private transfer from ${from} to ${to} (from $${p.staria}). Date & passengers: `;
     const href = slug || wa(msg);
     const ext = slug ? "" : ` target="_blank" rel="noopener"`;
+    const dur = ptDuration(p.dur);
     return `
       <a class="route-card" href="${href}"${ext} data-reveal>
-        <span class="route-tag">${tag}</span>
+        <div class="route-card-top">
+          <span class="route-tag">${tag}</span>
+          ${dur ? `<span class="route-dur"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg>${dur}</span>` : ""}
+        </div>
         <div class="route-path">
           <span class="route-from">${from}</span>
           ${ARROW}

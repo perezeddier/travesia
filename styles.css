@@ -468,7 +468,10 @@ body.no-scroll { overflow: hidden; }
   transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 .route-card:hover { transform: translateY(-4px); border-color: rgba(224,123,31,.5); box-shadow: var(--shadow); }
+.route-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .route-tag { align-self: flex-start; font-size: .72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); background: rgba(224,123,31,.1); border: 1px solid rgba(224,123,31,.25); padding: 4px 10px; border-radius: 999px; }
+.route-dur { display: inline-flex; align-items: center; gap: 4px; font-size: .78rem; font-weight: 600; color: var(--muted); }
+.route-dur svg { color: var(--gold-2); flex: 0 0 auto; }
 .route-path { display: flex; align-items: center; gap: 10px; font-family: var(--font-head); font-size: 1.22rem; font-weight: 600; }
 .route-path .arrow { color: var(--gold); flex: 0 0 auto; }
 .route-from, .route-to { flex: 1; }
