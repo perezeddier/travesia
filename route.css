@@ -40,6 +40,8 @@ img{max-width:100%;display:block}
 .rp-price .amt{font-family:var(--font-head);font-size:2rem;font-weight:700;margin-top:12px}
 .rp-price .amt em{font-size:1rem;font-style:normal;color:var(--muted);margin-right:1px}
 .rp-price .amt.na{font-size:1.1rem;color:var(--muted)}
+a.rp-price{display:block;text-decoration:none;color:inherit;cursor:pointer;transition:border-color .2s,transform .2s}
+a.rp-price:hover{border-color:var(--or);transform:translateY(-2px)}
 .rp-note{color:var(--muted-2);font-size:.85rem;margin-top:12px}
 
 .rp-incl{list-style:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px 20px;margin-top:4px}
