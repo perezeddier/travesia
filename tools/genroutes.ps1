@@ -108,7 +108,7 @@ foreach($p in $pages){
   $html=$html.Replace("{{INTRO}}",$intro).Replace("{{PRICECARDS}}",$cards)
   $html=$html.Replace("{{FAQ}}",$faq).Replace("{{RELATED}}",$rel)
   $html=$html.Replace("{{WAHREF}}",$waHref).Replace("{{BOOKHREF}}",$bookHref).Replace("{{YEAR}}",$year)
-  $html | Out-File -FilePath (Join-Path $outDir "$slug.html") -Encoding utf8
+  [System.IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
   [void]$urls.Add($url)
 }
 

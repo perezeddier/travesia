@@ -125,7 +125,7 @@ foreach ($h in $hotels) {
   $html = $html.Replace("{{PRICEFROM}}", "$($best.s)").Replace("{{ROUTECARDS}}", $routeCards)
   $html = $html.Replace("{{RELATED}}", $rel).Replace("{{WAHREF}}", $waHref)
   $html = $html.Replace("{{BOOKHREF}}", $bookHref).Replace("{{YEAR}}", $year)
-  $html | Out-File -FilePath (Join-Path $outDir "$slug.html") -Encoding utf8
+  [System.IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
   [void]$hotelUrls.Add($url)
   $generated++
 }

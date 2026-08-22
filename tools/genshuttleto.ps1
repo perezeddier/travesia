@@ -113,7 +113,7 @@ foreach ($z in $DEST_ZONES) {
   $html = $html.Replace("{{DEST}}", $destName).Replace("{{PRICEFROM}}", "$($best.price)")
   $html = $html.Replace("{{ROUTECARDS}}", $cards).Replace("{{HOTELSSECTION}}", $hotelsSection)
   $html = $html.Replace("{{WAHREF}}", $waHref).Replace("{{BOOKHREF}}", $bookHref).Replace("{{YEAR}}", $year)
-  $html | Out-File -FilePath (Join-Path $outDir "$destSlug.html") -Encoding utf8
+  [System.IO.File]::WriteAllText((Join-Path $outDir "$destSlug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
   [void]$urls.Add($url)
   $generated++
 }
