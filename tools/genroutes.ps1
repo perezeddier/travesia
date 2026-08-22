@@ -62,6 +62,12 @@ foreach($row in $rows){
 $byOrigin = @{}
 foreach($p in $pages){ if(-not $byOrigin.ContainsKey($p.f)){ $byOrigin[$p.f]=New-Object System.Collections.ArrayList }; [void]$byOrigin[$p.f].Add($p) }
 
+# Resenas reales de Google (verificadas en el perfil de negocio), asociadas a una ruta especifica.
+# Clave = "min-max" de los indices de zona (aplica a las 2 direcciones de esa ruta).
+$ROUTE_REVIEWS = @{
+  "0-2" = @{ quote = "Very good service got us safe and sound from La Fortuna to San Jose. Steven was our driver, he was amazing, a very nice person and a very good driver. Would definitely recommend if you're looking for a short or long distance shuttle service."; author = "Diego R." }
+}
+
 function PriceCard($v,$pax,$price){
   if($price -gt 0){ $amt = "<div class='amt'><em>`$</em>$price</div>" } else { $amt = "<div class='amt na'>On request</div>" }
   return "<div class='rp-price'><div class='v'>$v</div><div class='p'>Up to $pax passengers</div>$amt</div>"
@@ -92,6 +98,12 @@ foreach($p in $pages){
     $rel+="<a href='/shuttle/$slug2'><div class='r-route'>$($o.n) &rarr; $($d2.n)</div><div class='r-price'>From `$$($p2.s)</div></a>"
     $count++
   }
+  $rkey = "$([Math]::Min($p.f,$p.t))-$([Math]::Max($p.f,$p.t))"
+  $reviewHtml = ""
+  if ($ROUTE_REVIEWS.ContainsKey($rkey)) {
+    $rv = $ROUTE_REVIEWS[$rkey]
+    $reviewHtml = "<section class='rp-sec'><div class='wrap'><figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on Google Reviews</figcaption></figure></div></section>"
+  }
   $waMsg="Hi Travesia! I'd like to book a private transfer from $($o.n) to $($d.n). Date & passengers: "
   $waHref="https://wa.me/$WA"+"?text="+[uri]::EscapeDataString($waMsg)
   $bookHref="/?from=$($p.f)&to=$($p.t)"
@@ -107,6 +119,7 @@ foreach($p in $pages){
   $html=$html.Replace("{{DURATION}}",$p.dur).Replace("{{PRICEFROM}}","$($p.s)")
   $html=$html.Replace("{{INTRO}}",$intro).Replace("{{PRICECARDS}}",$cards)
   $html=$html.Replace("{{FAQ}}",$faq).Replace("{{RELATED}}",$rel)
+  $html=$html.Replace("{{REVIEW}}",$reviewHtml)
   $html=$html.Replace("{{WAHREF}}",$waHref).Replace("{{BOOKHREF}}",$bookHref).Replace("{{YEAR}}",$year)
   [System.IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
   [void]$urls.Add($url)

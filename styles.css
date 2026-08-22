@@ -636,9 +636,10 @@ body.no-scroll { overflow: hidden; }
 .ta-badge-txt strong { font-size: 1.06rem; }
 .ta-stars { color: #00aa6c; letter-spacing: 1px; font-size: .8rem; vertical-align: middle; }
 /* Reseña destacada (texto fijo, carga al instante) */
-.rev-featured { max-width: 720px; margin: 0 auto 24px; background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: 24px 26px; text-align: center; }
+.rev-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; max-width: 1100px; margin: 0 auto 24px; }
+.rev-featured { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: var(--radius); padding: 24px 26px; text-align: center; }
 .rev-featured-stars { color: #f5b301; letter-spacing: 2px; font-size: 1rem; }
-.rev-featured blockquote { margin: 12px 0 10px; font-size: 1.1rem; line-height: 1.6; color: var(--text); font-style: italic; }
+.rev-featured blockquote { margin: 12px 0 10px; font-size: 1rem; line-height: 1.6; color: var(--text); font-style: italic; }
 .rev-featured figcaption { color: var(--muted); font-size: .9rem; }
 
 /* ===================== FLEET ===================== */
