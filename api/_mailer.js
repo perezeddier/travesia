@@ -73,7 +73,7 @@ function clientEmail(d, lang, paid) {
     hi: `Thank you, ${esc(d.name || '')}!`,
     intro: paid ? 'Your payment was received and your private transfer is confirmed. Here are your trip details:' : 'We received your trip request. Our team will confirm availability and the final details with you shortly.',
     route: 'Your route', wa: 'Message us on WhatsApp',
-    L: { date: 'Date', time: 'Time', pax: 'Passengers', pickup: 'Pickup', flight: 'Flight', service: 'Service', price: paid ? 'Paid' : 'Price' },
+    L: { date: 'Date', time: 'Time', pax: 'Passengers', pickup: 'Pickup', dropoff: 'Drop-off', flight: 'Flight', service: 'Service', price: paid ? 'Paid' : 'Price' },
     note: paid ? 'We will track your flight and be there on time. Any change? Message us on WhatsApp.' : 'This is a request, not a final confirmation. We will contact you shortly to confirm your trip.'
   } : {
     subj: paid ? 'Pago recibido — tu reserva con Travesía está confirmada' : 'Recibimos tu solicitud de reserva — Travesía Costa Rica',
@@ -81,7 +81,7 @@ function clientEmail(d, lang, paid) {
     hi: `¡Gracias, ${esc(d.name || '')}!`,
     intro: paid ? 'Recibimos tu pago y tu traslado privado quedó confirmado. Estos son los detalles de tu viaje:' : 'Recibimos tu solicitud de viaje. Nuestro equipo te confirmará la disponibilidad y los detalles finales en breve.',
     route: 'Tu ruta', wa: 'Escríbenos por WhatsApp',
-    L: { date: 'Fecha', time: 'Hora', pax: 'Pasajeros', pickup: 'Recogida', flight: 'Vuelo', service: 'Servicio', price: paid ? 'Pagado' : 'Precio' },
+    L: { date: 'Fecha', time: 'Hora', pax: 'Pasajeros', pickup: 'Recogida', dropoff: 'Destino', flight: 'Vuelo', service: 'Servicio', price: paid ? 'Pagado' : 'Precio' },
     note: paid ? 'Monitoreamos tu vuelo y estaremos a tiempo. ¿Algún cambio? Escríbenos por WhatsApp.' : 'Esta es una solicitud, no una confirmación final. Te contactaremos en breve para confirmar tu viaje.'
   };
   const body = `
@@ -94,6 +94,7 @@ function clientEmail(d, lang, paid) {
       ${irow(t.L.time, d.time)}
       ${irow(t.L.pax, d.pax)}
       ${irow(t.L.pickup, d.pickup)}
+      ${irow(t.L.dropoff, d.dropoff)}
       ${irow(t.L.flight, d.flight)}
       ${irow(t.L.service, d.tier)}
       ${irow(t.L.price, d.total)}
@@ -121,6 +122,7 @@ function ownerEmail(d, paid) {
       ${irow('Hora', d.time)}
       ${irow('Pasajeros', d.pax)}
       ${irow('Recogida', d.pickup)}
+      ${irow('Destino', d.dropoff)}
       ${irow('Vuelo', d.flight)}
       ${irow('Servicio', d.tier)}
       ${irow(paid ? 'Pagado' : 'Total', d.total)}
@@ -191,7 +193,7 @@ async function logToSheet(d, paid) {
         estado: paid ? 'Pagado' : 'Solicitud',
         nombre: d.name || '', email: d.email || '', telefono: d.phone || '',
         ruta: d.summary || '', fecha: d.date || '', hora: d.time || '', pax: d.pax || '',
-        recogida: d.pickup || '', vuelo: d.flight || '', servicio: d.tier || '',
+        recogida: d.pickup || '', destino: d.dropoff || '', vuelo: d.flight || '', servicio: d.tier || '',
         total: d.total || '', orden: d.orderNumber || '', notas: d.notes || '',
       }),
     });

@@ -268,6 +268,7 @@ const I18N = {
     "co.adults": "Adults",
     "co.children": "Children (for free child seats)",
     "co.pickup": "Pickup — hotel or address",
+    "co.dropoff": "Drop-off — hotel or address (optional)",
     "co.dropoff": "Drop-off — hotel or address",
     "co.flight": "Flight number (optional)",
     "co.name": "Full name",
@@ -531,6 +532,7 @@ const I18N = {
     "co.adults": "Adultos",
     "co.children": "Niños (para sillas gratis)",
     "co.pickup": "Recogida — hotel o dirección",
+    "co.dropoff": "Destino — hotel o dirección (opcional)",
     "co.dropoff": "Destino — hotel o dirección",
     "co.flight": "Número de vuelo (opcional)",
     "co.name": "Nombre completo",
@@ -1059,7 +1061,7 @@ function checkoutOrderMessage(d) {
   const total = cartTotal();
   return `Hi Travesía! New booking:\n${legs}\nTotal: $${total}\n\n` +
     `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
-    `Pickup: ${d.pickup}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
+    `Pickup: ${d.pickup}\nDrop-off: ${d.dropoff || "-"}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
 }
 
 /* Reserva por correo: arma los datos (SIN tarjeta) y los envía a la función serverless */
@@ -1077,7 +1079,7 @@ function reservaPayload(d) {
   return {
     name: d.name, email: d.email, phone: d.phone,
     summary: route, date: d.date, time: d.time, pax,
-    pickup: d.pickup, flight: d.flight, tier,
+    pickup: d.pickup, dropoff: d.dropoff || "", flight: d.flight, tier,
     total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
   };
 }

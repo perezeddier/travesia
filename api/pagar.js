@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     const booking = {
       name: d.name, email: d.email, phone: d.phone || '',
       summary: d.summary || '', date: d.date || '', time: d.time || '',
-      pax: d.pax || '', pickup: d.pickup || '', flight: d.flight || '',
+      pax: d.pax || '', pickup: d.pickup || '', dropoff: d.dropoff || '', flight: d.flight || '',
       tier, total: '$' + amount.toFixed(2), notes: d.notes || '',
       lang: d.lang === 'es' ? 'es' : 'en', orderNumber,
     };
