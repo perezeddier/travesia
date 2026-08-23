@@ -269,6 +269,8 @@ const I18N = {
     "co.children": "Children (for free child seats)",
     "co.pickup": "Pickup — hotel or address",
     "co.dropoff": "Drop-off — hotel or address (optional)",
+    "co.legDetails": "When and where for trip {n}?",
+    "co.legMissing": "Please fill in the date, time and pickup for each additional trip.",
     "co.dropoff": "Drop-off — hotel or address",
     "co.flight": "Flight number (optional)",
     "co.name": "Full name",
@@ -533,6 +535,8 @@ const I18N = {
     "co.children": "Niños (para sillas gratis)",
     "co.pickup": "Recogida — hotel o dirección",
     "co.dropoff": "Destino — hotel o dirección (opcional)",
+    "co.legDetails": "¿Cuándo y dónde para el servicio {n}?",
+    "co.legMissing": "Por favor completa la fecha, hora y recogida de cada servicio adicional.",
     "co.dropoff": "Destino — hotel o dirección",
     "co.flight": "Número de vuelo (opcional)",
     "co.name": "Nombre completo",
@@ -981,7 +985,7 @@ function addToCart(i, j, vkey) {
   const p = ptPrice(i, j);
   if (!p || p[vkey] == null) return;
   const v = VEHICLES.find((x) => x.key === vkey);
-  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey], vip: false });
+  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey], vip: false, date: "", time: "", pickup: "", dropoff: "" });
   saveCart(); updateCartCount(); renderCart();
   toast(t("cart.added"));
   gaEvent("add_to_cart", { currency: "USD", value: p[vkey], vehicle: v.name, route: `${comboLabel("fromInput", i)} -> ${comboLabel("toInput", j)}` });
@@ -1037,6 +1041,16 @@ function renderCheckoutSummary() {
       <div class="co-sum-leg">
         <div class="co-sum-row"><span>${it.from} → ${it.to} · ${it.vname}</span><span>$${it.price + (it.vip ? 80 : 0)}</span></div>
         <label class="co-sum-vip"><input type="checkbox" data-vip="${idx}" ${it.vip ? "checked" : ""}> <span>${t("co.vipAdd")} <b>+$80</b></span></label>
+        ${idx === 0 ? "" : `
+        <div class="co-sum-legfields">
+          <p class="co-sum-legtitle">${t("co.legDetails").replace("{n}", idx + 1)}</p>
+          <div class="co-grid">
+            <label class="co-field"><span>${t("co.date")}</span><input type="date" data-legfield="date" data-leg="${idx}" value="${it.date || ""}" required></label>
+            <label class="co-field"><span>${t("co.time")}</span><input type="time" data-legfield="time" data-leg="${idx}" value="${it.time || ""}" required></label>
+          </div>
+          <label class="co-field"><span>${t("co.pickup")}</span><input type="text" data-legfield="pickup" data-leg="${idx}" value="${it.pickup || ""}" required></label>
+          <label class="co-field"><span>${t("co.dropoff")}</span><input type="text" data-legfield="dropoff" data-leg="${idx}" value="${it.dropoff || ""}"></label>
+        </div>`}
       </div>`).join("")}`;
 }
 function openCheckout() {
@@ -1056,12 +1070,26 @@ function closeCheckout() {
   document.body.classList.remove("no-scroll");
 }
 /* Mensaje de reserva completo (interino por WhatsApp; luego lo cobra Tilopay) */
+/* Cronograma por tramo: el 1er servicio usa los campos generales del formulario,
+   del 2do en adelante cada uno trae su propia fecha/hora/recogida/destino. */
+function buildItinerary(d) {
+  if (CART.length <= 1) return "";
+  return CART.map((it, idx) => {
+    const date = idx === 0 ? d.date : it.date;
+    const time = idx === 0 ? d.time : it.time;
+    const pickup = idx === 0 ? d.pickup : it.pickup;
+    const dropoff = idx === 0 ? (d.dropoff || "") : (it.dropoff || "");
+    return `${idx + 1}) ${it.from} -> ${it.to} — ${date} ${time} · Pickup: ${pickup}${dropoff ? " · Drop-off: " + dropoff : ""}`;
+  }).join("\n");
+}
+
 function checkoutOrderMessage(d) {
   const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · Travesía VIP (+$80)" : ""} · $${it.price + (it.vip ? 80 : 0)}`).join("\n");
   const total = cartTotal();
+  const itin = buildItinerary(d);
   return `Hi Travesía! New booking:\n${legs}\nTotal: $${total}\n\n` +
-    `Date/time: ${d.date} ${d.time}\nPassengers: ${d.adults} adults, ${d.children || 0} children\n` +
-    `Pickup: ${d.pickup}\nDrop-off: ${d.dropoff || "-"}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
+    (itin ? `Itinerary:\n${itin}\n\n` : `Date/time: ${d.date} ${d.time}\nPickup: ${d.pickup}\nDrop-off: ${d.dropoff || "-"}\n\n`) +
+    `Passengers: ${d.adults} adults, ${d.children || 0} children\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
 }
 
 /* Reserva por correo: arma los datos (SIN tarjeta) y los envía a la función serverless */
@@ -1080,6 +1108,7 @@ function reservaPayload(d) {
     name: d.name, email: d.email, phone: d.phone,
     summary: route, date: d.date, time: d.time, pax,
     pickup: d.pickup, dropoff: d.dropoff || "", flight: d.flight, tier,
+    itinerary: buildItinerary(d),
     total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
   };
 }
@@ -1305,12 +1334,26 @@ document.addEventListener("DOMContentLoaded", () => {
       // Destildar/marcar el VIP de un servicio específico.
       const idx = +el.dataset.vip;
       if (CART[idx]) { CART[idx].vip = el.checked; saveCart(); renderCheckoutSummary(); renderCart(); }
+    } else if (el.dataset && el.dataset.legfield) {
+      // Fecha/hora/recogida/destino propios del 2do servicio en adelante (sin re-render, para no perder el foco).
+      const idx = +el.dataset.leg;
+      if (CART[idx]) { CART[idx][el.dataset.legfield] = el.value; saveCart(); }
     }
   });
   const coForm = document.getElementById("coForm");
   if (coForm) coForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!coForm.reportValidity()) return;
+    for (let idx = 1; idx < CART.length; idx++) {
+      const it = CART[idx];
+      const missing = !it.date ? "date" : !it.time ? "time" : !it.pickup ? "pickup" : null;
+      if (missing) {
+        const el = document.querySelector(`[data-leg="${idx}"][data-legfield="${missing}"]`);
+        if (el) el.focus();
+        toast(t("co.legMissing"));
+        return;
+      }
+    }
     const data = Object.fromEntries(new FormData(coForm).entries());
     const btn = coForm.querySelector('[type="submit"]');
     const label = btn ? btn.innerHTML : "";

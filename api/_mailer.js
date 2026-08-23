@@ -31,6 +31,18 @@ function routeCard(label, route) {
   </div>`;
 }
 
+// Cronograma multi-tramo (2+ servicios, cada uno con su fecha/hora/recogida propia)
+function itineraryBlock(label, text) {
+  if (!text) return '';
+  const rows = String(text).split('\n').filter(Boolean).map(line =>
+    `<div style="padding:9px 0;border-bottom:1px solid #eef1f5;color:#1a1d23;font-size:13.5px;line-height:1.5">${esc(line)}</div>`
+  ).join('');
+  return `<div style="margin:0 0 18px">
+    <div style="font-size:11px;color:#98a1af;text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:4px">${esc(label)}</div>
+    ${rows}
+  </div>`;
+}
+
 function waBtn(phone, text, msg) {
   const num = String(phone || '').replace(/[^0-9]/g, '');
   if (!num) return '';
@@ -89,12 +101,13 @@ function clientEmail(d, lang, paid) {
     <h1 style="font-size:21px;margin:0 0 8px;color:#1a1d23">${t.hi}</h1>
     <p style="color:#4b5563;font-size:14px;line-height:1.6;margin:0 0 18px">${t.intro}</p>
     ${routeCard(t.route, d.summary)}
+    ${itineraryBlock(en ? 'Itinerary' : 'Itinerario', d.itinerary)}
     <table style="width:100%;border-collapse:collapse;margin:0 0 18px">
-      ${irow(t.L.date, d.date)}
-      ${irow(t.L.time, d.time)}
+      ${d.itinerary ? '' : irow(t.L.date, d.date)}
+      ${d.itinerary ? '' : irow(t.L.time, d.time)}
       ${irow(t.L.pax, d.pax)}
-      ${irow(t.L.pickup, d.pickup)}
-      ${irow(t.L.dropoff, d.dropoff)}
+      ${d.itinerary ? '' : irow(t.L.pickup, d.pickup)}
+      ${d.itinerary ? '' : irow(t.L.dropoff, d.dropoff)}
       ${irow(t.L.flight, d.flight)}
       ${irow(t.L.service, d.tier)}
       ${irow(t.L.price, d.total)}
@@ -115,14 +128,15 @@ function ownerEmail(d, paid) {
     <h1 style="font-size:21px;margin:0 0 4px;color:#1a1d23">${esc(d.name || 'Cliente')}</h1>
     <p style="color:#8a94a3;font-size:13px;margin:0 0 16px">${paid ? 'El cliente pagó en línea. Confirmá el pago en tu panel de Tilopay.' : 'Entró una nueva solicitud desde el sitio web.'}</p>
     ${routeCard('Ruta', d.summary)}
+    ${itineraryBlock('Itinerario', d.itinerary)}
     <table style="width:100%;border-collapse:collapse;margin:0 0 18px">
       ${irow('Teléfono', d.phone)}
       ${irow('Email', d.email)}
-      ${irow('Fecha', d.date)}
-      ${irow('Hora', d.time)}
+      ${d.itinerary ? '' : irow('Fecha', d.date)}
+      ${d.itinerary ? '' : irow('Hora', d.time)}
       ${irow('Pasajeros', d.pax)}
-      ${irow('Recogida', d.pickup)}
-      ${irow('Destino', d.dropoff)}
+      ${d.itinerary ? '' : irow('Recogida', d.pickup)}
+      ${d.itinerary ? '' : irow('Destino', d.dropoff)}
       ${irow('Vuelo', d.flight)}
       ${irow('Servicio', d.tier)}
       ${irow(paid ? 'Pagado' : 'Total', d.total)}
@@ -193,7 +207,7 @@ async function logToSheet(d, paid) {
         estado: paid ? 'Pagado' : 'Solicitud',
         nombre: d.name || '', email: d.email || '', telefono: d.phone || '',
         ruta: d.summary || '', fecha: d.date || '', hora: d.time || '', pax: d.pax || '',
-        recogida: d.pickup || '', destino: d.dropoff || '', vuelo: d.flight || '', servicio: d.tier || '',
+        recogida: d.pickup || '', destino: d.dropoff || '', itinerario: d.itinerary || '', vuelo: d.flight || '', servicio: d.tier || '',
         total: d.total || '', orden: d.orderNumber || '', notas: d.notes || '',
       }),
     });
