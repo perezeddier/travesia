@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cotizador — Travesía Costa Rica</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/route.css">
+<style>
+  .cz-wrap{max-width:720px;margin:0 auto;padding:40px 20px 80px}
+  .cz-title{font-family:var(--font-head);font-size:1.8rem;margin-bottom:6px}
+  .cz-sub{color:var(--muted);font-size:.92rem;margin-bottom:28px}
+  .cz-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:22px}
+  .cz-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+  .cz-field{display:flex;flex-direction:column;gap:6px;font-size:.82rem;font-weight:600;color:var(--muted)}
+  .cz-field input,.cz-field select{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-family:var(--font-body);font-size:.95rem}
+  .cz-vip{display:flex;align-items:center;gap:8px;font-size:.86rem;color:var(--muted);margin:4px 0 14px}
+  .cz-vip input{width:16px;height:16px;accent-color:var(--or)}
+  .cz-err{color:#ff6b6b;font-size:.85rem;margin:-4px 0 10px;display:none}
+  .cz-legs{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+  .cz-leg{display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .cz-leg .t{font-size:.92rem}
+  .cz-leg .p{color:var(--or-2);font-weight:700;white-space:nowrap}
+  .cz-leg button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:0 4px}
+  .cz-leg button:hover{color:#ff6b6b}
+  .cz-total{display:flex;justify-content:space-between;font-weight:700;padding-top:10px;border-top:1px solid var(--line);margin-bottom:18px}
+  .cz-empty{color:var(--muted-2);font-size:.88rem;text-align:center;padding:14px 0}
+  .cz-linkbox{display:none}
+  .cz-linkbox.show{display:block}
+  .cz-linkrow{display:flex;gap:8px;margin-top:10px}
+  .cz-linkrow input{flex:1;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:.85rem}
+  .cz-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+</style>
+</head>
+<body>
+<header class="rp-header">
+  <div class="wrap">
+    <a class="rp-brand" href="/"><img src="/assets/logo-travesia.png" alt="Travesía Costa Rica"></a>
+  </div>
+</header>
+
+<div class="cz-wrap">
+  <h1 class="cz-title">Cotizador rápido</h1>
+  <p class="cz-sub">Arma el viaje del cliente, genera el link y mándaselo por WhatsApp — le llega con todo ya cargado, listo para reservar.</p>
+
+  <div class="cz-card">
+    <div class="cz-row">
+      <label class="cz-field">Desde
+        <input type="text" id="czFrom" list="czFromList" placeholder="Ej. San José · Aeropuerto (SJO)">
+        <datalist id="czFromList"></datalist>
+      </label>
+      <label class="cz-field">Hasta
+        <input type="text" id="czTo" list="czToList" placeholder="Ej. La Fortuna / Arenal">
+        <datalist id="czToList"></datalist>
+      </label>
+    </div>
+    <div class="cz-row">
+      <label class="cz-field">Vehículo
+        <select id="czVeh">
+          <option value="staria">Hyundai Staria (hasta 5 pax)</option>
+          <option value="hiace">Toyota Hiace (hasta 9 pax)</option>
+          <option value="maxus">Maxus V90 (hasta 12 pax)</option>
+        </select>
+      </label>
+      <label class="cz-field">&nbsp;
+        <span class="cz-vip"><input type="checkbox" id="czVip"> Agregar Travesía VIP (+$80)</span>
+      </label>
+    </div>
+    <p class="cz-err" id="czErr"></p>
+    <button class="btn btn-primary" id="czAdd" type="button">Agregar al carrito</button>
+  </div>
+
+  <div class="cz-card">
+    <div class="cz-legs" id="czLegs"><p class="cz-empty">Todavía no agregaste ningún servicio.</p></div>
+    <div class="cz-total" id="czTotal" style="display:none"><span>Total</span><span id="czTotalAmt">$0</span></div>
+    <div class="cz-btns">
+      <button class="btn btn-primary" id="czGen" type="button">Generar link</button>
+    </div>
+    <div class="cz-linkbox" id="czLinkbox">
+      <div class="cz-linkrow">
+        <input type="text" id="czLink" readonly>
+        <button class="btn btn-wa" id="czCopy" type="button">Copiar</button>
+      </div>
+      <div class="cz-btns">
+        <a class="btn btn-wa" id="czWa" href="#" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/routes-data.js"></script>
+<script>
+(function () {
+  const BASE = location.origin;
+  const disp = (i) => (typeof PT_DISPLAY !== "undefined" && PT_DISPLAY[PT_PLACES[i]]) || PT_PLACES[i];
+  const nameToIdx = {};
+  PT_PLACES.forEach((_, i) => { nameToIdx[disp(i).trim().toLowerCase()] = i; });
+
+  const fromList = document.getElementById("czFromList");
+  const toList = document.getElementById("czToList");
+  PT_PLACES.forEach((_, i) => {
+    const o1 = document.createElement("option"); o1.value = disp(i); fromList.appendChild(o1);
+    const o2 = document.createElement("option"); o2.value = disp(i); toList.appendChild(o2);
+  });
+
+  const LOOKUP = {};
+  PT_ROWS.forEach((r) => {
+    const a = Math.min(r[0], r[1]), b = Math.max(r[0], r[1]);
+    LOOKUP[`${a}-${b}`] = { staria: r[2], hiace: r[3], maxus: r[4] };
+  });
+  const VEH_NAME = { staria: "Hyundai Staria", hiace: "Toyota Hiace", maxus: "Maxus V90" };
+
+  let quote = [];
+
+  function resolvePlace(text) {
+    const idx = nameToIdx[text.trim().toLowerCase()];
+    return idx == null ? null : idx;
+  }
+
+  document.getElementById("czAdd").addEventListener("click", () => {
+    const errEl = document.getElementById("czErr");
+    errEl.style.display = "none";
+    const i = resolvePlace(document.getElementById("czFrom").value);
+    const j = resolvePlace(document.getElementById("czTo").value);
+    const vkey = document.getElementById("czVeh").value;
+    const vip = document.getElementById("czVip").checked;
+    if (i == null || j == null) { errEl.textContent = "Escribí un origen y destino válidos de la lista."; errEl.style.display = "block"; return; }
+    if (i === j) { errEl.textContent = "El origen y el destino no pueden ser el mismo."; errEl.style.display = "block"; return; }
+    const p = LOOKUP[`${Math.min(i, j)}-${Math.max(i, j)}`];
+    if (!p || p[vkey] == null) { errEl.textContent = "No hay precio de " + VEH_NAME[vkey] + " para esa ruta."; errEl.style.display = "block"; return; }
+    quote.push({ i, j, vkey, vip, price: p[vkey] });
+    render();
+    document.getElementById("czLinkbox").classList.remove("show");
+  });
+
+  function render() {
+    const box = document.getElementById("czLegs");
+    if (!quote.length) { box.innerHTML = '<p class="cz-empty">Todavía no agregaste ningún servicio.</p>'; document.getElementById("czTotal").style.display = "none"; return; }
+    box.innerHTML = quote.map((q, idx) => `
+      <div class="cz-leg">
+        <span class="t">${disp(q.i)} &rarr; ${disp(q.j)} · ${VEH_NAME[q.vkey]}${q.vip ? " · VIP" : ""}</span>
+        <span class="p">$${q.price + (q.vip ? 80 : 0)} <button data-rm="${idx}" title="Quitar">&times;</button></span>
+      </div>`).join("");
+    const total = quote.reduce((s, q) => s + q.price + (q.vip ? 80 : 0), 0);
+    document.getElementById("czTotalAmt").textContent = "$" + total;
+    document.getElementById("czTotal").style.display = "flex";
+    box.querySelectorAll("[data-rm]").forEach((b) => b.addEventListener("click", () => {
+      quote.splice(+b.dataset.rm, 1); render(); document.getElementById("czLinkbox").classList.remove("show");
+    }));
+  }
+
+  document.getElementById("czGen").addEventListener("click", () => {
+    if (!quote.length) return;
+    const param = quote.map((q) => `${q.i}:${q.j}:${q.vkey}:${q.vip ? 1 : 0}`).join("|");
+    const link = `${BASE}/?cart=${encodeURIComponent(param)}`;
+    document.getElementById("czLink").value = link;
+    document.getElementById("czLinkbox").classList.add("show");
+    const msg = "¡Hola! Aquí tienes tu cotización con Travesía Costa Rica, lista para reservar: " + link;
+    document.getElementById("czWa").href = "https://wa.me/?text=" + encodeURIComponent(msg);
+  });
+
+  document.getElementById("czCopy").addEventListener("click", () => {
+    const el = document.getElementById("czLink");
+    el.select();
+    navigator.clipboard && navigator.clipboard.writeText(el.value).catch(() => document.execCommand("copy"));
+    const btn = document.getElementById("czCopy");
+    const old = btn.textContent; btn.textContent = "¡Copiado!";
+    setTimeout(() => { btn.textContent = old; }, 1500);
+  });
+})();
+</script>
+</body>
+</html>

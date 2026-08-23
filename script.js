@@ -1274,6 +1274,25 @@ document.addEventListener("DOMContentLoaded", () => {
       setComboValue("toInput", +qt);
       setTimeout(() => document.getElementById("finder")?.scrollIntoView({ behavior: "smooth", block: "center" }), 400);
     }
+    // Carrito precargado desde una cotización compartida por Eddie (?cart=i:j:vkey:vip|i:j:vkey:vip)
+    const qcart = qp.get("cart");
+    if (qcart) {
+      const legs = qcart.split("|").map((s) => s.split(":"));
+      const newCart = [];
+      for (const [iStr, jStr, vkey, vipStr] of legs) {
+        const i = +iStr, j = +jStr;
+        if (PT_PLACES[i] == null || PT_PLACES[j] == null) continue;
+        const p = ptPrice(i, j);
+        const v = VEHICLES.find((x) => x.key === vkey);
+        if (!p || !v || p[vkey] == null) continue;
+        newCart.push({ i, j, from: ptName(i), to: ptName(j), vkey, vname: v.name, price: p[vkey], vip: vipStr === "1", date: "", time: "", pickup: "", dropoff: "" });
+      }
+      if (newCart.length) {
+        CART = newCart;
+        saveCart(); updateCartCount(); renderCart();
+        setTimeout(() => openCheckout(), 300);
+      }
+    }
     if (swapBtn) swapBtn.addEventListener("click", () => {
       const v = fromInput.value, p = fromInput.dataset.place;
       fromInput.value = toInput.value; fromInput.dataset.place = toInput.dataset.place;

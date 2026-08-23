@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /cotizar.html
 
 Sitemap: https://travesiacr.online/sitemap.xml
