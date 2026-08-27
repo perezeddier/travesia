@@ -23,6 +23,8 @@
 
 /* ===================== RESET ===================== */
 * { box-sizing: border-box; }
+/* Texto solo para lectores de pantalla (invisible en pantalla) */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 body {
   margin: 0;
@@ -215,8 +217,8 @@ a.stop-card:hover { transform: translateY(-4px); border-color: rgba(224,123,31,.
 .men-card { display: block; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 26px 24px; color: inherit; transition: transform .2s ease, border-color .2s ease; }
 a.men-card:hover { transform: translateY(-3px); border-color: var(--gold); }
 .men-src { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; padding: 4px 11px; border-radius: 999px; margin-bottom: 14px; }
-.men-reddit { color: #ff4500; background: rgba(255,69,0,.10); border: 1px solid rgba(255,69,0,.30); }
-.men-fb { color: #6b8fd6; background: rgba(66,103,178,.14); border: 1px solid rgba(66,103,178,.35); }
+.men-reddit { color: #ff7a4d; background: rgba(255,69,0,.10); border: 1px solid rgba(255,69,0,.30); }
+.men-fb { color: #8fb0ea; background: rgba(66,103,178,.14); border: 1px solid rgba(66,103,178,.35); }
 .men-quote { font-size: 1.05rem; color: var(--text); line-height: 1.6; margin: 0 0 12px; font-style: italic; }
 .men-read { color: var(--gold-2); font-weight: 600; font-size: .9rem; }
 @media (max-width: 760px) { .men-grid { grid-template-columns: 1fr; } }
@@ -572,7 +574,7 @@ body.no-scroll { overflow: hidden; }
 .tour-card-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
 .tour-card-price { display: flex; flex-direction: column; }
 .tour-card-price strong { font-family: var(--font-head); font-size: 1.3rem; color: var(--text); }
-.tour-card-price small { color: var(--muted-2); font-size: .82rem; }
+.tour-card-price small { color: var(--muted); font-size: .82rem; }
 .tour-card-cta { color: var(--gold-2); font-weight: 700; white-space: nowrap; }
 @media (max-width: 640px) { .tour-card { grid-template-columns: 1fr; } .tour-card-img { min-height: 200px; } }
 

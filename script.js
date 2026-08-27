@@ -1180,7 +1180,7 @@ function renderFleet() {
             <span class="fleet-spec">${ICON_PAX}<strong>${f.pax}</strong> <span data-i18n="fleet.pax">${t("fleet.pax")}</span></span>
             <span class="fleet-spec">${ICON_BAG}<strong>${f.bags}</strong> <span data-i18n="fleet.bags">${t("fleet.bags")}</span></span>
           </div>
-          <a class="btn btn-outline" style="margin-top:18px" href="${wa(msg)}" target="_blank" rel="noopener" data-i18n="fleet.book">${t("fleet.book")}</a>
+          <a class="btn btn-outline" style="margin-top:18px" href="${wa(msg)}" target="_blank" rel="noopener"><span data-i18n="fleet.book">${t("fleet.book")}</span><span class="sr-only"> — ${f.name}</span></a>
         </div>
       </article>`;
   }).join("");
