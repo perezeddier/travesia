@@ -22,9 +22,15 @@
        pega aquí la etiqueta <meta> que te dé Google, por ejemplo:
        <meta name="google-site-verification" content="TU_CODIGO_AQUI" /> -->
 
+  <!-- Precargar la foto de portada (es lo mas grande que se ve al entrar; asi baja de inmediato) -->
+  <link rel="preload" as="image" href="assets/hero-arenal-m.jpg" media="(max-width: 820px)" fetchpriority="high" />
+  <link rel="preload" as="image" href="assets/hero-arenal.jpg" media="(min-width: 821px)" fetchpriority="high" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Fuentes sin bloquear el arranque: el texto aparece al toque con fuente del sistema y luego cambia -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" /></noscript>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 
