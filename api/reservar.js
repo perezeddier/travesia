@@ -4,9 +4,14 @@
    SIN datos de tarjeta. La lógica de correo vive en ./_mailer.js
    ========================================================================== */
 import { sendReservation } from './_mailer.js';
+import { rateLimited } from './_ratelimit.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ ok: false, error: 'method' }); return; }
+  // Anti-spam: máx. 5 solicitudes por IP cada 15 min (cada una envía 2 correos)
+  if (rateLimited(req, { max: 5, windowMs: 15 * 60 * 1000, key: 'reservar' })) {
+    res.status(429).json({ ok: false, error: 'rate' }); return;
+  }
   if (!process.env.BREVO_API_KEY) { res.status(500).json({ ok: false, error: 'no-key' }); return; }
   try {
     const d = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});

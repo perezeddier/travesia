@@ -15,6 +15,13 @@ function fechaMenosNDias(n) {
 }
 
 export default async function handler(req, res) {
+  // Solo el cron de Vercel puede disparar esto: cuando existe la env var CRON_SECRET,
+  // Vercel la manda como "Authorization: Bearer <CRON_SECRET>" en cada ejecución
+  // programada; cualquier otra llamada sin esa llave se rechaza. (Si la env var
+  // no está configurada aún, se comporta como antes para no romper el cron.)
+  if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+    res.status(401).json({ ok: false, error: 'unauthorized' }); return;
+  }
   const url = process.env.SHEETS_WEBHOOK_URL;
   if (!url) { res.status(200).json({ ok: true, sent: 0, note: 'sin hoja configurada' }); return; }
 

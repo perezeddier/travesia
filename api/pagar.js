@@ -9,6 +9,7 @@
    Env vars (Vercel): TILOPAY_KEY, TILOPAY_USER, TILOPAY_PASSWORD.
    ========================================================================== */
 import routesData from '../routes-data.js';
+import { rateLimited } from './_ratelimit.js';
 
 const { PT_ROWS } = routesData;
 
@@ -51,6 +52,10 @@ const REDIRECT = 'https://travesiacr.online/api/retorno';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') { res.status(405).json({ ok: false, error: 'method' }); return; }
+  // Anti-spam: máx. 10 intentos de pago por IP cada 15 min (deja margen para reintentos reales)
+  if (rateLimited(req, { max: 10, windowMs: 15 * 60 * 1000, key: 'pagar' })) {
+    res.status(429).json({ ok: false, error: 'rate' }); return;
+  }
   if (!process.env.TILOPAY_KEY || !process.env.TILOPAY_USER || !process.env.TILOPAY_PASSWORD) {
     res.status(500).json({ ok: false, error: 'no-keys' }); return;
   }
