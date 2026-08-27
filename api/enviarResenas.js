@@ -22,11 +22,6 @@ export default async function handler(req, res) {
   if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
     res.status(401).json({ ok: false, error: 'unauthorized' }); return;
   }
-  // DIAGNOSTICO TEMPORAL: indica solo SI existe la llave (true/false), nunca su valor
-  if (req.query && req.query.diag === '1') {
-    res.status(200).json({ ok: true, diag: { tieneCronSecret: !!process.env.CRON_SECRET, largo: (process.env.CRON_SECRET || '').length } });
-    return;
-  }
   const url = process.env.SHEETS_WEBHOOK_URL;
   if (!url) { res.status(200).json({ ok: true, sent: 0, note: 'sin hoja configurada' }); return; }
 
