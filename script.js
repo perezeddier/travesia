@@ -1110,6 +1110,7 @@ function reservaPayload(d) {
     pickup: d.pickup, dropoff: d.dropoff || "", flight: d.flight, tier,
     itinerary: buildItinerary(d),
     total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
+    country: d.country || "",   // para que el correo a Eddie arme el WhatsApp con código de país
   };
 }
 function postReserva(payload) {
@@ -1127,8 +1128,7 @@ function postReserva(payload) {
 function pagarPayload(d) {
   const base = reservaPayload(d);
   base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey, vip: !!it.vip }));  // VIP por tramo
-  base.country = d.country || "";   // país de la tarjeta (ISO) — mejora aceptación (AVS)
-  base.zip = d.zip || "";           // código postal de la tarjeta
+  base.zip = d.zip || "";           // código postal de la tarjeta (país ya viene en reservaPayload)
   return base;
 }
 

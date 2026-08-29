@@ -111,7 +111,7 @@ export default async function handler(req, res) {
       pax: d.pax || '', pickup: d.pickup || '', dropoff: d.dropoff || '', flight: d.flight || '',
       itinerary: d.itinerary || '',
       tier, total: '$' + amount.toFixed(2), notes: d.notes || '',
-      lang: d.lang === 'es' ? 'es' : 'en', orderNumber,
+      lang: d.lang === 'es' ? 'es' : 'en', orderNumber, country,
     };
     const returnData = Buffer.from(JSON.stringify(booking), 'utf8').toString('base64');
 

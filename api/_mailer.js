@@ -9,6 +9,29 @@ const FROM_EMAIL = 'reservas@travesiacr.online';
 const OWNER = process.env.OWNER_EMAIL || 'infotravesiacr@gmail.com';
 const WA = '50685028476';
 
+// Convierte el teléfono del cliente a formato internacional para wa.me.
+// El cliente escribe su número "local" (ej. 2022996558 US) — sin código de
+// país WhatsApp no lo encuentra. Usamos el país de la tarjeta del checkout.
+const DIAL = {
+  US: '1', CA: '1', CR: '506', MX: '52', GB: '44', DE: '49', FR: '33', ES: '34',
+  IT: '39', NL: '31', BE: '32', CH: '41', AT: '43', PT: '351', IE: '353',
+  SE: '46', NO: '47', DK: '45', FI: '358', PL: '48', AU: '61', NZ: '64',
+  BR: '55', AR: '54', CL: '56', CO: '57', PE: '51', EC: '593', PA: '507',
+  GT: '502', SV: '503', HN: '504', NI: '505', DO: '1', IL: '972', JP: '81', IN: '91',
+};
+function waNumber(phone, country) {
+  const raw = String(phone || '').trim();
+  const digits = raw.replace(/\D/g, '');
+  if (!digits) return '';
+  if (raw.startsWith('+') || raw.startsWith('00')) return digits.replace(/^00/, '');
+  const dial = DIAL[String(country || '').toUpperCase()] || '';
+  if (dial && digits.startsWith(dial) && digits.length > 10) return digits;  // ya trae el código
+  if (dial) return dial + digits;
+  if (digits.length === 8) return '506' + digits;   // sin país: 8 dígitos = Costa Rica
+  if (digits.length === 10) return '1' + digits;    // 10 dígitos = EE.UU./Canadá
+  return digits;
+}
+
 function esc(s) {
   return String(s == null ? '' : s).replace(/[&<>"]/g, c =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -143,7 +166,7 @@ function ownerEmail(d, paid) {
       ${irow('Orden', d.orderNumber)}
       ${irow('Notas', d.notes)}
     </table>
-    ${waBtn(d.phone, 'Escribir al cliente por WhatsApp', d.lang !== 'es'
+    ${waBtn(waNumber(d.phone, d.country), 'Escribir al cliente por WhatsApp', d.lang !== 'es'
       ? `Hi ${d.name || ''}, thank you for booking with Travesía Costa Rica! About your trip ${d.summary || ''}${d.date ? ' on ' + d.date : ''} — I'd love to confirm the details with you.`
       : `Hola ${d.name || ''}, ¡gracias por reservar con Travesía Costa Rica! Sobre tu viaje ${d.summary || ''}${d.date ? ' el ' + d.date : ''}, me encantaría confirmar los detalles con vos.`)}`;
   return { subject: `${tag}: ${d.name || 'cliente'} - ${d.summary || ''}`, html: shell(body, `${d.name || ''} - ${d.summary || ''}`) };
