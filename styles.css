@@ -435,6 +435,15 @@ body.no-scroll { overflow: hidden; }
   padding: 12px 13px; font-family: var(--font-body); font-size: .98rem; font-weight: 400; width: 100%;
 }
 .co-field input:focus, .co-field textarea:focus { outline: none; border-color: var(--gold); }
+.co-field select {
+  background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: 10px;
+  padding: 12px 13px; font-family: var(--font-body); font-size: .98rem; font-weight: 400; width: 100%;
+}
+.co-field select:focus { outline: none; border-color: var(--gold); }
+.co-seats { background: var(--bg-3); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 10px; }
+.co-seats-title { font-size: .8rem; font-weight: 700; color: var(--gold-2); }
+.co-grid-3 { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+@media (max-width: 480px) { .co-grid-3 { grid-template-columns: 1fr; } }
 .co-field textarea { resize: vertical; }
 .co-sum-addon span:first-child { color: var(--gold-2); }
 .co-choose { display: flex; flex-direction: column; gap: 8px; }
@@ -674,6 +683,9 @@ body.no-scroll { overflow: hidden; }
 .fleet-spec { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: .95rem; }
 .fleet-spec svg { color: var(--gold-2); flex: 0 0 auto; }
 .fleet-spec strong { color: var(--text); font-weight: 600; }
+.fleet-price { margin-top: 14px; font-size: .95rem; color: var(--muted); }
+.fleet-price strong { color: var(--gold-2); font-size: 1.35rem; font-weight: 800; margin: 0 2px; }
+.fleet-price small { display: block; font-size: .78rem; color: var(--muted); margin-top: 2px; }
 
 /* ===================== WHY ===================== */
 .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 18px; }

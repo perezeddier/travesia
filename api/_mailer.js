@@ -129,6 +129,7 @@ function clientEmail(d, lang, paid) {
       ${d.itinerary ? '' : irow(t.L.date, d.date)}
       ${d.itinerary ? '' : irow(t.L.time, d.time)}
       ${irow(t.L.pax, d.pax)}
+      ${irow(en ? 'Child seats' : 'Sillas de niño', d.seats)}
       ${d.itinerary ? '' : irow(t.L.pickup, d.pickup)}
       ${d.itinerary ? '' : irow(t.L.dropoff, d.dropoff)}
       ${irow(t.L.flight, d.flight)}
@@ -158,6 +159,7 @@ function ownerEmail(d, paid) {
       ${d.itinerary ? '' : irow('Fecha', d.date)}
       ${d.itinerary ? '' : irow('Hora', d.time)}
       ${irow('Pasajeros', d.pax)}
+      ${irow('Sillas de niño', d.seats)}
       ${d.itinerary ? '' : irow('Recogida', d.pickup)}
       ${d.itinerary ? '' : irow('Destino', d.dropoff)}
       ${irow('Vuelo', d.flight)}
@@ -231,7 +233,8 @@ async function logToSheet(d, paid) {
         nombre: d.name || '', email: d.email || '', telefono: d.phone || '',
         ruta: d.summary || '', fecha: d.date || '', hora: d.time || '', pax: d.pax || '',
         recogida: d.pickup || '', destino: d.dropoff || '', itinerario: d.itinerary || '', vuelo: d.flight || '', servicio: d.tier || '',
-        total: d.total || '', orden: d.orderNumber || '', notas: d.notes || '',
+        total: d.total || '', orden: d.orderNumber || '',
+        notas: (d.seats ? 'Sillas: ' + d.seats + ' · ' : '') + (d.notes || ''),
       }),
     });
   } catch (e) { /* la hoja es un extra: si falla, no afecta correo ni pago */ }

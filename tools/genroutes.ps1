@@ -62,10 +62,48 @@ foreach($row in $rows){
 $byOrigin = @{}
 foreach($p in $pages){ if(-not $byOrigin.ContainsKey($p.f)){ $byOrigin[$p.f]=New-Object System.Collections.ArrayList }; [void]$byOrigin[$p.f].Add($p) }
 
-# Resenas reales de Google (verificadas en el perfil de negocio), asociadas a una ruta especifica.
+# Resenas reales de Google (verificadas en el perfil de negocio 2026-08-29), asociadas a una ruta especifica.
 # Clave = "min-max" de los indices de zona (aplica a las 2 direcciones de esa ruta).
+# Cada valor es un ARRAY de resenas (1 a 3 por ruta). Texto VERBATIM del perfil (recortado en limites de oracion).
 $ROUTE_REVIEWS = @{
-  "0-2" = @{ quote = "Very good service got us safe and sound from La Fortuna to San Jose. Steven was our driver, he was amazing, a very nice person and a very good driver. Would definitely recommend if you're looking for a short or long distance shuttle service."; author = "Diego R." }
+  "0-2" = @(
+    @{ quote = "Very good service got us safe and sound from La Fortuna to San Jose. Steven was our driver, he was amazing, a very nice person and a very good driver. Would definitely recommend if you're looking for a short or long distance shuttle service."; author = "Diego R." },
+    @{ quote = "Eddier was an amazing driver! He was so kind and got me from La Fortuna to SJO airport safely. The car was clean and comfortable. As a solo female traveler I felt very safe and I am so thankful to him for helping me with my Spanish and for getting me back safely!"; author = "Grace" },
+    @{ quote = "Mr. Eddie was our driver and he was so amazing! He drove us 3 hours from the main airport to Lost Iguana Resort around the La Fortuna area. He knew a lot about the history and scenery of Costa Rica as we drove through the country. It was a very engaging ride!"; author = "Mayah M." }
+  )
+  "1-2" = @(
+    @{ quote = "The drive from Liberia to La Fortuna was an activity in itself, thanks to Eddy. He made the experience incredibly enjoyable by making our needs the forefront of his service. He was extremely thoughtful, accommodating and had so much insight on the area."; author = "Ben M." },
+    @{ quote = "Eddie drove us from Liberia to La Fortuna. He was so kind to wait for us while we went tubing at Rio Celeste (one of the highlights for our trip). He watched our luggage and belongings while we were tubing and brought us safely to our next destination."; author = "Annie L." },
+    @{ quote = "Eric was a wonderful driver. He pointed out interesting facts about this beautiful country including a scenic spot for breakfast. It was a lovely drive from La Fortuna to the Liberia airport. We highly recommend his services."; author = "Sidney K." }
+  )
+  "2-4" = @(
+    @{ quote = "Excellent transportation and service from La Fortuna to Manuel Antonio with Eric! He shared local info and helped us practice some Spanish on the way!"; author = "Suzanne P." },
+    @{ quote = "Having private shuttles took the stress out of driving (especially during heavy rain and thunderstorms between La Fortuna and MA) and our driver John was extremely informative with a wealth of knowledge as well as pointing out wildlife (monkeys, birds etc) and stopped at interesting places to break the journey up."; author = "Phoebe S." }
+  )
+  "0-4" = @(
+    @{ quote = "We connected with Eddie at Travesia CR to arrange a few key shuttle transfers for our group of 11, including San Jose to La Fortuna, La Fortuna to Manuel Antonio, and Manuel Antonio back to the San Jose airport. Every transfer and tour they managed was exceptional. The drivers were kind, thoughtful, and punctual, and the vehicles were consistently clean, comfortable, and modern."; author = "David I." }
+  )
+  "2-3" = @(
+    @{ quote = "Un viaje muy agradable en un coche estupendo, limpio y c&oacute;modo con Eddy, quien nos llev&oacute; perfectamente desde La Fortuna hasta Santa Elena. &iexcl;100% recomendable!"; author = "Nicole P." }
+  )
+  "2-5" = @(
+    @{ quote = "We just got back from Costa Rica - Monteverde, La Fortuna, Tamarindo. Eddie (Travesia) planned all our transportation and tours. We were two families with 3 kids and 4 adults. Eddie has been amazing in making our trip comfortable and successful!"; author = "Viprali B." }
+  )
+  "3-10" = @(
+    @{ quote = "We did a last minute request and Eddie responded in a minute! Everything was smooth. Miguel, our driver drove us up to Monteverde from Santa Teresa, we chatted about animals, the land, the people. Everything was deep in the tico culture."; author = "Yu H." }
+  )
+  "0-9" = @(
+    @{ quote = "Exceptional and super efficient service! Carlos drove my wife, son, and I from Puerto Viejo to San Jose. Carlos is a great driver, very friendly, and he taught us so much about Costa Rica along the way. He even made some stops for us to get some photos and enjoy some of the country's beauty."; author = "BTL" }
+  )
+  "1-39" = @(
+    @{ quote = "American canceled my flight and we ended up getting into Liberia later than expected and so my previous travel plans changed. Eddie was able to help me book a chartered van all the way to Nosara (3 hour drive) the night before for a very fair transport price. My drive with Carlos was 10/10."; author = "Ryan B." }
+  )
+  "2-14" = @(
+    @{ quote = "Our driver Eddy took the time to point out and sometimes stop to explain some of the amazing views such as the different volcanos, pineapple field, and this gigantic tree. He was our driver from La Fortuna area to playa Hermosa area, and would check-in to see if we were fine."; author = "Roxanne G." }
+  )
+  "2-38" = @(
+    @{ quote = "We just completed a wonderful 5 hour drive from Montezuma to La Fortuna. Our driver, Eric was so nice and accommodating. He pointed out many points of interest and any animals he spotted along the way. The van was super clean and comfortable and Eric navigated the roads flawlessly."; author = "Lindsey Q." }
+  )
 }
 
 function PriceCard($v,$pax,$price){
@@ -101,8 +139,12 @@ foreach($p in $pages){
   $rkey = "$([Math]::Min($p.f,$p.t))-$([Math]::Max($p.f,$p.t))"
   $reviewHtml = ""
   if ($ROUTE_REVIEWS.ContainsKey($rkey)) {
-    $rv = $ROUTE_REVIEWS[$rkey]
-    $reviewHtml = "<section class='rp-sec'><div class='wrap'><figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on Google Reviews</figcaption></figure></div></section>"
+    $figs = ""
+    foreach($rv in @($ROUTE_REVIEWS[$rkey])) {
+      $figs += "<figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on Google Reviews</figcaption></figure>"
+    }
+    $revTitle = if (@($ROUTE_REVIEWS[$rkey]).Count -gt 1) { "<h2>What travelers say about this route</h2>" } else { "" }
+    $reviewHtml = "<section class='rp-sec'><div class='wrap'>$revTitle$figs</div></section>"
   }
   $waMsg="Hi Travesia! I'd like to book a private transfer from $($o.n) to $($d.n). Date & passengers: "
   $waHref="https://wa.me/$WA"+"?text="+[uri]::EscapeDataString($waMsg)
@@ -128,6 +170,16 @@ foreach($p in $pages){
 # --- Guias del blog ---
 $guides=@("guide","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","tours/la-fortuna-full-day","terms","privacy")
 foreach($g in $guides){ [void]$urls.Add("$base/$g") }
+
+# --- Conservar URLs de otras herramientas (hoteles, shuttle-to, etc.) ya presentes en el sitemap ---
+$smPath = Join-Path $root "sitemap.xml"
+if (Test-Path $smPath) {
+  $old = Get-Content -Raw -Encoding UTF8 $smPath
+  foreach($m in [regex]::Matches($old,'<loc>([^<]+)</loc>')){
+    $u = $m.Groups[1].Value
+    if ($urls -notcontains $u) { [void]$urls.Add($u) }
+  }
+}
 
 # --- Sitemap ---
 $sm="<?xml version=""1.0"" encoding=""UTF-8""?>`n<urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">`n"

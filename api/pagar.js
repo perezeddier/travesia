@@ -110,6 +110,7 @@ export default async function handler(req, res) {
       summary: d.summary || '', date: d.date || '', time: d.time || '',
       pax: d.pax || '', pickup: d.pickup || '', dropoff: d.dropoff || '', flight: d.flight || '',
       itinerary: d.itinerary || '',
+      seats: String(d.seats || '').slice(0, 120),
       tier, total: '$' + amount.toFixed(2), notes: d.notes || '',
       lang: d.lang === 'es' ? 'es' : 'en', orderNumber, country,
     };

@@ -57,9 +57,9 @@ function ptDuration(dur) {
 }
 
 const FLEET = [
-  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg", pos: "center 84%" },
-  { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9,  img: "hiace.jpg",  pos: "center 62%" },
-  { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12, img: "maxus.jpg",  pos: "center 60%" },
+  { name: "Hyundai Staria", cls: "Comfort", pax: 5,  bags: 5,  img: "staria.jpg", pos: "center 84%", from: 80 },
+  { name: "Toyota Hiace",   cls: "Group",   pax: 9,  bags: 9,  img: "hiace.jpg",  pos: "center 62%", from: 135 },
+  { name: "Maxus V90",      cls: "Premium", pax: 12, bags: 12, img: "maxus.jpg",  pos: "center 60%", from: 180 },
 ];
 
 /* ---------- TRANSLATIONS ---------- */
@@ -266,7 +266,11 @@ const I18N = {
     "co.date": "Travel date",
     "co.time": "Pickup time",
     "co.adults": "Adults",
-    "co.children": "Children (for free child seats)",
+    "co.children": "Children",
+    "co.seats": "Free child seats — pick what you need:",
+    "co.seatInfant": "Infant (0–12 m)",
+    "co.seatConv": "Convertible (1–4 yr)",
+    "co.seatBooster": "Booster (4–12 yr)",
     "co.pickup": "Pickup — hotel or address",
     "co.dropoff": "Drop-off — hotel or address (optional)",
     "co.legDetails": "When and where for trip {n}?",
@@ -301,6 +305,8 @@ const I18N = {
     "fleet.lead": "Modern, air-conditioned and fully insured — and always private, just for you and your group. Pick the size that fits your party and luggage.",
     "fleet.pax": "passengers",
     "fleet.bags": "bags",
+    "fleet.from": "From",
+    "fleet.taxes": "per vehicle · taxes included",
     "fleet.book": "Book this vehicle",
     "gallery.eyebrow": "Real photos",
     "gallery.title": "Our fleet across Costa Rica",
@@ -532,7 +538,11 @@ const I18N = {
     "co.date": "Fecha del viaje",
     "co.time": "Hora de recogida",
     "co.adults": "Adultos",
-    "co.children": "Niños (para sillas gratis)",
+    "co.children": "Niños",
+    "co.seats": "Sillas para niños gratis — elija las que ocupa:",
+    "co.seatInfant": "Bebé (0–12 m)",
+    "co.seatConv": "Convertible (1–4 años)",
+    "co.seatBooster": "Booster (4–12 años)",
     "co.pickup": "Recogida — hotel o dirección",
     "co.dropoff": "Destino — hotel o dirección (opcional)",
     "co.legDetails": "¿Cuándo y dónde para el servicio {n}?",
@@ -567,6 +577,8 @@ const I18N = {
     "fleet.lead": "Modernos, con aire acondicionado y con seguro completo — y siempre privados, solo para ti y tu grupo. Elige el tamaño ideal para tus pasajeros y equipaje.",
     "fleet.pax": "pasajeros",
     "fleet.bags": "maletas",
+    "fleet.from": "Desde",
+    "fleet.taxes": "por vehículo · impuestos incluidos",
     "fleet.book": "Reservar este vehículo",
     "gallery.eyebrow": "Fotos reales",
     "gallery.title": "Nuestra flota por Costa Rica",
@@ -1089,7 +1101,16 @@ function checkoutOrderMessage(d) {
   const itin = buildItinerary(d);
   return `Hi Travesía! New booking:\n${legs}\nTotal: $${total}\n\n` +
     (itin ? `Itinerary:\n${itin}\n\n` : `Date/time: ${d.date} ${d.time}\nPickup: ${d.pickup}\nDrop-off: ${d.dropoff || "-"}\n\n`) +
-    `Passengers: ${d.adults} adults, ${d.children || 0} children\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
+    `Passengers: ${d.adults} adults, ${d.children || 0} children\nChild seats: ${childSeatsText(d) || "-"}\nFlight: ${d.flight || "-"}\nName: ${d.name}\nEmail: ${d.email}\nPhone: ${d.phone}\nNotes: ${d.notes || "-"}`;
+}
+
+// Sillas de niño pedidas en el checkout → texto legible ("1 infant (0-12m), 2 booster")
+function childSeatsText(d) {
+  const parts = [];
+  if (+d.seatInfant) parts.push(`${d.seatInfant} infant (0-12m)`);
+  if (+d.seatConv) parts.push(`${d.seatConv} convertible (1-4y)`);
+  if (+d.seatBooster) parts.push(`${d.seatBooster} booster (4-12y)`);
+  return parts.join(", ");
 }
 
 /* Reserva por correo: arma los datos (SIN tarjeta) y los envía a la función serverless */
@@ -1109,6 +1130,7 @@ function reservaPayload(d) {
     summary: route, date: d.date, time: d.time, pax,
     pickup: d.pickup, dropoff: d.dropoff || "", flight: d.flight, tier,
     itinerary: buildItinerary(d),
+    seats: childSeatsText(d),
     total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
     country: d.country || "",   // para que el correo a Eddie arme el WhatsApp con código de país
   };
@@ -1180,6 +1202,7 @@ function renderFleet() {
             <span class="fleet-spec">${ICON_PAX}<strong>${f.pax}</strong> <span data-i18n="fleet.pax">${t("fleet.pax")}</span></span>
             <span class="fleet-spec">${ICON_BAG}<strong>${f.bags}</strong> <span data-i18n="fleet.bags">${t("fleet.bags")}</span></span>
           </div>
+          <div class="fleet-price"><span data-i18n="fleet.from">${t("fleet.from")}</span> <strong>$${f.from}</strong> <small data-i18n="fleet.taxes">${t("fleet.taxes")}</small></div>
           <a class="btn btn-outline" style="margin-top:18px" href="${wa(msg)}" target="_blank" rel="noopener"><span data-i18n="fleet.book">${t("fleet.book")}</span><span class="sr-only"> — ${f.name}</span></a>
         </div>
       </article>`;

@@ -36,6 +36,7 @@ img{max-width:100%;display:block}
 .rp-review .stars{color:#f5b301;letter-spacing:2px;font-size:1rem}
 .rp-review blockquote{margin:10px 0 8px;font-size:1.02rem;line-height:1.6;font-style:italic;color:var(--text)}
 .rp-review figcaption{color:var(--muted);font-size:.88rem}
+.rp-review + .rp-review{margin-top:14px}
 .rp-lead{color:var(--muted);font-size:1.05rem;max-width:70ch}
 
 .rp-prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:6px}
