@@ -267,6 +267,7 @@ const I18N = {
     "co.time": "Pickup time",
     "co.adults": "Adults",
     "co.children": "Children",
+    "hero.photoCap": "Real guests — meet & greet at SJO Airport",
     "co.step1": "Your trip",
     "co.step2": "Details & payment",
     "co.next": "Continue →",
@@ -543,6 +544,7 @@ const I18N = {
     "co.time": "Hora de recogida",
     "co.adults": "Adultos",
     "co.children": "Niños",
+    "hero.photoCap": "Clientes reales — recibimiento en el aeropuerto SJO",
     "co.step1": "Tu viaje",
     "co.step2": "Datos y pago",
     "co.next": "Continuar →",
@@ -620,6 +622,8 @@ const I18N = {
 
 /* ---------- GALERÍA ---------- */
 const GALLERY = [
+  { img: "clients-airport.jpg",    cap: { es: "Recibimiento en el aeropuerto SJO — con maletas y todo", en: "Meet & greet at SJO Airport — luggage and all" } },
+  { img: "g-family-staria.jpg",    cap: { es: "Familia lista para su traslado privado", en: "Family ready for their private transfer" } },
   { img: "g-van-sunset.jpg",       cap: { es: "Nuestra flota al atardecer",        en: "Our fleet at sunset" } },
   { img: "g-clients-van.jpg",      cap: { es: "Clientes felices con nuestro equipo",en: "Happy clients with our team" } },
   { img: "g-arenal.jpg",           cap: { es: "Volcán Arenal",                     en: "Arenal Volcano" } },

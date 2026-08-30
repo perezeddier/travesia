@@ -146,6 +146,9 @@ body[data-lang="en"] .lang-en, body[data-lang="es"] .lang-es { color: var(--gold
 .hero-trust { list-style: none; display: flex; flex-wrap: wrap; gap: 30px; margin: 40px 0 0; padding: 26px 0 0; border-top: 1px solid var(--line); }
 .hero-trust li { color: var(--muted); font-size: .95rem; }
 .hero-trust strong { display: block; font-family: var(--font-head); font-size: 1.5rem; color: var(--text); }
+.hero-photo-card { margin: 26px 0 0; max-width: 330px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 8px 8px 4px; transform: rotate(-1.4deg); box-shadow: 0 14px 34px rgba(0,0,0,.4); }
+.hero-photo-card img { width: 100%; height: auto; border-radius: 9px; display: block; }
+.hero-photo-card figcaption { font-size: .78rem; color: var(--muted); padding: 7px 4px 4px; }
 
 /* ===================== SECTIONS ===================== */
 .section { padding: clamp(42px, 6vw, 76px) 0; }
