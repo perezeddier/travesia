@@ -6,7 +6,20 @@ export default async function handler(req, res) {
   const q = req.query || {};
   if (String(q.d) !== '1') { res.status(404).end(); return; }
   const url = process.env.SHEETS_WEBHOOK_URL;
-  const out = { tieneUrl: !!url };
+  const out = { tieneUrl: !!url, urlPathStart: url ? new URL(url).pathname.slice(0, 40) : null };
+  if (url && String(q.get) === '1') {
+    // GET al webhook: el código NUEVO responde {ok:true, servicio:'Travesia reservas'};
+    // el viejo responde otra cosa. Así sabemos qué versión está publicada.
+    try {
+      const r = await fetch(url, { method: 'GET' });
+      out.status = r.status;
+      out.respuesta = (await r.text()).slice(0, 300);
+    } catch (e) {
+      out.error = String(e && e.message || e).slice(0, 300);
+    }
+    res.status(200).json(out);
+    return;
+  }
   if (url) {
     let payload = {
       estado: 'PRUEBA-DIAG', nombre: 'Fila de diagnostico (borrar)', ruta: 'diagnostico',
