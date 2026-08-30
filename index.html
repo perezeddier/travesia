@@ -731,6 +731,11 @@
       <h3 class="checkout-title" data-i18n="co.title">Complete your booking</h3>
       <div class="co-summary" id="coSummary"><!-- injected --></div>
       <form class="co-form" id="coForm" novalidate>
+        <ol class="co-progress" id="coProgress" aria-hidden="true">
+          <li class="active"><span>1</span><em data-i18n="co.step1">Your trip</em></li>
+          <li><span>2</span><em data-i18n="co.step2">Details &amp; payment</em></li>
+        </ol>
+        <div class="co-step active" data-costep="1">
         <div class="co-choose">
           <span class="co-choose-label" data-i18n="co.choose">Choose your service</span>
           <div class="co-tiers">
@@ -773,6 +778,10 @@
         <label class="co-field"><span data-i18n="co.pickup">Pickup — hotel or address</span><input type="text" name="pickup" required></label>
         <label class="co-field"><span data-i18n="co.dropoff">Drop-off — hotel or address (optional)</span><input type="text" name="dropoff"></label>
         <label class="co-field"><span data-i18n="co.flight">Flight number (optional)</span><input type="text" name="flight"></label>
+        <button type="button" class="btn btn-primary btn-lg" id="coNext" data-i18n="co.next">Continue →</button>
+        </div>
+        <div class="co-step" data-costep="2">
+        <button type="button" class="co-back" id="coBack" data-i18n="co.backStep">← Back to trip details</button>
         <label class="co-field"><span data-i18n="co.name">Full name</span><input type="text" name="name" required></label>
         <div class="co-grid">
           <label class="co-field"><span data-i18n="co.email">Email</span><input type="email" name="email" required></label>
@@ -816,6 +825,7 @@
         <label class="co-field"><span data-i18n="co.notes">Notes (optional)</span><textarea name="notes" rows="2"></textarea></label>
         <button type="submit" class="btn btn-primary btn-lg co-pay" data-i18n="co.pay">Reserve now</button>
         <p class="co-secure"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg> <span data-i18n="co.secure">We confirm your trip and send a secure payment link on WhatsApp · Free cancellation up to 48h before · Taxes included, prices in USD</span></p>
+        </div>
       </form>
     </div>
   </aside>

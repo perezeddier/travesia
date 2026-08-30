@@ -267,6 +267,10 @@ const I18N = {
     "co.time": "Pickup time",
     "co.adults": "Adults",
     "co.children": "Children",
+    "co.step1": "Your trip",
+    "co.step2": "Details & payment",
+    "co.next": "Continue →",
+    "co.backStep": "← Back to trip details",
     "co.seats": "Free child seats — pick what you need:",
     "co.seatInfant": "Infant (0–12 m)",
     "co.seatConv": "Convertible (1–4 yr)",
@@ -539,6 +543,10 @@ const I18N = {
     "co.time": "Hora de recogida",
     "co.adults": "Adultos",
     "co.children": "Niños",
+    "co.step1": "Tu viaje",
+    "co.step2": "Datos y pago",
+    "co.next": "Continuar →",
+    "co.backStep": "← Volver a los datos del viaje",
     "co.seats": "Sillas para niños gratis — elija las que ocupa:",
     "co.seatInfant": "Bebé (0–12 m)",
     "co.seatConv": "Convertible (1–4 años)",
@@ -1065,12 +1073,23 @@ function renderCheckoutSummary() {
         </div>`}
       </div>`).join("")}`;
 }
+/* Checkout en 2 pasos: 1) el viaje  2) datos y pago. Solo presentación — la lógica de pago no cambia. */
+function coStep(n) {
+  document.querySelectorAll("#coForm .co-step").forEach((s) => s.classList.toggle("active", +s.dataset.costep === n));
+  document.querySelectorAll("#coProgress li").forEach((li, i) => {
+    li.classList.toggle("active", i + 1 === n);
+    li.classList.toggle("done", i + 1 < n);
+  });
+  document.querySelector(".checkout-body")?.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 function openCheckout() {
   if (!CART.length) { toast(t("co.empty")); return; }
   const anyVip = CART.some((it) => it.vip);
   const r = document.querySelector(`#coForm [name="experience"][value="${anyVip ? "1" : "0"}"]`);
   if (r) r.checked = true;
   renderCheckoutSummary();
+  coStep(1);
   document.getElementById("checkout")?.classList.add("open");
   document.getElementById("checkoutOverlay")?.classList.add("show");
   document.body.classList.add("no-scroll");
@@ -1382,9 +1401,30 @@ document.addEventListener("DOMContentLoaded", () => {
       if (CART[idx]) { CART[idx][el.dataset.legfield] = el.value; saveCart(); }
     }
   });
+  // Botones de los pasos del checkout
+  document.getElementById("coNext")?.addEventListener("click", () => {
+    const step1 = document.querySelector('#coForm .co-step[data-costep="1"]');
+    for (const el of step1.querySelectorAll("input, select, textarea")) {
+      if (!el.checkValidity()) { el.reportValidity(); return; }
+    }
+    coStep(2);
+    gaEvent("begin_checkout_step2", {});
+  });
+  document.getElementById("coBack")?.addEventListener("click", () => coStep(1));
+
   const coForm = document.getElementById("coForm");
   if (coForm) coForm.addEventListener("submit", async (e) => {
     e.preventDefault();
+    // Si quedó algo inválido en un paso oculto, volvemos a ese paso antes de mostrar el error.
+    const bad = coForm.querySelector(":invalid");
+    if (bad) {
+      const stepDiv = bad.closest(".co-step");
+      if (stepDiv && !stepDiv.classList.contains("active")) {
+        coStep(+stepDiv.dataset.costep);
+        setTimeout(() => coForm.reportValidity(), 80);
+        return;
+      }
+    }
     if (!coForm.reportValidity()) return;
     for (let idx = 1; idx < CART.length; idx++) {
       const it = CART[idx];

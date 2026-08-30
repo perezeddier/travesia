@@ -428,6 +428,17 @@ body.no-scroll { overflow: hidden; }
 .co-sum-legtitle { font-size: .8rem; font-weight: 700; color: var(--gold-2); margin: 0; }
 
 .co-form { display: flex; flex-direction: column; gap: 14px; }
+.co-step { display: none; }
+.co-step.active { display: flex; flex-direction: column; gap: 14px; }
+.co-progress { display: flex; list-style: none; margin: 0 0 4px; padding: 0; gap: 8px; }
+.co-progress li { flex: 1; display: flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 700; color: var(--muted); border-bottom: 2px solid var(--line); padding-bottom: 8px; }
+.co-progress li span { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-3); border: 1px solid var(--line); font-size: .75rem; flex: 0 0 auto; }
+.co-progress li.active { color: var(--text); border-bottom-color: var(--gold); }
+.co-progress li.active span { background: var(--gold); border-color: var(--gold); color: #171310; }
+.co-progress li.done { color: var(--gold-2); border-bottom-color: rgba(224,123,31,.5); }
+.co-progress li.done span { background: rgba(224,123,31,.18); border-color: rgba(224,123,31,.5); color: var(--gold-2); }
+.co-back { background: none; border: none; color: var(--gold-2); font-size: .85rem; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-family: var(--font-body); }
+.co-back:hover { text-decoration: underline; }
 .co-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .co-field { display: flex; flex-direction: column; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--muted); }
 .co-field input, .co-field textarea {
