@@ -232,8 +232,9 @@ function ownerEmail(d, paid) {
     </div>
   </div>`;
 
-  const html = `<!doctype html><html><body style="margin:0;background:#0e0c0a;font-family:'Segoe UI',Arial,sans-serif">
-  <div style="max-width:430px;margin:0 auto;padding:16px 12px">
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#0e0c0a;font-family:'Segoe UI',Arial,sans-serif">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#0e0c0a"><tr><td align="center" style="padding:16px 10px">
+  <table role="presentation" width="430" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:430px;max-width:430px"><tr><td>
     ${card}
     <div style="margin-top:14px;background:#1c1710;border:1px solid #2b241d;border-radius:14px;padding:15px 18px">
       <div style="color:#9a8f80;font-size:10.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px">Solo para vos (la captura de arriba no incluye esto)</div>
@@ -246,7 +247,8 @@ function ownerEmail(d, paid) {
         ? `Hi ${d.name || ''}, thank you for booking with Travesía Costa Rica! About your trip ${d.summary || ''}${d.date ? ' on ' + d.date : ''} — I'd love to confirm the details with you.`
         : `Hola ${d.name || ''}, ¡gracias por reservar con Travesía Costa Rica! Sobre tu viaje ${d.summary || ''}${d.date ? ' el ' + d.date : ''}, me encantaría confirmar los detalles con vos.`)}</div>
     </div>
-  </div></body></html>`;
+  </td></tr></table>
+  </td></tr></table></body></html>`;
 
   const subjTag = paid ? 'Reserva PAGADA' : 'Nueva reserva';
   return { subject: `${subjTag} ${d.orderNumber || ''}: ${d.name || 'cliente'} - ${d.summary || ''}`, html };
