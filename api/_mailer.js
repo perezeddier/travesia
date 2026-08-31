@@ -145,13 +145,13 @@ function clientEmail(d, lang, paid) {
 
 /* ===== Correo para Eddie = TIQUETE oscuro (para captura y pasar al conductor) ===== */
 
-// fila del tiquete: etiqueta gris izquierda, valor claro derecha
+// fila del tiquete APILADA (a prueba de Gmail móvil): etiqueta gris arriba, valor claro abajo
 function trow(label, value) {
   if (!value) return '';
-  return `<tr>
-    <td style="padding:11px 0;border-bottom:1px solid #2b241d;color:#9a8f80;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;vertical-align:top;padding-right:14px;white-space:nowrap">${esc(label)}</td>
-    <td style="padding:11px 0;border-bottom:1px solid #2b241d;color:#f5efe6;font-size:14.5px;font-weight:600;text-align:right;line-height:1.4;word-break:break-word">${esc(value)}</td>
-  </tr>`;
+  return `<tr><td style="padding:9px 0;border-bottom:1px solid #2b241d">
+    <div style="color:#9a8f80;font-size:10.5px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:2px">${esc(label)}</div>
+    <div style="color:#f5efe6;font-size:15px;font-weight:600;line-height:1.4">${esc(value)}</div>
+  </td></tr>`;
 }
 
 // itinerario multi-tramo en oscuro
@@ -181,13 +181,9 @@ function ownerEmail(d, paid) {
     if (m) { route = m[1].trim(); veh = m[2]; }
     const parts = route.split(/\s*→\s*/);
     if (parts.length === 2) {
-      routeHtml += `<table role="presentation" width="100%" style="border-collapse:collapse;margin:0 0 4px"><tr>
-        <td style="width:44%;text-align:left;color:#ffffff;font-size:16px;font-weight:800;line-height:1.35">${esc(parts[0])}</td>
-        <td style="text-align:center;color:#e07b1f;font-size:20px;font-weight:800">&#8594;</td>
-        <td style="width:44%;text-align:right;color:#ffffff;font-size:16px;font-weight:800;line-height:1.35">${esc(parts[1])}</td>
-      </tr></table>`;
+      routeHtml += `<div style="color:#ffffff;font-size:17px;font-weight:800;text-align:center;margin:0 0 4px;line-height:1.4">${esc(parts[0])} <span style="color:#e07b1f">&#8594;</span> ${esc(parts[1])}</div>`;
     } else {
-      routeHtml += `<div style="color:#ffffff;font-size:16px;font-weight:800;text-align:center;margin:0 0 4px;line-height:1.35">${esc(route)}</div>`;
+      routeHtml += `<div style="color:#ffffff;font-size:17px;font-weight:800;text-align:center;margin:0 0 4px;line-height:1.4">${esc(route)}</div>`;
     }
     if (veh) routeHtml += `<div style="text-align:center;color:#9a8f80;font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 12px">${esc(veh)}</div>`;
   }
@@ -232,7 +228,7 @@ function ownerEmail(d, paid) {
     </div>
   </div>`;
 
-  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#0e0c0a;font-family:'Segoe UI',Arial,sans-serif">
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#0e0c0a;font-family:'Segoe UI',Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#0e0c0a"><tr><td align="center" style="padding:16px 10px">
   <table role="presentation" width="430" cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:430px;max-width:430px"><tr><td>
     ${card}
