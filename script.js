@@ -282,6 +282,7 @@ const I18N = {
     "co.legMissing": "Please fill in the date, time and pickup for each additional trip.",
     "co.dropoff": "Drop-off — hotel or address",
     "co.flight": "Flight number (optional)",
+    "co.flightReq": "Flight number — required for airport transfers",
     "co.name": "Full name",
     "co.email": "Email",
     "co.phone": "WhatsApp / phone",
@@ -559,6 +560,7 @@ const I18N = {
     "co.legMissing": "Por favor completa la fecha, hora y recogida de cada servicio adicional.",
     "co.dropoff": "Destino — hotel o dirección",
     "co.flight": "Número de vuelo (opcional)",
+    "co.flightReq": "Número de vuelo — obligatorio para traslados de aeropuerto",
     "co.name": "Nombre completo",
     "co.email": "Correo electrónico",
     "co.phone": "WhatsApp / teléfono",
@@ -1087,12 +1089,31 @@ function coStep(n) {
   document.querySelector(".checkout-body")?.scrollTo({ top: 0, behavior: "smooth" });
 }
 
+// ¿Algún tramo del carrito toca un aeropuerto? (índices 0 = SJO, 1 = LIR en PT_PLACES)
+function cartTouchesAirport() {
+  return CART.some((it) => +it.i === 0 || +it.i === 1 || +it.j === 0 || +it.j === 1);
+}
+
+// El número de vuelo es OBLIGATORIO solo cuando la reserva incluye un aeropuerto.
+function setFlightRequirement() {
+  const input = document.querySelector('#coForm [name="flight"]');
+  if (!input) return;
+  const req = cartTouchesAirport();
+  input.required = req;
+  const label = input.closest(".co-field")?.querySelector("[data-i18n]");
+  if (label) {
+    label.setAttribute("data-i18n", req ? "co.flightReq" : "co.flight");
+    label.textContent = t(req ? "co.flightReq" : "co.flight");
+  }
+}
+
 function openCheckout() {
   if (!CART.length) { toast(t("co.empty")); return; }
   const anyVip = CART.some((it) => it.vip);
   const r = document.querySelector(`#coForm [name="experience"][value="${anyVip ? "1" : "0"}"]`);
   if (r) r.checked = true;
   renderCheckoutSummary();
+  setFlightRequirement();
   coStep(1);
   document.getElementById("checkout")?.classList.add("open");
   document.getElementById("checkoutOverlay")?.classList.add("show");
