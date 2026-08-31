@@ -442,6 +442,9 @@ body.no-scroll { overflow: hidden; }
 .co-progress li.done span { background: rgba(224,123,31,.18); border-color: rgba(224,123,31,.5); color: var(--gold-2); }
 .co-back { background: none; border: none; color: var(--gold-2); font-size: .85rem; font-weight: 600; cursor: pointer; text-align: left; padding: 0; font-family: var(--font-body); }
 .co-back:hover { text-decoration: underline; }
+.co-terms { font-size: .74rem; color: var(--muted); text-align: center; margin: 2px 0 0; }
+.co-terms a { color: var(--gold-2); text-decoration: none; }
+.co-terms a:hover { text-decoration: underline; }
 .co-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .co-field { display: flex; flex-direction: column; gap: 6px; font-size: .82rem; font-weight: 600; color: var(--muted); }
 .co-field input, .co-field textarea {
