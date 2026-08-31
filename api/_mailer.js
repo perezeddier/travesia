@@ -318,6 +318,14 @@ async function logToSheet(d, paid) {
   } catch (e) { /* la hoja es un extra: si falla, no afecta correo ni pago */ }
 }
 
+// Reenvía SOLO el tiquete a Eddie (sin correo al cliente y sin tocar la hoja).
+// Se usa para regenerar el tiquete de una reserva existente y pasarlo al conductor.
+export async function sendOwnerTicket(d, paid) {
+  if (!process.env.BREVO_API_KEY) throw new Error('no-brevo-key');
+  const o = ownerEmail(d, !!paid);
+  await sendEmail(OWNER, '[Tiquete] ' + o.subject, o.html, d.email);
+}
+
 // Envía los 2 correos (cliente + Eddie) y guarda en la hoja. paid=true = pago confirmado.
 export async function sendReservation(d, paid) {
   if (!process.env.BREVO_API_KEY) throw new Error('no-brevo-key');
