@@ -40,7 +40,13 @@ $meta[44] = @{ n="San Jose (city)"; slug="san-jose-city"; blurb="San Jose is Cos
 $meta[45] = @{ n="Alajuela"; slug="alajuela"; blurb="Alajuela is the city right next to San Jose's international airport (SJO), a convenient first or last stop." }
 
 $airports = @(0,1)
-$hubs = @(2,3,4,5,8,11)
+# Zonas turisticas reales y reconocidas (mismas 22 que usa genshuttleto.ps1) -- se genera
+# pagina de ruta entre CUALQUIER par de estas zonas con precio real, no solo el viejo set de 6.
+# Deliberadamente NO incluye endpoints de resort/hotel individual (RIU, JW Marriott, Punta Islita,
+# Las Catalinas, Hacienda Pinilla, Playa Grande, Playa Potrero, Playa Avellanas, Herradura, Esterillos,
+# Ojochal, etc.) porque nadie busca esas combinaciones especificas en Google -- esas zonas ya estan
+# cubiertas por las paginas de hotel + shuttle-to, no necesitan pagina de ruta punto a punto.
+$hubs = @(2,3,4,5,6,7,8,9,10,11,12,13,14,19,20,23,30,32,36,39,40,42)
 
 # --- Construir lista de paginas dirigidas (ambos sentidos) ---
 $pages = New-Object System.Collections.ArrayList
