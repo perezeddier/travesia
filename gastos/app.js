@@ -227,6 +227,8 @@ const inMonth = (arr) => arr.filter(x => monthOf(x.fecha) === State.month);
 const nombreVehiculo = (id)=>{ const v=DB.get('vehiculos',id); return v ? (v.placa || v.nombre) : '—'; };
 const nombreChofer   = (id)=> DB.get('choferes',id)?.nombre || '—';
 const nombreProveedor= (id)=> DB.get('proveedores',id)?.nombre || '—';
+// Chofer de un gasto: el que tiene el gasto directamente, o si no, el asignado al vehículo
+const choferDeGasto = (g)=> g.choferId || (DB.get('vehiculos', g.vehiculoId)||{}).choferId || null;
 
 /* ---------------- INICIO (dashboard) ---------------- */
 function renderInicio(){
@@ -254,10 +256,22 @@ function renderInicio(){
   const cats = Object.entries(porCat).sort((a,b)=>b[1]-a[1]);
   const maxCat = cats.length ? cats[0][1] : 1;
 
-  // comisiones por proveedor
+  // gastos por chofer (directo, o heredado del vehículo si el gasto no trae chofer propio)
+  const porChofer = {};
+  gastos.forEach(g=>{ const k=choferDeGasto(g)||'_'; porChofer[k]=(porChofer[k]||0)+toBase(g.monto,g.moneda); });
+  const chofs = Object.entries(porChofer).sort((a,b)=>b[1]-a[1]);
+  const maxChof = chofs.length ? chofs[0][1] : 1;
+
+  // comisiones por proveedor (monto + cantidad de servicios)
   const porProv = {};
-  comis.forEach(c=>{ const k=c.proveedorId||'_'; porProv[k]=(porProv[k]||0)+toBase(c.monto,c.moneda); });
-  const provs = Object.entries(porProv).sort((a,b)=>b[1]-a[1]);
+  comis.forEach(c=>{ const k=c.proveedorId||'_'; const cur=porProv[k]||{monto:0,n:0}; cur.monto+=toBase(c.monto,c.moneda); cur.n+=1; porProv[k]=cur; });
+  const provs = Object.entries(porProv).sort((a,b)=>b[1].monto-a[1].monto);
+
+  // destacados del período (porVeh ya viene ordenado por resultado/net)
+  const destVehResultado = porVeh[0] || null;
+  const destVehIngreso = porVeh.length ? [...porVeh].sort((a,b)=>b.ing-a.ing)[0] : null;
+  const destVehGasto = porVeh.length ? [...porVeh].sort((a,b)=>b.gas-a.gas)[0] : null;
+  const destProv = provs.length ? provs[0] : null;
 
   const esAno = State.period==='año';
   let h = `
@@ -274,6 +288,16 @@ function renderInicio(){
     <div class="kpi profit ${ganancia>=0?'pos':'neg'}"><span class="bar"></span><div class="label">📈 Ganancia</div><div class="value small">${fmtMoney(ganancia)}</div></div>
     <div class="kpi wide" style="padding:12px 15px"><div class="label" style="margin:0">💰 Ingresos ${esAno?'del año':'del mes'}: <b style="color:var(--green)">${fmtMoney(ingreso)}</b>${pend>0?` &nbsp;·&nbsp; <span style="color:var(--gold-2)">⏳ Por cobrar: ${fmtMoney(pend)}</span>`:''}</div></div>
   </div>`;
+
+  // Destacados del período (se derivan de porVeh/provs, ya calculados arriba)
+  if(destVehIngreso || destProv){
+    h += `<div class="section-label">Destacados</div><div class="kpi-grid">`;
+    if(destVehIngreso) h += `<div class="kpi income" onclick="openUnidad('${destVehIngreso.v.id}')" style="cursor:pointer"><span class="bar"></span><div class="label">🏆 Más genera</div><div class="value small pos">${esc(nombreVehiculo(destVehIngreso.v.id))}</div><div class="value small" style="font-size:.78rem;color:var(--muted)">${fmtMoney(destVehIngreso.ing)}</div></div>`;
+    if(destVehGasto && destVehGasto.gas>0) h += `<div class="kpi expense" onclick="openUnidad('${destVehGasto.v.id}')" style="cursor:pointer"><span class="bar"></span><div class="label">⚠️ Más gasta</div><div class="value small neg">${esc(nombreVehiculo(destVehGasto.v.id))}</div><div class="value small" style="font-size:.78rem;color:var(--muted)">${fmtMoney(destVehGasto.gas)}</div></div>`;
+    if(destVehResultado) h += `<div class="kpi profit ${destVehResultado.net>=0?'pos':'neg'}" onclick="openUnidad('${destVehResultado.v.id}')" style="cursor:pointer"><span class="bar"></span><div class="label">📈 Mejor resultado</div><div class="value small">${esc(nombreVehiculo(destVehResultado.v.id))}</div><div class="value small" style="font-size:.78rem;color:var(--muted)">${fmtMoney(destVehResultado.net)}</div></div>`;
+    if(destProv) h += `<div class="kpi commission"><span class="bar"></span><div class="label">🤝 Proveedor top</div><div class="value small pos">${esc(destProv[0]==='_'?'Sin proveedor':nombreProveedor(destProv[0]))}</div><div class="value small" style="font-size:.78rem;color:var(--muted)">${fmtMoney(destProv[1].monto)}</div></div>`;
+    h += `</div>`;
+  }
 
   // En modo Año: balance mes por mes
   if(esAno){
@@ -315,12 +339,26 @@ function renderInicio(){
     h += `</div>`;
   }
 
+  if(chofs.length){
+    h += `<div class="section-label">Gastos por chofer</div><div class="bd">`;
+    chofs.forEach(([id,val])=>{
+      h += `<div class="bd-row" ${id!=='_'?`onclick="openChoferDetalle('${id}')" style="cursor:pointer"`:''}>
+        <div class="ic">👤</div>
+        <div class="nm"><div class="t">${esc(id==='_'?'Sin chofer':nombreChofer(id))}</div>
+          <div class="mini-bar"><span style="width:${Math.max(6,val/maxChof*100)}%"></span></div></div>
+        <div class="amt neg">${fmtMoney(val)}${id!=='_'?' ›':''}</div>
+      </div>`;
+    });
+    h += `</div>`;
+  }
+
   if(provs.length){
     h += `<div class="section-label">Comisiones por proveedor</div><div class="bd">`;
     provs.forEach(([id,val])=>{
       h += `<div class="bd-row"><div class="ic">🤝</div>
-        <div class="nm"><div class="t">${esc(id==='_'?'Sin proveedor':nombreProveedor(id))}</div></div>
-        <div class="amt pos">${fmtMoney(val)}</div></div>`;
+        <div class="nm"><div class="t">${esc(id==='_'?'Sin proveedor':nombreProveedor(id))}</div>
+          <div class="s">${val.n} servicio${val.n!==1?'s':''}</div></div>
+        <div class="amt pos">${fmtMoney(val.monto)}</div></div>`;
     });
     h += `</div>`;
   }
@@ -372,6 +410,25 @@ function openUnidad(id){
   h += `<div class="section-label">Gastos (${gastos.length})</div>`;
   if(gastos.length){ h+=`<div class="bd">`; gastos.forEach(g=>{ const c=catOf(g.categoria);
     h+=`<div class="bd-row" onclick="closeSheet();openGastoForm('${g.id}')" style="cursor:pointer"><div class="ic">${c.em}</div><div class="nm"><div class="t">${esc(c.nom)}</div><div class="s">${fmtDate(g.fecha)}${g.notas?' · '+esc(g.notas):''}</div></div><div class="amt neg">${fmtMoney(toBase(g.monto,g.moneda))}</div></div>`;
+  }); h+=`</div>`; }
+  else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin gastos en ${periodLabel()}.</div>`;
+  h += `<div class="form-actions"><button class="btn ghost block" onclick="closeSheet()">Cerrar</button></div>`;
+  openSheet(h);
+}
+
+/* ---------------- Detalle por chofer (gastos asociados) ---------------- */
+function openChoferDetalle(id){
+  const c = DB.get('choferes', id); if(!c) return;
+  const gastos = inPeriod(DB.all('gastos')).filter(g=>choferDeGasto(g)===id).sort((a,b)=>b.fecha.localeCompare(a.fecha));
+  const gas = gastos.reduce((s,g)=>s+toBase(g.monto,g.moneda),0);
+  let h = `<h3>👤 ${esc(c.nombre)}</h3>
+    <div style="color:var(--muted);font-size:.82rem;margin:-8px 0 14px">${periodLabel()}</div>
+    <div class="kpi-grid">
+      <div class="kpi expense wide"><span class="bar"></span><div class="label">Gastos asociados</div><div class="value small neg">${fmtMoney(gas)}</div></div>
+    </div>
+    <div class="section-label">Gastos (${gastos.length})</div>`;
+  if(gastos.length){ h+=`<div class="bd">`; gastos.forEach(g=>{ const cat=catOf(g.categoria);
+    h+=`<div class="bd-row" onclick="closeSheet();openGastoForm('${g.id}')" style="cursor:pointer"><div class="ic">${cat.em}</div><div class="nm"><div class="t">${esc(cat.nom)} · ${esc(nombreVehiculo(g.vehiculoId))}</div><div class="s">${fmtDate(g.fecha)}${g.notas?' · '+esc(g.notas):''}</div></div><div class="amt neg">${fmtMoney(toBase(g.monto,g.moneda))}</div></div>`;
   }); h+=`</div>`; }
   else h += `<div style="color:var(--muted);font-size:.85rem;padding:2px 4px 8px">Sin gastos en ${periodLabel()}.</div>`;
   h += `<div class="form-actions"><button class="btn ghost block" onclick="closeSheet()">Cerrar</button></div>`;
@@ -619,7 +676,7 @@ function saveViaje(id){
 
 /* ----- Gasto ----- */
 function openGastoForm(id){
-  const g = id ? Object.assign({}, DB.get('gastos',id)) : {fecha:todayISO(), moneda:'₡', categoria:'combustible'};
+  const g = id ? Object.assign({}, DB.get('gastos',id)) : {fecha:todayISO(), moneda:DB.data.settings.moneda, categoria:'combustible'};
   const del = id ? `<button class="del" onclick="delItem('gastos','${id}')">🗑 Borrar</button>` : '';
   openSheet(`
     <h3>${id?'Editar gasto':'Nuevo gasto'} ${del}</h3>
@@ -635,14 +692,23 @@ function openGastoForm(id){
     </div>
     <div class="field row2">
       <div><label>Fecha</label><input type="date" id="g_fecha" value="${g.fecha||todayISO()}"></div>
-      <div><label>Vehículo</label><select id="g_veh">${vehOptions(g.vehiculoId)}</select></div>
+      <div><label>Vehículo</label><select id="g_veh" onchange="onGastoVehChange()">${vehOptions(g.vehiculoId)}</select></div>
     </div>
+    <div class="field"><label>Chofer (opcional)</label><select id="g_cho" onchange="this.dataset.touched='1'">${choOptions(g.choferId)}</select></div>
     <div class="field"><label>Notas (opcional)</label><textarea id="g_notas" placeholder="Ej: gasolina llena, cambio de aceite…">${esc(g.notas||'')}</textarea></div>
     <div class="form-actions">
       <button class="btn ghost" onclick="closeSheet()">Cancelar</button>
       <button class="btn primary" onclick="saveGasto('${id||''}')">Guardar</button>
     </div>`);
   chipClick('g_cat');
+  if(!id) onGastoVehChange();  // sugiere el chofer del vehículo elegido en un gasto nuevo
+}
+// Al elegir vehículo en un gasto, sugiere su chofer asignado (si el usuario no lo cambió a mano)
+function onGastoVehChange(){
+  const choSel = $('#g_cho');
+  if(!choSel || choSel.dataset.touched) return;
+  const veh = DB.get('vehiculos', $('#g_veh').value);
+  choSel.value = (veh && veh.choferId) || '';
 }
 function saveGasto(id){
   const monto = parseFloat($('#g_monto').value);
@@ -653,6 +719,7 @@ function saveGasto(id){
     categoria: $('#g_cat').dataset.val || 'otro',
     monto, moneda: $('#g_moneda').value,
     vehiculoId: $('#g_veh').value,
+    choferId: $('#g_cho').value,
     notas: $('#g_notas').value.trim(),
   };
   DB.upsert('gastos', obj); closeSheet(); toast(id?'Gasto actualizado':'Gasto guardado ✅'); render();
@@ -669,6 +736,7 @@ function openVehiculoForm(id){
       <div><label>Nombre / modelo</label><input id="v_nombre" value="${esc(v.nombre||'')}" placeholder="Staria, Hiace…"></div>
       <div><label>Capacidad (pax)</label><input type="number" id="v_cap" value="${v.capacidad||''}" placeholder="5"></div>
     </div>
+    <div class="field"><label>Chofer asignado (opcional)</label><select id="v_cho">${choOptions(v.choferId)}</select></div>
     <div class="field"><label>Notas</label><textarea id="v_notas" placeholder="Color, año, detalles…">${esc(v.notas||'')}</textarea></div>
     <div class="form-actions">
       <button class="btn ghost" onclick="closeSheet()">Cancelar</button>
@@ -679,7 +747,7 @@ function saveVehiculo(id){
   const placa = $('#v_placa').value.trim();
   const nombre = $('#v_nombre').value.trim();
   if(!placa && !nombre){ toast('Escribí la placa o el nombre'); return; }
-  DB.upsert('vehiculos', {id:id||undefined, placa, nombre, capacidad:$('#v_cap').value?+$('#v_cap').value:'', notas:$('#v_notas').value.trim()});
+  DB.upsert('vehiculos', {id:id||undefined, placa, nombre, capacidad:$('#v_cap').value?+$('#v_cap').value:'', choferId:$('#v_cho').value, notas:$('#v_notas').value.trim()});
   closeSheet(); toast(id?'Vehículo actualizado':'Vehículo guardado ✅'); render();
 }
 
