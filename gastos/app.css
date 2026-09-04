@@ -199,6 +199,8 @@ a{color:var(--gold-2)}
 .seg{display:flex; background:var(--bg-3); border:1px solid var(--line-2); border-radius:var(--radius-sm); overflow:hidden}
 .seg button{flex:1; background:none; border:none; color:var(--muted); padding:12px; font-weight:700}
 .seg button.on{background:var(--gold); color:#241c05}
+/* Con 4 apartados los botones van mas compactos para que quepan en el celular */
+.seg.seg-4 button{padding:12px 2px; font-size:.78rem; white-space:nowrap}
 .form-actions{display:flex; gap:10px; margin-top:20px}
 .form-actions .btn{flex:1}
 

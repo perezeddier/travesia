@@ -203,6 +203,7 @@ function onFab(){
   else if(State.tab==='mas'){
     if(State.masView==='choferes') openChoferForm();
     else if(State.masView==='proveedores') openProveedorForm();
+    else if(State.masView==='informe') openViajeForm();
     else openVehiculoForm();
   }
   else openViajeForm(); // inicio y viajes -> nuevo viaje
@@ -523,19 +524,22 @@ function renderComisiones(){
 function renderMas(){
   const vv = DB.all('vehiculos'), cc = DB.all('choferes'), pp = DB.all('proveedores');
   let h = `<div class="screen-head"><h2>Más</h2></div>
-    <div class="seg" style="margin-bottom:16px">
+    <div class="seg seg-4" style="margin-bottom:16px">
       <button class="${State.masView==='vehiculos'?'on':''}" onclick="setMas('vehiculos')">🚐 Vehículos</button>
       <button class="${State.masView==='choferes'?'on':''}" onclick="setMas('choferes')">👤 Choferes</button>
-      <button class="${State.masView==='proveedores'?'on':''}" onclick="setMas('proveedores')">🤝 Proveedores</button>
+      <button class="${State.masView==='proveedores'?'on':''}" onclick="setMas('proveedores')">🤝 Proveed.</button>
+      <button class="${State.masView==='informe'?'on':''}" onclick="setMas('informe')">📊 Informe</button>
     </div>`;
-  // botón "Agregar" siempre visible según el apartado
+  // botón "Agregar" siempre visible según el apartado (el Informe no lleva)
   const addBtn = {
     vehiculos:['＋ Agregar vehículo','openVehiculoForm()'],
     choferes:['＋ Agregar chofer','openChoferForm()'],
     proveedores:['＋ Agregar proveedor','openProveedorForm()'],
   }[State.masView];
-  h += `<button class="btn primary block" style="margin-bottom:14px" onclick="${addBtn[1]}">${addBtn[0]}</button>`;
-  if(State.masView==='vehiculos'){
+  if(addBtn) h += `<button class="btn primary block" style="margin-bottom:14px" onclick="${addBtn[1]}">${addBtn[0]}</button>`;
+  if(State.masView==='informe'){
+    h += informeHTML();
+  }else if(State.masView==='vehiculos'){
     if(!vv.length) h += emptyBox('🚐','No hay vehículos.','＋ Agregar vehículo','openVehiculoForm()');
     else{ h += `<div class="list">`; vv.forEach(v=>{
       const meta = [v.nombre?esc(v.nombre):'', v.capacidad?`${v.capacidad} pax`:''].filter(Boolean).join(' · ');
@@ -562,6 +566,131 @@ function renderMas(){
   $('#scr-mas').innerHTML = h;
 }
 function setMas(v){ State.masView=v; renderMas(); }
+
+/* ---------------- INFORME (revisión completa dentro de la app) ----------------
+   Eddie pidió poder repasar todo lo registrado (por vehículo, con placa, fecha,
+   chofer y montos) sin tener que descargar nada — el archivo de "Exportar" en
+   Ajustes es solo un respaldo técnico (JSON), no sirve para leer. */
+const fmtDia = (iso)=> iso ? `${iso.slice(8,10)}/${iso.slice(5,7)}` : '';
+
+// Viajes + gastos de un vehículo en el período, mezclados y ordenados por fecha
+function movsDeVehiculo(vid, viajes, gastos){
+  return [
+    ...viajes.filter(t=>t.vehiculoId===vid).map(t=>({fecha:t.fecha||'', tipo:'viaje', o:t})),
+    ...gastos.filter(g=>g.vehiculoId===vid).map(g=>({fecha:g.fecha||'', tipo:'gasto', o:g})),
+  ].sort((a,b)=> a.fecha.localeCompare(b.fecha));
+}
+// Una fila del informe (clic = abrir el registro para ver/editar)
+function movRow(m){
+  if(m.tipo==='viaje'){ const t=m.o;
+    return `<div class="bd-row" onclick="openViajeForm('${t.id}')" style="cursor:pointer">
+      <div class="ic">🚌</div>
+      <div class="nm"><div class="t">${esc(t.origen||'?')} → ${esc(t.destino||'?')}</div>
+        <div class="s">${fmtDate(t.fecha)}${t.cliente?' · '+esc(t.cliente):''}${t.estado==='pendiente'?' · ⏳ por cobrar':''}</div></div>
+      <div class="amt pos">${fmtMoney(toBase(t.precio,t.moneda))}</div></div>`;
+  }
+  const g=m.o, c=catOf(g.categoria), ch=choferDeGasto(g);
+  return `<div class="bd-row" onclick="openGastoForm('${g.id}')" style="cursor:pointer">
+    <div class="ic">${c.em}</div>
+    <div class="nm"><div class="t">${esc(c.nom)}</div>
+      <div class="s">${fmtDate(g.fecha)}${ch?' · '+esc(nombreChofer(ch)):''}${g.notas?' · '+esc(g.notas):''}</div></div>
+    <div class="amt neg">${fmtMoney(toBase(g.monto,g.moneda))}</div></div>`;
+}
+function informeHTML(){
+  const viajes = inPeriod(DB.all('viajes'));
+  const gastos = inPeriod(DB.all('gastos'));
+  const comis  = inPeriod(DB.all('comisiones'));
+  const ing = viajes.reduce((s,t)=>s+toBase(t.precio,t.moneda),0);
+  const com = comis.reduce((s,c)=>s+toBase(c.monto,c.moneda),0);
+  const gas = gastos.reduce((s,g)=>s+toBase(g.monto,g.moneda),0);
+  let h = `<div class="kpi-grid">
+      <div class="kpi income"><span class="bar"></span><div class="label">Ingresos</div><div class="value small pos">${fmtMoney(ing+com)}</div></div>
+      <div class="kpi expense"><span class="bar"></span><div class="label">Gastos</div><div class="value small neg">${fmtMoney(gas)}</div></div>
+      <div class="kpi profit wide ${(ing+com-gas)>=0?'pos':'neg'}"><span class="bar"></span><div class="label">Ganancia de ${periodLabel()}</div><div class="value small">${fmtMoney(ing+com-gas)}</div></div>
+    </div>
+    <button class="btn ghost block" style="margin:12px 0 2px" onclick="compartirInforme()">📤 Compartir / copiar como texto</button>`;
+
+  DB.all('vehiculos').forEach(v=>{
+    const movs = movsDeVehiculo(v.id, viajes, gastos);
+    const ingV = movs.filter(m=>m.tipo==='viaje').reduce((s,m)=>s+toBase(m.o.precio,m.o.moneda),0);
+    const gasV = movs.filter(m=>m.tipo==='gasto').reduce((s,m)=>s+toBase(m.o.monto,m.o.moneda),0);
+    const datos = [ v.capacidad?`${v.capacidad} pax`:null,
+                    v.choferId?('Chofer: '+esc(nombreChofer(v.choferId))):null ].filter(Boolean).join(' · ');
+    h += `<div class="section-label">🚐 ${esc(v.placa||v.nombre||'Vehículo')}${(v.placa&&v.nombre)?' · '+esc(v.nombre):''}</div>
+      <div class="bd">
+        <div class="bd-row"><div class="nm"><div class="s">${[datos||null, periodLabel()].filter(Boolean).join(' · ')}</div></div>
+          <div class="amt ${ingV-gasV>=0?'pos':'neg'}">${fmtMoney(ingV-gasV)}</div></div>`;
+    if(!movs.length){
+      h += `<div class="bd-row"><div class="nm"><div class="s">Sin movimientos en ${periodLabel()}.</div></div></div>`;
+    }else{
+      movs.forEach(m=> h += movRow(m));
+      h += `<div class="bd-row"><div class="nm"><div class="s">${movs.filter(m=>m.tipo==='viaje').length} viajes · ${movs.filter(m=>m.tipo==='gasto').length} gastos</div></div>
+        <div class="amt" style="color:var(--muted);font-size:.8rem">${fmtMoney(ingV)} − ${fmtMoney(gasV)}</div></div>`;
+    }
+    h += `</div>`;
+  });
+
+  // Registros cuyo vehículo ya no existe o quedó sin asignar (que no se pierda nada)
+  const sueltos = [
+    ...viajes.filter(t=>!DB.get('vehiculos',t.vehiculoId)).map(t=>({fecha:t.fecha||'',tipo:'viaje',o:t})),
+    ...gastos.filter(g=>!DB.get('vehiculos',g.vehiculoId)).map(g=>({fecha:g.fecha||'',tipo:'gasto',o:g})),
+  ].sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  if(sueltos.length){
+    h += `<div class="section-label">📦 Sin vehículo asignado</div><div class="bd">`;
+    sueltos.forEach(m=> h += movRow(m));
+    h += `</div>`;
+  }
+
+  if(comis.length){
+    h += `<div class="section-label">🤝 Comisiones (${comis.length})</div><div class="bd">`;
+    [...comis].sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||'')).forEach(c=>{
+      h += `<div class="bd-row" onclick="openComisionForm('${c.id}')" style="cursor:pointer">
+        <div class="ic">🤝</div>
+        <div class="nm"><div class="t">${esc(c.servicio||'Comisión')}</div>
+          <div class="s">${fmtDate(c.fecha)} · ${esc(nombreProveedor(c.proveedorId))}${c.estado==='pendiente'?' · ⏳ por cobrar':''}</div></div>
+        <div class="amt pos">${fmtMoney(toBase(c.monto,c.moneda))}</div></div>`;
+    });
+    h += `<div class="bd-row"><div class="nm"><div class="s">Total comisiones</div></div><div class="amt pos">${fmtMoney(com)}</div></div></div>`;
+  }
+  return h;
+}
+
+// Versión en texto plano del informe, para compartir por WhatsApp o copiar
+function compartirInforme(){
+  const viajes = inPeriod(DB.all('viajes'));
+  const gastos = inPeriod(DB.all('gastos'));
+  const comis  = inPeriod(DB.all('comisiones'));
+  const ing = viajes.reduce((s,t)=>s+toBase(t.precio,t.moneda),0);
+  const com = comis.reduce((s,c)=>s+toBase(c.monto,c.moneda),0);
+  const gas = gastos.reduce((s,g)=>s+toBase(g.monto,g.moneda),0);
+  const L = [`INFORME TRAVESÍA — ${periodLabel()}`,
+             `Ingresos ${fmtMoney(ing+com)} · Gastos ${fmtMoney(gas)} · Ganancia ${fmtMoney(ing+com-gas)}`];
+  DB.all('vehiculos').forEach(v=>{
+    const movs = movsDeVehiculo(v.id, viajes, gastos);
+    const ingV = movs.filter(m=>m.tipo==='viaje').reduce((s,m)=>s+toBase(m.o.precio,m.o.moneda),0);
+    const gasV = movs.filter(m=>m.tipo==='gasto').reduce((s,m)=>s+toBase(m.o.monto,m.o.moneda),0);
+    L.push('', `🚐 ${v.placa||v.nombre||'Vehículo'}${(v.placa&&v.nombre)?` (${v.nombre})`:''}${v.choferId?` — chofer ${nombreChofer(v.choferId)}`:''}`);
+    if(!movs.length){ L.push('   sin movimientos'); return; }
+    movs.forEach(m=>{
+      if(m.tipo==='viaje'){ const t=m.o;
+        L.push(`   ${fmtDia(t.fecha)}  ${t.origen||'?'} → ${t.destino||'?'}  +${fmtMoney(toBase(t.precio,t.moneda))}${t.estado==='pendiente'?' (por cobrar)':''}`);
+      }else{ const g=m.o;
+        L.push(`   ${fmtDia(g.fecha)}  ${catOf(g.categoria).nom}${g.notas?' ('+g.notas+')':''}  -${fmtMoney(toBase(g.monto,g.moneda))}`);
+      }
+    });
+    L.push(`   Subtotal: +${fmtMoney(ingV)} / -${fmtMoney(gasV)} = ${fmtMoney(ingV-gasV)}`);
+  });
+  if(comis.length){
+    L.push('', '🤝 Comisiones');
+    [...comis].sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||'')).forEach(c=>
+      L.push(`   ${fmtDia(c.fecha)}  ${c.servicio||'Comisión'} — ${nombreProveedor(c.proveedorId)}  +${fmtMoney(toBase(c.monto,c.moneda))}`));
+    L.push(`   Total comisiones: ${fmtMoney(com)}`);
+  }
+  const txt = L.join('\n');
+  if(navigator.share){ navigator.share({text:txt}).catch(()=>{}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(txt).then(()=> toast('Informe copiado — pegalo donde quieras')); }
+  else toast('No se pudo copiar en este navegador');
+}
 
 /* ---------------- AJUSTES ---------------- */
 function renderAjustes(){
