@@ -174,7 +174,7 @@ foreach($p in $pages){
 }
 
 # --- Guias del blog ---
-$guides=@("guide","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","tours/la-fortuna-full-day","terms","privacy")
+$guides=@("guide","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","terms","privacy")
 foreach($g in $guides){ [void]$urls.Add("$base/$g") }
 
 # --- Conservar URLs de otras herramientas (hoteles, shuttle-to, etc.) ya presentes en el sitemap ---
