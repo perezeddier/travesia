@@ -1187,7 +1187,7 @@ function buildItinerary(d) {
     const time = idx === 0 ? d.time : it.time;
     const pickup = idx === 0 ? d.pickup : it.pickup;
     const dropoff = idx === 0 ? (d.dropoff || "") : (it.dropoff || "");
-    return `${idx + 1}) ${it.from} -> ${it.to} — ${date} ${time} · Pickup: ${pickup}${dropoff ? " · Drop-off: " + dropoff : ""}`;
+    return `${idx + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · VIP (+$80)" : ""} — ${date} ${time} · Pickup: ${pickup}${dropoff ? " · Drop-off: " + dropoff : ""}`;
   }).join("\n");
 }
 
