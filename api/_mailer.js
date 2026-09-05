@@ -154,79 +154,104 @@ function trow(label, value) {
   </td></tr>`;
 }
 
-// itinerario multi-tramo en oscuro
-function darkItinerary(text) {
-  if (!text) return '';
-  const rows = String(text).split('\n').filter(Boolean).map(line =>
-    `<div style="padding:9px 0;border-bottom:1px solid #2b241d;color:#f5efe6;font-size:13px;line-height:1.5">${esc(line)}</div>`
-  ).join('');
-  return `<div style="margin:6px 0 4px">
-    <div style="color:#9a8f80;font-size:11px;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:2px">Itinerario</div>
-    ${rows}
+const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+function fmtFecha(iso) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return iso || '';
+  return `${+m[3]} de ${MESES_ES[+m[2] - 1]} de ${m[1]}`;
+}
+function fmtHora(hhmm) {
+  const m = String(hhmm || '').match(/^(\d{1,2}):(\d{2})/);
+  if (!m) return hhmm || '';
+  let h = +m[1]; const ap = h >= 12 ? 'PM' : 'AM'; h = h % 12; if (h === 0) h = 12;
+  return `${h}:${m[2]} ${ap}`;
+}
+
+// Una tarjeta tipo "tiquete" por tramo — completa y autocontenida (Eddie le toma
+// captura de pantalla a UNA sola tarjeta y se la manda al chofer de ese servicio).
+function legCard(leg, idx, totalLegs, order, d) {
+  const tramoTag = totalLegs > 1 ? `<div style="color:#9a8f80;font-size:10px;letter-spacing:2px;text-transform:uppercase;margin-top:8px">Servicio ${idx + 1} de ${totalLegs}</div>` : '';
+  return `
+  <div style="background:#161210;border:1px solid #33291f;border-radius:18px;overflow:hidden;${idx > 0 ? 'margin-top:16px' : ''}">
+    <div style="text-align:center;padding:22px 20px 14px;border-bottom:1px solid #2b241d">
+      <img src="https://travesiacr.online/assets/logo-travesia.png" alt="Travesía Costa Rica" width="56" style="width:56px;height:auto;display:inline-block">
+      <div style="color:#f5efe6;font-size:19px;font-weight:800;letter-spacing:.3px;margin-top:8px;font-family:Georgia,'Times New Roman',serif">Travesía <span style="color:#ff9e4d">Costa Rica</span></div>
+      <div style="color:#9a8f80;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;margin-top:3px">Costa Rica &middot; Traslados Privados</div>
+      <div style="display:inline-block;margin-top:12px;border:1px solid ${order.tagBorder};background:${order.tagBg};color:${order.tagColor};font-size:10.5px;font-weight:800;letter-spacing:1.3px;padding:5px 13px;border-radius:999px">&#9679; ${order.tag}</div>
+      ${tramoTag}
+    </div>
+    <div style="padding:16px 22px 4px;text-align:center">
+      <div style="color:#9a8f80;font-size:10px;letter-spacing:2.5px;text-transform:uppercase">N&ordm; de reserva</div>
+      <div style="color:#ff9e4d;font-size:25px;font-weight:800;letter-spacing:2.5px;margin-top:2px">${esc(order.orderNumber || '—')}</div>
+    </div>
+    <table role="presentation" width="100%" style="border-collapse:collapse;margin:14px 0 4px"><tr>
+      <td style="width:42%;text-align:left;padding-left:22px;vertical-align:top">
+        <div style="color:#ffffff;font-size:16px;font-weight:800;line-height:1.25">${esc(leg.from || '')}</div>
+        ${leg.pickup ? `<div style="color:#9a8f80;font-size:11px;margin-top:3px">${esc(leg.pickup)}</div>` : ''}
+      </td>
+      <td style="width:16%;text-align:center;vertical-align:middle">
+        <div style="color:#a3651f;font-size:16px;letter-spacing:2px">&#9679;&mdash;&mdash;&#9679;</div>
+      </td>
+      <td style="width:42%;text-align:right;padding-right:22px;vertical-align:top">
+        <div style="color:#ffffff;font-size:16px;font-weight:800;line-height:1.25">${esc(leg.to || '')}</div>
+        ${leg.dropoff ? `<div style="color:#9a8f80;font-size:11px;margin-top:3px">${esc(leg.dropoff)}</div>` : ''}
+      </td>
+    </tr></table>
+    <div style="padding:8px 22px 6px">
+      <table role="presentation" width="100%" style="border-collapse:collapse">
+        ${trow('Servicio', leg.vip ? 'Travesía VIP' : 'Travesía Standard')}
+        ${trow('Cliente', d.name)}
+        ${trow('Fecha', fmtFecha(leg.date))}
+        ${trow('Hora de recogida', fmtHora(leg.time))}
+        ${/aeropuerto|airport/i.test(`${leg.from} ${leg.to}`) ? trow('Vuelo', d.flight || 'NA') : ''}
+        ${trow('Vehículo', leg.vname)}
+        ${trow('Pasajeros', d.pax)}
+        ${trow('Sillas de niño', d.seats)}
+        ${trow('Teléfono', d.phone)}
+      </table>
+    </div>
+    <div style="margin:8px 18px 18px;border:1px solid #a3651f;background:rgba(224,123,31,.10);border-radius:12px;padding:12px 18px">
+      <table role="presentation" width="100%" style="border-collapse:collapse"><tr>
+        <td style="color:#9a8f80;font-size:10.5px;letter-spacing:2px;text-transform:uppercase">Precio</td>
+        <td style="text-align:right;color:#ff9e4d;font-size:24px;font-weight:800">$${leg.price}</td>
+      </tr></table>
+    </div>
+    <div style="border-top:1px solid #2b241d;padding:12px 18px;text-align:center;color:#9a8f80;font-size:10.5px;line-height:1.85">
+      &#9679; Asegurado y con permisos &nbsp;&#9679; Soporte 24/7<br>
+      <span style="color:#f5efe6;font-weight:700">WhatsApp +506 8502 8476</span> &middot; travesiacr.online
+    </div>
   </div>`;
 }
 
 function ownerEmail(d, paid) {
-  const tag = paid ? 'RESERVA PAGADA' : 'SOLICITUD (SIN PAGO)';
-  const tagBg = paid ? 'rgba(37,211,102,.14)' : 'rgba(224,123,31,.16)';
-  const tagColor = paid ? '#4ade80' : '#ff9e4d';
-  const tagBorder = paid ? '#2e7d4f' : '#a3651f';
+  const order = {
+    tag: paid ? 'RESERVA PAGADA' : 'SOLICITUD (SIN PAGO)',
+    tagBg: paid ? 'rgba(37,211,102,.14)' : 'rgba(224,123,31,.16)',
+    tagColor: paid ? '#4ade80' : '#ff9e4d',
+    tagBorder: paid ? '#2e7d4f' : '#a3651f',
+    orderNumber: d.orderNumber,
+  };
 
-  // Ruta grande: un tramo "A → B (Vehículo)" se parte en dos columnas; multi-tramo se apila
-  const legs = String(d.summary || '').split('  +  ');
-  let routeHtml = '';
-  for (const leg of legs) {
-    let veh = '', route = leg;
-    const m = leg.match(/^(.*)\(([^)]+)\)\s*$/);
-    if (m) { route = m[1].trim(); veh = m[2]; }
-    const parts = route.split(/\s*→\s*/);
-    if (parts.length === 2) {
-      routeHtml += `<div style="color:#ffffff;font-size:17px;font-weight:800;text-align:center;margin:0 0 4px;line-height:1.4">${esc(parts[0])} <span style="color:#e07b1f">&#8594;</span> ${esc(parts[1])}</div>`;
-    } else {
-      routeHtml += `<div style="color:#ffffff;font-size:17px;font-weight:800;text-align:center;margin:0 0 4px;line-height:1.4">${esc(route)}</div>`;
-    }
-    if (veh) routeHtml += `<div style="text-align:center;color:#9a8f80;font-size:11.5px;letter-spacing:1.5px;text-transform:uppercase;margin:0 0 12px">${esc(veh)}</div>`;
-  }
+  // d.legs = datos estructurados por tramo (precio verificado en el servidor cuando hay pago).
+  // Si por alguna razon no vienen (reserva vieja antes de este cambio), arma 1 sola tarjeta con lo que haya.
+  const legsData = Array.isArray(d.legs) && d.legs.length ? d.legs : [{
+    from: (d.summary || '').split(/\s*(?:→|->)\s*/)[0] || d.summary || '',
+    to: (d.summary || '').split(/\s*(?:→|->)\s*/)[1] || '',
+    vname: '', vip: /vip/i.test(d.tier || ''), price: (d.total || '').replace(/[^0-9.]/g, ''),
+    date: d.date, time: d.time, pickup: d.pickup, dropoff: d.dropoff,
+  }];
 
-  const card = `
-  <div style="background:#161210;border:1px solid #33291f;border-radius:18px;overflow:hidden">
-    <div style="text-align:center;padding:24px 20px 16px;border-bottom:1px solid #2b241d">
-      <div style="display:inline-block;background:#ffffff;border-radius:999px;padding:9px 13px"><img src="https://travesiacr.online/assets/logo-travesia.png" alt="Travesía Costa Rica" width="84" style="width:84px;height:auto;display:block"></div>
-      <div style="color:#f5efe6;font-size:18px;font-weight:800;letter-spacing:.5px;margin-top:10px">Travesía <span style="color:#ff9e4d">Costa Rica</span></div>
-      <div style="color:#9a8f80;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase;margin-top:3px">Transporte privado &middot; Puerta a puerta</div>
-      <div style="display:inline-block;margin-top:12px;border:1px solid ${tagBorder};background:${tagBg};color:${tagColor};font-size:11px;font-weight:800;letter-spacing:1.5px;padding:6px 14px;border-radius:999px">&#9679; ${tag}</div>
-    </div>
-    <div style="padding:18px 22px 6px;text-align:center">
-      <div style="color:#9a8f80;font-size:10.5px;letter-spacing:2.5px;text-transform:uppercase">Orden N.&ordm;</div>
-      <div style="color:#ff9e4d;font-size:27px;font-weight:800;letter-spacing:3px;margin-top:2px">${esc(d.orderNumber || '—')}</div>
-    </div>
-    <div style="padding:12px 22px 0">${routeHtml}</div>
-    <div style="padding:2px 22px 6px">
-      <table role="presentation" width="100%" style="border-collapse:collapse">
-        ${trow('Cliente', d.name)}
-        ${d.itinerary ? '' : trow('Fecha', d.date)}
-        ${d.itinerary ? '' : trow('Hora de recogida', d.time)}
-        ${d.itinerary ? '' : trow('Recogida', d.pickup)}
-        ${d.itinerary ? '' : trow('Destino', d.dropoff)}
-        ${trow('Vuelo', d.flight || 'NA')}
-        ${trow('Pasajeros', d.pax)}
-        ${trow('Sillas de niño', d.seats)}
-        ${trow('Servicio', d.tier)}
-        ${trow('Teléfono', d.phone)}
-      </table>
-      ${d.itinerary ? darkItinerary(d.itinerary) : ''}
-    </div>
-    <div style="margin:14px 18px 18px;border:1px solid #a3651f;background:rgba(224,123,31,.10);border-radius:12px;padding:13px 18px">
+  const cardsHtml = legsData.map((leg, idx) => legCard(leg, idx, legsData.length, order, d)).join('');
+
+  const grandTotal = legsData.length > 1 ? `
+    <div style="margin-top:16px;background:#161210;border:1px solid #33291f;border-radius:18px;padding:16px 22px">
       <table role="presentation" width="100%" style="border-collapse:collapse"><tr>
-        <td style="color:#9a8f80;font-size:11px;letter-spacing:2px;text-transform:uppercase">Total</td>
-        <td style="text-align:right;color:#ff9e4d;font-size:26px;font-weight:800">${esc(d.total || '')}</td>
+        <td style="color:#9a8f80;font-size:11px;letter-spacing:2px;text-transform:uppercase">Total de la reserva (${legsData.length} servicios)</td>
+        <td style="text-align:right;color:#ff9e4d;font-size:24px;font-weight:800">${esc(d.total || '')}</td>
       </tr></table>
-    </div>
-    <div style="border-top:1px solid #2b241d;padding:13px 18px;text-align:center;color:#9a8f80;font-size:11px;line-height:1.9">
-      &#9679; Con seguro y permisos &nbsp;&#9679; Soporte 24/7 &nbsp;&#9679; 100% privado<br>
-      <span style="color:#f5efe6;font-weight:700">WhatsApp +506 8502 8476</span> &middot; travesiacr.online
-    </div>
-  </div>`;
+    </div>` : '';
+
+  const card = cardsHtml + grandTotal;
 
   const html = `<!doctype html><html><body style="margin:0;padding:0;background:#0e0c0a;font-family:'Segoe UI',Arial,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#0e0c0a"><tr><td align="center" style="padding:16px 10px">

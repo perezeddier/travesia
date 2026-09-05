@@ -1221,11 +1221,21 @@ function reservaPayload(d) {
   const tier = vipCount === 0
     ? "Travesía Standard"
     : (vipCount === CART.length ? "Travesía VIP" : (es ? `VIP en ${vipCount} de ${CART.length}` : `VIP on ${vipCount} of ${CART.length}`));
+  // Datos estructurados por tramo (para el tiquete tipo tarjeta) — 1er tramo usa los
+  // campos generales del formulario, del 2do en adelante usa los propios de esa tarjeta.
+  const legs = CART.map((it, idx) => ({
+    from: it.from, to: it.to, vname: it.vname, vip: !!it.vip,
+    price: it.price + (it.vip ? 80 : 0),
+    date: idx === 0 ? d.date : it.date,
+    time: idx === 0 ? d.time : it.time,
+    pickup: idx === 0 ? d.pickup : it.pickup,
+    dropoff: idx === 0 ? (d.dropoff || "") : (it.dropoff || ""),
+  }));
   return {
     name: d.name, email: d.email, phone: d.phone,
     summary: route, date: d.date, time: d.time, pax,
     pickup: d.pickup, dropoff: d.dropoff || "", flight: d.flight, tier,
-    itinerary: buildItinerary(d),
+    itinerary: buildItinerary(d), legs,
     seats: childSeatsText(d),
     total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
     country: d.country || "",   // para que el correo a Eddie arme el WhatsApp con código de país

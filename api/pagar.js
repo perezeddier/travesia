@@ -65,14 +65,26 @@ export default async function handler(req, res) {
     if (!cart.length) { res.status(400).json({ ok: false, error: 'empty-cart' }); return; }
     if (!d.name || !d.email) { res.status(400).json({ ok: false, error: 'missing' }); return; }
 
-    // ---- RECALCULAR el precio en el servidor ----
+    // ---- RECALCULAR el precio en el servidor (tambien por tramo, para el tiquete) ----
+    const clientLegs = Array.isArray(d.legs) ? d.legs : [];
     let amount = 0;
     let vipCount = 0;
-    for (const it of cart) {
+    const legs = [];
+    for (let idx = 0; idx < cart.length; idx++) {
+      const it = cart[idx];
       const p = legPrice(+it.i, +it.j, it.vkey);
       if (p == null) { res.status(400).json({ ok: false, error: 'bad-leg' }); return; }
+      const isVip = it.vip === true || it.vip === '1' || it.vip === 1;
       amount += p;
-      if (it.vip === true || it.vip === '1' || it.vip === 1) { amount += 80; vipCount++; }  // VIP por tramo
+      if (isVip) { amount += 80; vipCount++; }  // VIP por tramo
+      const cl = clientLegs[idx] || {};
+      legs.push({
+        from: String(cl.from || '').slice(0, 80), to: String(cl.to || '').slice(0, 80),
+        vname: String(cl.vname || '').slice(0, 40), vip: isVip,
+        price: p + (isVip ? 80 : 0),   // precio del tramo verificado en el servidor, no el que mando el cliente
+        date: String(cl.date || '').slice(0, 20), time: String(cl.time || '').slice(0, 20),
+        pickup: String(cl.pickup || '').slice(0, 120), dropoff: String(cl.dropoff || '').slice(0, 120),
+      });
     }
     if (!(amount > 0)) { res.status(400).json({ ok: false, error: 'bad-amount' }); return; }
 
@@ -109,7 +121,7 @@ export default async function handler(req, res) {
       name: d.name, email: d.email, phone: d.phone || '',
       summary: d.summary || '', date: d.date || '', time: d.time || '',
       pax: d.pax || '', pickup: d.pickup || '', dropoff: d.dropoff || '', flight: d.flight || '',
-      itinerary: d.itinerary || '',
+      itinerary: d.itinerary || '', legs,
       seats: String(d.seats || '').slice(0, 120),
       tier, total: '$' + amount.toFixed(2), notes: d.notes || '',
       lang: d.lang === 'es' ? 'es' : 'en', orderNumber, country,
