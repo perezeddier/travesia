@@ -1,8 +1,6 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://travesiacr.online/</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://travesiacr.online/shuttle</loc><lastmod>2026-09-06</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://travesiacr.online/hotel</loc><lastmod>2026-09-06</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-papagayo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/papagayo-to-san-jose-airport</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-liberia-airport</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -43,6 +41,8 @@
   <url><loc>https://travesiacr.online/shuttle/nosara-to-san-jose-airport</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-samara</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/samara-to-san-jose-airport</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-puntarenas</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/puntarenas-to-san-jose-airport</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-dominical</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/dominical-to-san-jose-airport</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/san-jose-airport-to-rio-celeste</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -151,6 +151,8 @@
   <url><loc>https://travesiacr.online/shuttle/brasilito-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/monteverde-to-jaco</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/jaco-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/la-fortuna-to-puntarenas</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/puntarenas-to-la-fortuna</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/monteverde-to-playa-hermosa</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/playa-hermosa-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/monteverde-to-puerto-viejo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -201,6 +203,8 @@
   <url><loc>https://travesiacr.online/shuttle/rio-celeste-to-manuel-antonio</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/manuel-antonio-to-nosara</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/nosara-to-manuel-antonio</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/manuel-antonio-to-puntarenas</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/puntarenas-to-manuel-antonio</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/tamarindo-to-papagayo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/papagayo-to-tamarindo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/tamarindo-to-santa-teresa</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -387,6 +391,10 @@
   <url><loc>https://travesiacr.online/shuttle/samara-to-rincon-de-la-vieja</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/rincon-de-la-vieja-to-nosara</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/shuttle/nosara-to-rincon-de-la-vieja</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/jaco-to-puntarenas</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/puntarenas-to-jaco</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/monteverde-to-puntarenas</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle/puntarenas-to-monteverde</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/guide</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://travesiacr.online/guide/how-to-get-from-sjo-to-la-fortuna</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://travesiacr.online/guide/how-to-get-from-liberia-to-tamarindo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
@@ -416,6 +424,8 @@
   <url><loc>https://travesiacr.online/tours/bridges-waterfall-combo</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/terms</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/privacy</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://travesiacr.online/shuttle</loc><lastmod>2026-09-06</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://travesiacr.online/hotel</loc><lastmod>2026-09-06</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://travesiacr.online/hotel/tabacon-thermal-resort</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/hotel/nayara-springs-nayara-gardens</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://travesiacr.online/hotel/nayara-tented-camp</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>

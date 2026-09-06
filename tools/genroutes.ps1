@@ -38,6 +38,7 @@ $meta[40] = @{ n="Samara"; slug="samara"; blurb="Samara is a mellow, family-frie
 $meta[42] = @{ n="Rio Celeste"; slug="rio-celeste"; blurb="Rio Celeste, in Tenorio Volcano National Park, is famous for its surreal turquoise-blue river and waterfall." }
 $meta[44] = @{ n="San Jose (city)"; slug="san-jose-city"; blurb="San Jose is Costa Rica's capital, home to museums, the central market and the country's main airport nearby." }
 $meta[45] = @{ n="Alajuela"; slug="alajuela"; blurb="Alajuela is the city right next to San Jose's international airport (SJO), a convenient first or last stop." }
+$meta[46] = @{ n="Puntarenas / Caldera"; slug="puntarenas"; blurb="Puntarenas (Caldera) is Costa Rica's main Pacific cruise port, on a narrow peninsula in the Gulf of Nicoya with ferry connections to the Nicoya Peninsula." }
 
 $airports = @(0,1)
 # Zonas turisticas reales y reconocidas (mismas 22 que usa genshuttleto.ps1) -- se genera
@@ -46,7 +47,7 @@ $airports = @(0,1)
 # Las Catalinas, Hacienda Pinilla, Playa Grande, Playa Potrero, Playa Avellanas, Herradura, Esterillos,
 # Ojochal, etc.) porque nadie busca esas combinaciones especificas en Google -- esas zonas ya estan
 # cubiertas por las paginas de hotel + shuttle-to, no necesitan pagina de ruta punto a punto.
-$hubs = @(2,3,4,5,6,7,8,9,10,11,12,13,14,19,20,23,30,32,36,39,40,42)
+$hubs = @(2,3,4,5,6,7,8,9,10,11,12,13,14,19,20,23,30,32,36,39,40,42,46)
 
 # --- Construir lista de paginas dirigidas (ambos sentidos) ---
 $pages = New-Object System.Collections.ArrayList
