@@ -59,5 +59,10 @@
   ],
   "crons": [
     { "path": "/api/enviarResenas", "schedule": "0 15 * * *" }
-  ]
+  ],
+  "images": {
+    "sizes": [660, 800, 900, 1100, 1200, 1600, 1920],
+    "formats": ["image/webp"],
+    "minimumCacheTTL": 31536000
+  }
 }
