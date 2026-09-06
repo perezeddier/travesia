@@ -104,6 +104,8 @@ const PT_HOTELS = [
   { name: "Arenal Paraiso Resort & Spa", place: 2 },
   { name: "Hotel El Silencio del Campo", place: 2 },
   { name: "Rancho Margot", place: 2 },
+  { name: "Hotel Montaña de Fuego", place: 2 },
+  { name: "Lomas del Volcán", place: 2 },
   // Monteverde (3)
   { name: "Hotel Belmar", place: 3 },
   { name: "Monteverde Lodge & Gardens", place: 3 },
@@ -112,6 +114,8 @@ const PT_HOTELS = [
   { name: "Hotel Fonda Vela", place: 3 },
   { name: "Trapp Family Lodge", place: 3 },
   { name: "Hotel Poco a Poco", place: 3 },
+  { name: "Koora Hotel by Sandglass", place: 3 },
+  { name: "Cloud Forest Lodge", place: 3 },
   // Manuel Antonio / Quepos (4)
   { name: "Si Como No Resort", place: 4 },
   { name: "Tulemar Resort", place: 4 },
@@ -123,6 +127,8 @@ const PT_HOTELS = [
   { name: "Hotel La Mariposa", place: 4 },
   { name: "Shana by the Beach", place: 4 },
   { name: "Karahe Beach Hotel", place: 4 },
+  { name: "Villa Roca Boutique Resort", place: 4 },
+  { name: "Hotel San Bada", place: 4 },
   // Tamarindo (5)
   { name: "Tamarindo Diriá", place: 5 },
   { name: "Wyndham Tamarindo", place: 5 },
@@ -130,6 +136,7 @@ const PT_HOTELS = [
   { name: "Cala Luna Boutique Hotel", place: 5 },
   { name: "Jardín del Edén Boutique Hotel", place: 5 },
   { name: "The Coast Beachfront Hotel", place: 5 },
+  { name: "Los Altos de Eros Boutique Hotel & Spa", place: 5 },
   // Papagayo (8)
   { name: "Four Seasons Papagayo", place: 8 },
   { name: "Andaz Peninsula Papagayo", place: 8 },
