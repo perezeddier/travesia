@@ -963,7 +963,7 @@ function chooseCombo(inputId, listId, placeIdx, label) {
 function setupCombo(inputId, listId) {
   const input = document.getElementById(inputId), list = document.getElementById(listId);
   if (!input || !list) return;
-  input.addEventListener("focus", () => renderComboList(inputId, listId));
+  input.addEventListener("focus", () => { input.select(); renderComboList(inputId, listId); });
   input.addEventListener("input", () => { input.dataset.place = ""; renderComboList(inputId, listId); });
   input.addEventListener("keydown", (e) => {
     if (e.key === "Escape") { list.classList.remove("open"); input.setAttribute("aria-expanded", "false"); }
@@ -1431,6 +1431,7 @@ document.addEventListener("DOMContentLoaded", () => {
       fromInput.value = toInput.value; fromInput.dataset.place = toInput.dataset.place;
       toInput.value = v; toInput.dataset.place = p;
       renderFinder();
+      toInput.focus();  // listo para escribir el nuevo destino sin tener que borrar
     });
     // Botón "Ver precios": baja a los vehículos; si falta destino, abre el campo de destino
     document.getElementById("finderGo")?.addEventListener("click", () => {
