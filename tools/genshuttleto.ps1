@@ -105,7 +105,7 @@ foreach ($z in $DEST_ZONES) {
   $desc = "Private door-to-door shuttle to $destName, Costa Rica, from the airport or other destinations. From `$$($best.price) per vehicle, taxes included. Bilingual driver, flight tracking, book online or on WhatsApp."
   $url = "$base/shuttle-to/$destSlug"
   $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private shuttle transfer","name":"Private Shuttle to ' + $destName + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.price + '","priceCurrency":"USD","url":"' + $url + '"}}'
-  $bc = '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"' + $base + '/"},{"@type":"ListItem","position":2,"name":"Shuttle routes","item":"' + $base + '/#routes"},{"@type":"ListItem","position":3,"name":"Shuttle to ' + $destName + '","item":"' + $url + '"}]}'
+  $bc = '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"' + $base + '/"},{"@type":"ListItem","position":2,"name":"All routes","item":"' + $base + '/shuttle"},{"@type":"ListItem","position":3,"name":"Shuttle to ' + $destName + '","item":"' + $url + '"}]}'
 
   $html = $tpl
   $html = $html.Replace("{{TITLE}}", $title).Replace("{{DESC}}", $desc).Replace("{{CANON}}", $url)

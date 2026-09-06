@@ -158,7 +158,7 @@ foreach($p in $pages){
   $title="$($o.n) to $($d.n) Shuttle - Private Transfer from `$$($p.s) (2026) | Travesia"
   $desc="Private shuttle from $($o.n) to $($d.n) in Costa Rica. Door-to-door, about $($p.dur), from `$$($p.s) per vehicle. Bilingual driver, flat rate, book online or on WhatsApp."
   $jsonld='{"@context":"https://schema.org","@type":"Service","serviceType":"Private airport shuttle transfer","name":"'+$o.n+' to '+$d.n+' Private Shuttle","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"'+$base+'/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"'+$p.s+'","priceCurrency":"USD","url":"'+$url+'"}}'
-  $bc='{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"'+$base+'/"},{"@type":"ListItem","position":2,"name":"Shuttle routes","item":"'+$base+'/#routes"},{"@type":"ListItem","position":3,"name":"'+$o.n+' to '+$d.n+'","item":"'+$url+'"}]}'
+  $bc='{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"'+$base+'/"},{"@type":"ListItem","position":2,"name":"All routes","item":"'+$base+'/shuttle"},{"@type":"ListItem","position":3,"name":"'+$o.n+' to '+$d.n+'","item":"'+$url+'"}]}'
 
   $html=$tpl
   $html=$html.Replace("{{TITLE}}",$title).Replace("{{DESC}}",$desc).Replace("{{CANON}}",$url)

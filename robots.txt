@@ -2,4 +2,37 @@ User-agent: *
 Allow: /
 Disallow: /cotizar.html
 
+# Acceso explicito para robots de asistentes de IA (ya permitidos por la regla
+# general de arriba; se listan aparte para que quede claro y no se bloqueen
+# por error si en el futuro se agregan reglas mas restrictivas).
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://travesiacr.online/sitemap.xml
