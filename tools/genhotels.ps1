@@ -49,7 +49,9 @@ $meta[45] = @{ n = "Alajuela"; slug = "alajuela" }
 
 # Zonas que YA tienen su propia pagina /shuttle/... generada por genroutes.ps1
 # (para no linkear a una pagina de ruta que no existe)
-$routeCovered = @(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,19,20,23,30,32,36,39,40,42,44,45)
+$routeCovered = @(0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,19,20,23,30,32,36,39,40,42,44)
+# Nota: 45 (Alajuela) se excluye a proposito: no existe /shuttle/alajuela-to-san-jose-airport
+# (el aeropuerto SJO esta en Alajuela, esa "ruta" nunca se genero) - antes generaba un enlace roto.
 
 # --- Precio directo entre dos zonas (Staria + duracion) ---
 $LOOKUP = @{}
