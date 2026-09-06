@@ -697,6 +697,7 @@ const GALLERY = [
   { img: "g-group-ballena.jpg",    cap: { es: "Parque Marino Ballena",             en: "Marino Ballena National Park" } },
   { img: "g-cloudforest.jpg",      cap: { es: "Bosque nuboso",                     en: "Cloud-forest trails" } },
   { img: "g-llanos-cortes.jpg",    cap: { es: "Catarata Llanos de Cortés",         en: "Llanos de Cortés Waterfall" } },
+  { img: "g-hiace-mural.jpg",      cap: { es: "Nuestra Toyota Hiace",              en: "Our Toyota Hiace" } },
 ];
 
 function renderGallery() {
