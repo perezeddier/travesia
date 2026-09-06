@@ -698,6 +698,9 @@ const GALLERY = [
   { img: "g-cloudforest.jpg",      cap: { es: "Bosque nuboso",                     en: "Cloud-forest trails" } },
   { img: "g-llanos-cortes.jpg",    cap: { es: "Catarata Llanos de Cortés",         en: "Llanos de Cortés Waterfall" } },
   { img: "g-hiace-mural.jpg",      cap: { es: "Nuestra Toyota Hiace",              en: "Our Toyota Hiace" } },
+  { img: "g-van-arenal.jpg",       cap: { es: "Clientes y nuestra van frente al Volcán Arenal", en: "Clients & our van at Arenal Volcano" } },
+  { img: "g-hanging-bridges-group.jpg", cap: { es: "Grupo en los Puentes Colgantes del Arenal", en: "Group at the Arenal Hanging Bridges" } },
+  { img: "g-souvenir-shop.jpg",    cap: { es: "Nuestra Hiace en una parada artesanal", en: "Our Hiace at a local souvenir stop" } },
 ];
 
 function renderGallery() {
