@@ -77,6 +77,7 @@ const PT_SLUG = {
   23: "los-suenos", 30: "rincon-de-la-vieja", 32: "la-paz-waterfall-gardens",
   36: "sarapiqui", 39: "nosara", 40: "samara", 42: "rio-celeste",
   44: "san-jose-city", 45: "alajuela", 46: "puntarenas", 50: "jw-marriott-costa-elena",
+  41: "puerto-jimenez",
 };
 
 /* [i, j, staria, hiace, maxus, duracion] — 633 rutas */
