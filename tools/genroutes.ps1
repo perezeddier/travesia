@@ -90,7 +90,8 @@ $ROUTE_REVIEWS = @{
     @{ quote = "Having private shuttles took the stress out of driving (especially during heavy rain and thunderstorms between La Fortuna and MA) and our driver John was extremely informative with a wealth of knowledge as well as pointing out wildlife (monkeys, birds etc) and stopped at interesting places to break the journey up."; author = "Phoebe S." }
   )
   "0-4" = @(
-    @{ quote = "We connected with Eddie at Travesia CR to arrange a few key shuttle transfers for our group of 11, including San Jose to La Fortuna, La Fortuna to Manuel Antonio, and Manuel Antonio back to the San Jose airport. Every transfer and tour they managed was exceptional. The drivers were kind, thoughtful, and punctual, and the vehicles were consistently clean, comfortable, and modern."; author = "David I." }
+    @{ quote = "We connected with Eddie at Travesia CR to arrange a few key shuttle transfers for our group of 11, including San Jose to La Fortuna, La Fortuna to Manuel Antonio, and Manuel Antonio back to the San Jose airport. Every transfer and tour they managed was exceptional. The drivers were kind, thoughtful, and punctual, and the vehicles were consistently clean, comfortable, and modern."; author = "David I." },
+    @{ quote = "We used Travesia when we visited Costa Rica in February. It was great to get off a plane and have a whole van to our self. They took us from San Jose to Manuel Antonio and back to the airport when we left. Both of our drivers were great. Knowledgeable, friendly and willing to answer all my silly questions. They both stopped for us to eat and shop. They were on time and always kept in contact with us."; author = "Michelle A."; source = "Facebook" }
   )
   "2-3" = @(
     @{ quote = "Un viaje muy agradable en un coche estupendo, limpio y c&oacute;modo con Eddy, quien nos llev&oacute; perfectamente desde La Fortuna hasta Santa Elena. &iexcl;100% recomendable!"; author = "Nicole P." }
@@ -112,6 +113,12 @@ $ROUTE_REVIEWS = @{
   )
   "2-38" = @(
     @{ quote = "We just completed a wonderful 5 hour drive from Montezuma to La Fortuna. Our driver, Eric was so nice and accommodating. He pointed out many points of interest and any animals he spotted along the way. The van was super clean and comfortable and Eric navigated the roads flawlessly."; author = "Lindsey Q." }
+  )
+  "2-42" = @(
+    @{ quote = "Eddie drove our family of three, including our 4-year-old daughter, on two long excursions/trips from Nayara Resort to Rio Celeste and also to Dreams Las Mareas. We were in the car with him for 5+ hours. He was professional, kind, safety-conscious and extremely friendly and knowledgeable. He didn't even blink when our daughter got car sick in the mountains. He helped us get cleaned up and continued on. I would highly recommend Eddie to anyone traveling with family in the Arenal/Fortuna region."; author = "Corey M."; source = "Facebook" }
+  )
+  "2-50" = @(
+    @{ quote = "Eddie drove our family of three, including our 4-year-old daughter, on two long excursions/trips from Nayara Resort to Rio Celeste and also to Dreams Las Mareas. We were in the car with him for 5+ hours. He was professional, kind, safety-conscious and extremely friendly and knowledgeable. He didn't even blink when our daughter got car sick in the mountains. He helped us get cleaned up and continued on. I would highly recommend Eddie to anyone traveling with family in the Arenal/Fortuna region."; author = "Corey M."; source = "Facebook" }
   )
 }
 
@@ -150,7 +157,8 @@ foreach($p in $pages){
   if ($ROUTE_REVIEWS.ContainsKey($rkey)) {
     $figs = ""
     foreach($rv in @($ROUTE_REVIEWS[$rkey])) {
-      $figs += "<figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on Google Reviews</figcaption></figure>"
+      $rvSource = if ($rv.source) { $rv.source } else { "Google Reviews" }
+      $figs += "<figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on $rvSource</figcaption></figure>"
     }
     $revTitle = if (@($ROUTE_REVIEWS[$rkey]).Count -gt 1) { "<h2>What travelers say about this route</h2>" } else { "" }
     $reviewHtml = "<section class='rp-sec'><div class='wrap'>$revTitle$figs</div></section>"
