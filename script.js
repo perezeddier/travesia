@@ -701,6 +701,7 @@ const GALLERY = [
   { img: "g-van-arenal.jpg",       cap: { es: "Clientes y nuestra van frente al Volcán Arenal", en: "Clients & our van at Arenal Volcano" } },
   { img: "g-hanging-bridges-group.jpg", cap: { es: "Grupo en los Puentes Colgantes del Arenal", en: "Group at the Arenal Hanging Bridges" } },
   { img: "g-souvenir-shop.jpg",    cap: { es: "Nuestra Hiace en una parada artesanal", en: "Our Hiace at a local souvenir stop" } },
+  { img: "tour-safari-float.jpg",  cap: { es: "Safari Float en el Río Peñas Blancas", en: "Safari Float on the Peñas Blancas River" } },
 ];
 
 function renderGallery() {
