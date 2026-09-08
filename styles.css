@@ -627,6 +627,12 @@ body.no-scroll { overflow: hidden; }
 .svc-best { margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: .92rem; }
 .svc-best strong { color: var(--text); text-transform: uppercase; letter-spacing: .5px; font-size: .74rem; font-weight: 800; }
 
+/* ===================== FULL TRIP CHAUFFEUR (teaser) ===================== */
+.chauffeur-teaser { max-width: 720px; margin: 0 auto; text-align: center; }
+.chauffeur-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 22px 0 26px; }
+.chauffeur-chips .rp-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 16px; font-size: .92rem; color: var(--muted); }
+.chauffeur-chips .rp-chip strong { color: var(--gold-2); font-family: var(--font-head); font-size: 1.05rem; }
+
 /* Conoce a Eddie (historia / confianza) */
 /* Menos espacio vacío entre "Why Travesía" y "Conoce a Eddie" */
 #why { padding-bottom: clamp(28px, 4vw, 48px); }
