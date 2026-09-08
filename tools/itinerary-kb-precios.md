@@ -1,0 +1,686 @@
+# Travesia Costa Rica - Precios reales de traslados (para armar itinerarios)
+
+Generado automaticamente desde la base de datos real del sitio (routes-data.js) el 2026-09-08.
+REGLA DE ORO: nunca inventes ni redondees un precio. Si una combinacion no aparece en esta lista, dilo claramente y sugiere escribir a Eddie por WhatsApp (+506 8502 8476) para cotizar, en vez de adivinar.
+
+Todos los precios son por vehiculo (no por persona), tarifa plana, impuestos incluidos. Elige el vehiculo segun el total de pasajeros del grupo:
+- Hyundai Staria: hasta 5 pasajeros
+- Toyota Hiace: hasta 9 pasajeros
+- Maxus V90: hasta 12 pasajeros
+- Si el grupo supera 12 personas, se necesita mas de un vehiculo (combinalos).
+
+## Tabla de precios por ruta
+
+Formato: Origen ↔ Destino — Staria / Hiace / Maxus — duracion aprox.
+
+- Bajos del Toro ↔ Alajuela (ciudad) — $165 / $215 / $265 — 2h
+- Bajos del Toro ↔ San José (centro) — $185 / $230 / $295 — 2h
+- Brasilito ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Brasilito ↔ Sámara / Playa Carrillo — $220 / $265 / $350 — 3h
+- Brasilito ↔ Playa Hermosa (Guanacaste) — $130 / $145 / $200 — 45min
+- Brasilito ↔ Jacó — $325 / $370 / $455 — 4h
+- Brasilito ↔ Hacienda Pinilla — $125 / $140 / $195 — 40min
+- Brasilito ↔ Alajuela (ciudad) — $345 / $390 / $475 — 5h
+- Brasilito ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Brasilito ↔ Península Papagayo — $145 / $160 / $215 — 55min
+- Brasilito ↔ Río Celeste — $275 / $320 / $405 — 3h
+- Brasilito ↔ Nosara / Playa Guiones — $235 / $280 / $365 — 2h
+- Brasilito ↔ Montezuma — $365 / $430 / $495 — 4h 30min
+- Brasilito ↔ Playas del Coco — $130 / $145 / $200 — 45min
+- Brasilito ↔ Playa Ocotal — $130 / $145 / $200 — 45min
+- Brasilito ↔ Dominical — $455 / $500 / $585 — 6h
+- Brasilito ↔ Uvita — $470 / $515 / $600 — 6h 30min
+- Brasilito ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Brasilito ↔ Herradura / Los Sueños — $325 / $370 / $455 — 4h
+- Brasilito ↔ Ojochal — $455 / $500 / $585 — 6h
+- Brasilito ↔ RIU Guanacaste / RIU Palace — $130 / $145 / $200 — 45min
+- Brasilito ↔ Punta Islita — $305 / $350 / $435 — 2h 30min
+- Brasilito ↔ Playa Avellanas — $125 / $140 / $195 — 40min
+- Brasilito ↔ Esterillos — $410 / $455 / $540 — 6h
+- Brasilito ↔ JW Marriott Guanacaste — $125 / $140 / $195 — 40min
+- Brasilito ↔ Rincón de la Vieja — $225 / $270 / $355 — 2h 30min
+- Brasilito ↔ Santa Teresa — $365 / $410 / $495 — 4h 30min
+- Brasilito ↔ San José (centro) — $365 / $410 / $495 — 5h
+- Dominical ↔ Hacienda Pinilla — $455 / $520 / $585 — 6h
+- Dominical ↔ JW Marriott Guanacaste — $455 / $500 / $585 — 6h
+- Dominical ↔ Las Catalinas — $455 / $500 / $585 — 6h
+- Dominical ↔ San José (centro) — $325 / $370 / $465 — 3h 30min
+- Dominical ↔ Alajuela (ciudad) — $320 / $365 / $415 — 3h 30min
+- Dominical ↔ Nosara / Playa Guiones — $430 / $495 / $560 — 7h 30min
+- Dominical ↔ Sámara / Playa Carrillo — $430 / $495 / $560 — 7h 30min
+- Dominical ↔ Punta Islita — $420 / $465 / $565 — 7h 30min
+- Dominical ↔ RIU Guanacaste / RIU Palace — $455 / $520 / $585 — 6h
+- Esterillos ↔ Alajuela (ciudad) — $195 / $255 / $325 — 3h 30min
+- Esterillos ↔ San José (centro) — $215 / $260 / $345 — 3h 30min
+- Esterillos ↔ JW Marriott Guanacaste — $410 / $455 / $540 — 6h
+- Esterillos ↔ Punta Islita — $365 / $410 / $495 — 7h 30min
+- Esterillos ↔ Hacienda Pinilla — $410 / $455 / $540 — 6h
+- Esterillos ↔ Sámara / Playa Carrillo — $375 / $420 / $505 — 7h 30min
+- Esterillos ↔ Nosara / Playa Guiones — $375 / $420 / $495 — 7h 30min
+- Esterillos ↔ RIU Guanacaste / RIU Palace — $410 / $455 / $540 — 6h
+- Esterillos ↔ Las Catalinas — $410 / $455 / $540 — 6h
+- Hacienda Pinilla ↔ Alajuela (ciudad) — $345 / $395 / $455 — 5h 30min
+- Hacienda Pinilla ↔ Rincón de la Vieja — $260 / $305 / $390 — 3h
+- Hacienda Pinilla ↔ Río Perdido (Bagaces) — $230 / $250 / $310 — 2h
+- Hacienda Pinilla ↔ Río Celeste — $275 / $325 / $385 — 3h 30min
+- Hacienda Pinilla ↔ RIU Guanacaste / RIU Palace — $150 / $200 / $250 — 1h
+- Hacienda Pinilla ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Hacienda Pinilla ↔ San José (centro) — $365 / $410 / $495 — 5h 30min
+- Hacienda Pinilla ↔ Sámara / Playa Carrillo — $220 / $265 / $350 — 2h 30min
+- Hacienda Pinilla ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Hacienda Pinilla ↔ Las Catalinas — $125 / $160 / $195 — 40min
+- Hacienda Pinilla ↔ Punta Islita — $315 / $360 / $415 — 2h 30min
+- Hacienda Pinilla ↔ Nosara / Playa Guiones — $235 / $275 / $315 — 1h 30min
+- Hacienda Pinilla ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Hacienda Pinilla ↔ Peñas Blancas (frontera Nicaragua) — $270 / $315 / $365 — 3h
+- Herradura / Los Sueños ↔ Alajuela (ciudad) — $180 / $195 / $250 — 1h 30min
+- Herradura / Los Sueños ↔ Hacienda Pinilla — $325 / $375 / $425 — 4h
+- Herradura / Los Sueños ↔ San José (centro) — $200 / $240 / $270 — 1h 30min
+- Herradura / Los Sueños ↔ Sámara / Playa Carrillo — $350 / $415 / $480 — 4h
+- Herradura / Los Sueños ↔ Las Catalinas — $325 / $370 / $455 — 4h
+- Herradura / Los Sueños ↔ RIU Guanacaste / RIU Palace — $335 / $380 / $465 — 4h
+- Herradura / Los Sueños ↔ JW Marriott Guanacaste — $325 / $390 / $455 — 4h
+- Herradura / Los Sueños ↔ Nosara / Playa Guiones — $350 / $400 / $450 — 4h
+- Herradura / Los Sueños ↔ Punta Islita — $350 / $395 / $465 — 4h
+- Jacó ↔ Alajuela (ciudad) — $165 / $180 / $235 — 1h 30min
+- Jacó ↔ Río Celeste — $320 / $365 / $450 — 3h 30min
+- Jacó ↔ San José (centro) — $195 / $210 / $265 — 1h 30min
+- Jacó ↔ Puntarenas / Caldera — $175 / $210 / $245 — 1h 30min
+- Jacó ↔ Playa Grande — $325 / $370 / $455 — 4h
+- Jacó ↔ Sámara / Playa Carrillo — $350 / $395 / $455 — 4h
+- Jacó ↔ Sierpe (Osa) — $310 / $350 / $390 — 4h
+- Jacó ↔ Playas del Coco — $335 / $380 / $465 — 4h
+- Jacó ↔ Uvita — $240 / $285 / $370 — 3h
+- Jacó ↔ Dominical — $220 / $265 / $350 — 2h 30min
+- Jacó ↔ Playa Hermosa (Guanacaste) — $335 / $380 / $465 — 4h
+- Jacó ↔ Playa Flamingo — $325 / $370 / $455 — 4h
+- Jacó ↔ Playa Avellanas — $325 / $370 / $455 — 4h
+- Jacó ↔ Playa Potrero — $325 / $370 / $455 — 4h
+- Jacó ↔ Ojochal — $260 / $305 / $390 — 3h 30min
+- Jacó ↔ Punta Islita — $350 / $395 / $480 — 4h
+- Jacó ↔ Rincón de la Vieja — $335 / $380 / $465 — 4h
+- Jacó ↔ Hacienda Pinilla — $325 / $370 / $455 — 4h
+- Jacó ↔ Las Catalinas — $325 / $370 / $455 — 4h
+- Jacó ↔ Playa Ocotal — $335 / $380 / $465 — 4h
+- Jacó ↔ RIU Guanacaste / RIU Palace — $335 / $380 / $465 — 4h
+- Jacó ↔ JW Marriott Guanacaste — $325 / $370 / $455 — 4h
+- Jacó ↔ Nosara / Playa Guiones — $350 / $395 / $480 — 4h 30min
+- JW Marriott Guanacaste ↔ Rincón de la Vieja — $260 / $305 / $390 — 3h
+- JW Marriott Guanacaste ↔ Malpaís — $365 / $415 / $465 — 4h 30min
+- JW Marriott Guanacaste ↔ Las Catalinas — $125 / $140 / $195 — 40min
+- JW Marriott Guanacaste ↔ Sámara / Playa Carrillo — $220 / $270 / $320 — 2h 30min
+- JW Marriott Guanacaste ↔ Peñas Blancas (frontera Nicaragua) — $270 / $315 / $400 — 3h
+- JW Marriott Guanacaste ↔ Nosara / Playa Guiones — $235 / $285 / $335 — 1h 30min
+- JW Marriott Guanacaste ↔ Punta Leona — $315 / $360 / $445 — 4h
+- JW Marriott Guanacaste ↔ Punta Islita — $315 / $360 / $445 — 2h 30min
+- JW Marriott Guanacaste ↔ RIU Guanacaste / RIU Palace — $150 / $185 / $215 — 1h
+- JW Marriott Guanacaste ↔ Río Celeste — $305 / $350 / $435 — 3h 30min
+- JW Marriott Guanacaste ↔ Montezuma — $365 / $415 / $465 — 4h 30min
+- JW Marriott Guanacaste ↔ Alajuela (ciudad) — $345 / $390 / $465 — 5h 30min
+- La Fortuna / Arenal ↔ Río Perdido (Bagaces) — $220 / $260 / $300 — 3h
+- La Fortuna / Arenal ↔ JW Marriott Costa Elena (La Cruz) — $315 / $360 / $445 — 3h 30min
+- La Fortuna / Arenal ↔ Sierpe (Osa) — $510 / $530 / $590 — 6h
+- La Fortuna / Arenal ↔ San José (centro) — $250 / $295 / $380 — 3h
+- La Fortuna / Arenal ↔ Río Celeste — $185 / $230 / $315 — 2h
+- La Fortuna / Arenal ↔ Playa Conchal — $315 / $360 / $445 — 4h 30min
+- La Fortuna / Arenal ↔ Santa Teresa — $400 / $445 / $530 — 5h 30min
+- La Fortuna / Arenal ↔ Monteverde — $255 / $300 / $385 — 4h
+- La Fortuna / Arenal ↔ Manuel Antonio / Quepos — $330 / $375 / $460 — 5h 30min
+- La Fortuna / Arenal ↔ Los Chiles (frontera Nicaragua) — $240 / $285 / $370 — 2h
+- La Fortuna / Arenal ↔ Alajuela (ciudad) — $220 / $265 / $350 — 3h
+- La Fortuna / Arenal ↔ Península Papagayo — $285 / $330 / $415 — 4h 30min
+- La Fortuna / Arenal ↔ Puntarenas / Caldera — $205 / $225 / $285 — 3h
+- La Fortuna / Arenal ↔ Tamarindo — $315 / $360 / $445 — 4h 30min
+- La Fortuna / Arenal ↔ Brasilito — $315 / $360 / $445 — 4h 30min
+- La Fortuna / Arenal ↔ Puerto Viejo (Caribe) — $390 / $435 / $520 — 6h
+- La Fortuna / Arenal ↔ Puerto Jiménez (Osa) — $570 / $615 / $700 — 8h
+- La Fortuna / Arenal ↔ Montezuma — $400 / $450 / $495 — 5h 30min
+- La Fortuna / Arenal ↔ Ojochal — $430 / $475 / $560 — 5h 30min
+- La Fortuna / Arenal ↔ Playa Hermosa (Guanacaste) — $280 / $325 / $410 — 4h 30min
+- La Fortuna / Arenal ↔ Uvita — $415 / $460 / $545 — 6h
+- La Fortuna / Arenal ↔ Playa Avellanas — $315 / $360 / $445 — 5h
+- La Fortuna / Arenal ↔ Hacienda Pinilla — $315 / $360 / $445 — 5h
+- La Fortuna / Arenal ↔ Sarapiquí — $180 / $225 / $310 — 2h 30min
+- La Fortuna / Arenal ↔ Rincón de la Vieja — $280 / $325 / $410 — 3h 30min
+- La Fortuna / Arenal ↔ Tortuguero (La Pavona) — $270 / $315 / $400 — 4h 30min
+- La Fortuna / Arenal ↔ Playa Grande — $315 / $360 / $445 — 4h 30min
+- La Fortuna / Arenal ↔ Herradura / Los Sueños — $260 / $305 / $390 — 2h 30min
+- La Fortuna / Arenal ↔ Punta Leona — $260 / $305 / $390 — 3h
+- La Fortuna / Arenal ↔ Esterillos — $305 / $350 / $435 — 4h
+- La Fortuna / Arenal ↔ Peñas Blancas (frontera Nicaragua) — $330 / $375 / $460 — 4h 30min
+- La Fortuna / Arenal ↔ Malpaís — $400 / $445 / $530 — 5h 30min
+- La Fortuna / Arenal ↔ Playa Ocotal — $280 / $325 / $410 — 4h 30min
+- La Fortuna / Arenal ↔ Bajos del Toro — $195 / $240 / $325 — 3h 30min
+- La Fortuna / Arenal ↔ Punta Islita — $370 / $415 / $500 — 5h 30min
+- La Fortuna / Arenal ↔ Playa Flamingo — $315 / $360 / $445 — 4h 30min
+- La Fortuna / Arenal ↔ Jacó — $260 / $305 / $390 — 3h 30min
+- La Fortuna / Arenal ↔ Dominical — $400 / $445 / $530 — 5h 30min
+- La Fortuna / Arenal ↔ Nosara / Playa Guiones — $390 / $435 / $520 — 5h 30min
+- La Fortuna / Arenal ↔ Las Catalinas — $315 / $360 / $410 — 4h 30min
+- La Fortuna / Arenal ↔ Playa Potrero — $315 / $360 / $445 — 4h 30min
+- La Fortuna / Arenal ↔ JW Marriott Guanacaste — $315 / $360 / $445 — 5h
+- La Fortuna / Arenal ↔ RIU Guanacaste / RIU Palace — $280 / $325 / $410 — 4h
+- La Fortuna / Arenal ↔ Playas del Coco — $280 / $325 / $410 — 4h 30min
+- La Fortuna / Arenal ↔ Sámara / Playa Carrillo — $370 / $415 / $500 — 4h 30min
+- La Fortuna / Arenal ↔ La Paz Waterfall Gardens — $215 / $260 / $345 — 2h 30min
+- La Paz Waterfall Gardens ↔ Alajuela (ciudad) — $145 / $185 / $225 — 2h
+- La Paz Waterfall Gardens ↔ San José (centro) — $150 / $200 / $250 — 2h
+- Las Catalinas ↔ Río Celeste — $275 / $320 / $405 — 2h 30min
+- Las Catalinas ↔ Alajuela (ciudad) — $350 / $395 / $480 — 4h 30min
+- Las Catalinas ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Las Catalinas ↔ Rincón de la Vieja — $255 / $300 / $385 — 2h 30min
+- Las Catalinas ↔ Punta Islita — $305 / $350 / $435 — 2h 30min
+- Las Catalinas ↔ Punta Leona — $315 / $360 / $415 — 4h
+- Las Catalinas ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Las Catalinas ↔ San José (centro) — $370 / $420 / $470 — 4h 30min
+- Las Catalinas ↔ Malpaís — $365 / $410 / $475 — 4h 30min
+- Las Catalinas ↔ Río Perdido (Bagaces) — $220 / $270 / $320 — 2h
+- Las Catalinas ↔ Sámara / Playa Carrillo — $235 / $280 / $365 — 2h
+- Las Catalinas ↔ Nosara / Playa Guiones — $250 / $295 / $355 — 2h 30min
+- Liberia · Aeropuerto (LIR) ↔ Monteverde — $230 / $275 / $360 — 3h
+- Liberia · Aeropuerto (LIR) ↔ Hacienda Pinilla — $140 / $175 / $230 — 2h
+- Liberia · Aeropuerto (LIR) ↔ Jacó — $300 / $350 / $400 — 3h 30min
+- Liberia · Aeropuerto (LIR) ↔ Playa Conchal — $135 / $175 / $235 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Santa Teresa — $350 / $415 / $480 — 5h
+- Liberia · Aeropuerto (LIR) ↔ La Fortuna / Arenal — $225 / $280 / $345 — 3h
+- Liberia · Aeropuerto (LIR) ↔ Manuel Antonio / Quepos — $375 / $420 / $505 — 5h
+- Liberia · Aeropuerto (LIR) ↔ Brasilito — $135 / $175 / $230 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Península Papagayo — $110 / $160 / $180 — 45min
+- Liberia · Aeropuerto (LIR) ↔ Playa Flamingo — $135 / $175 / $230 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Ojochal — $405 / $475 / $535 — 6h
+- Liberia · Aeropuerto (LIR) ↔ Playas del Coco — $110 / $140 / $195 — 45min
+- Liberia · Aeropuerto (LIR) ↔ Tamarindo — $135 / $175 / $230 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Playa Hermosa (Guanacaste) — $110 / $160 / $195 — 45min
+- Liberia · Aeropuerto (LIR) ↔ Río Celeste — $190 / $255 / $320 — 2h 30min
+- Liberia · Aeropuerto (LIR) ↔ Montezuma — $350 / $395 / $480 — 5h
+- Liberia · Aeropuerto (LIR) ↔ JW Marriott Guanacaste — $140 / $205 / $270 — 2h
+- Liberia · Aeropuerto (LIR) ↔ Nosara / Playa Guiones — $240 / $285 / $335 — 2h 30min
+- Liberia · Aeropuerto (LIR) ↔ Rincón de la Vieja — $125 / $140 / $195 — 1h
+- Liberia · Aeropuerto (LIR) ↔ Malpaís — $350 / $395 / $480 — 5h
+- Liberia · Aeropuerto (LIR) ↔ Playa Panamá — $110 / $140 / $195 — 45min
+- Liberia · Aeropuerto (LIR) ↔ JW Marriott Costa Elena (La Cruz) — $150 / $195 / $245 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Playa Grande — $135 / $150 / $200 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Río Perdido (Bagaces) — $155 / $175 / $235 — 1h
+- Liberia · Aeropuerto (LIR) ↔ Alajuela (ciudad) — $305 / $350 / $435 — 3h 30min
+- Liberia · Aeropuerto (LIR) ↔ San José (centro) — $325 / $370 / $455 — 4h
+- Liberia · Aeropuerto (LIR) ↔ Uvita — $390 / $435 / $520 — 6h
+- Liberia · Aeropuerto (LIR) ↔ RIU Guanacaste / RIU Palace — $125 / $140 / $195 — 45min
+- Liberia · Aeropuerto (LIR) ↔ Playa Potrero — $135 / $175 / $230 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Esterillos — $310 / $355 / $440 — 4h
+- Liberia · Aeropuerto (LIR) ↔ Dominical — $375 / $420 / $505 — 6h
+- Liberia · Aeropuerto (LIR) ↔ Herradura / Los Sueños — $300 / $345 / $430 — 3h 30min
+- Liberia · Aeropuerto (LIR) ↔ Las Catalinas — $135 / $175 / $230 — 1h 30min
+- Liberia · Aeropuerto (LIR) ↔ Sámara / Playa Carrillo — $215 / $275 / $345 — 2h
+- Liberia · Aeropuerto (LIR) ↔ Playa Avellanas — $145 / $175 / $230 — 2h
+- Liberia · Aeropuerto (LIR) ↔ Playa Ocotal — $125 / $140 / $195 — 45min
+- Liberia · Aeropuerto (LIR) ↔ Punta Islita — $270 / $315 / $365 — 3h
+- Los Chiles (frontera Nicaragua) ↔ San José (centro) — $330 / $375 / $460 — 4h 30min
+- Los Chiles (frontera Nicaragua) ↔ Alajuela (ciudad) — $310 / $355 / $440 — 4h 30min
+- Malpaís ↔ Nosara / Playa Guiones — $375 / $425 / $475 — 5h
+- Malpaís ↔ Sámara / Playa Carrillo — $355 / $405 / $455 — 5h
+- Malpaís ↔ San José (centro) — $395 / $440 / $495 — 6h
+- Malpaís ↔ Alajuela (ciudad) — $375 / $425 / $475 — 6h
+- Manuel Antonio / Quepos ↔ Rincón de la Vieja — $420 / $465 / $550 — 5h 30min
+- Manuel Antonio / Quepos ↔ Tamarindo — $410 / $455 / $540 — 5h 30min
+- Manuel Antonio / Quepos ↔ Alajuela (ciudad) — $235 / $280 / $365 — 3h
+- Manuel Antonio / Quepos ↔ Río Celeste — $360 / $405 / $490 — 5h 30min
+- Manuel Antonio / Quepos ↔ Sámara / Playa Carrillo — $405 / $450 / $535 — 5h 30min
+- Manuel Antonio / Quepos ↔ Nosara / Playa Guiones — $405 / $450 / $535 — 5h 30min
+- Manuel Antonio / Quepos ↔ JW Marriott Guanacaste — $405 / $450 / $535 — 6h 30min
+- Manuel Antonio / Quepos ↔ San José (centro) — $250 / $295 / $380 — 3h
+- Manuel Antonio / Quepos ↔ Puntarenas / Caldera — $250 / $270 / $330 — 1h
+- Manuel Antonio / Quepos ↔ Montezuma — $470 / $515 / $600 — 6h 30min
+- Manuel Antonio / Quepos ↔ RIU Guanacaste / RIU Palace — $420 / $465 / $550 — 5h 30min
+- Manuel Antonio / Quepos ↔ Dominical — $160 / $205 / $290 — 1h
+- Manuel Antonio / Quepos ↔ Playa Potrero — $410 / $455 / $540 — 5h 30min
+- Manuel Antonio / Quepos ↔ Las Catalinas — $410 / $455 / $540 — 6h 30min
+- Manuel Antonio / Quepos ↔ Malpaís — $470 / $515 / $600 — 6h 30min
+- Manuel Antonio / Quepos ↔ Playa Avellanas — $410 / $455 / $540 — 6h 30min
+- Manuel Antonio / Quepos ↔ Playa Grande — $410 / $455 / $540 — 5h 30min
+- Manuel Antonio / Quepos ↔ Sierpe (Osa) — $220 / $240 / $300 — 3h
+- Manuel Antonio / Quepos ↔ Península Papagayo — $420 / $465 / $550 — 5h 30min
+- Manuel Antonio / Quepos ↔ Playa Flamingo — $410 / $455 / $540 — 5h 30min
+- Manuel Antonio / Quepos ↔ Playas del Coco — $420 / $485 / $550 — 6h 30min
+- Manuel Antonio / Quepos ↔ Jacó — $175 / $230 / $295 — 1h 30min
+- Manuel Antonio / Quepos ↔ Brasilito — $410 / $455 / $540 — 5h 30min
+- Manuel Antonio / Quepos ↔ Santa Teresa — $470 / $515 / $600 — 6h 30min
+- Manuel Antonio / Quepos ↔ Playa Conchal — $410 / $455 / $540 — 5h 30min
+- Manuel Antonio / Quepos ↔ Playa Ocotal — $420 / $465 / $550 — 6h 30min
+- Manuel Antonio / Quepos ↔ Punta Islita — $395 / $440 / $525 — 5h 30min
+- Manuel Antonio / Quepos ↔ Hacienda Pinilla — $410 / $455 / $540 — 6h 30min
+- Manuel Antonio / Quepos ↔ Ojochal — $205 / $250 / $335 — 2h
+- Manuel Antonio / Quepos ↔ Playa Hermosa (Guanacaste) — $420 / $465 / $550 — 6h 30min
+- Manuel Antonio / Quepos ↔ Uvita — $180 / $195 / $250 — 1h 30min
+- Monteverde ↔ Puntarenas / Caldera — $175 / $210 / $245 — 2h
+- Monteverde ↔ JW Marriott Costa Elena (La Cruz) — $270 / $315 / $400 — 3h 30min
+- Monteverde ↔ Rincón de la Vieja — $270 / $315 / $400 — 3h
+- Monteverde ↔ Punta Leona — $215 / $260 / $345 — 2h
+- Monteverde ↔ Montezuma — $400 / $445 / $530 — 5h 30min
+- Monteverde ↔ RIU Guanacaste / RIU Palace — $270 / $315 / $400 — 4h
+- Monteverde ↔ Nosara / Playa Guiones — $305 / $350 / $435 — 4h
+- Monteverde ↔ Punta Islita — $305 / $350 / $435 — 4h
+- Monteverde ↔ Dominical — $340 / $385 / $470 — 5h
+- Monteverde ↔ Playa Ocotal — $270 / $315 / $400 — 4h
+- Monteverde ↔ Hacienda Pinilla — $270 / $315 / $400 — 4h
+- Monteverde ↔ Playa Grande — $270 / $315 / $400 — 4h
+- Monteverde ↔ Las Catalinas — $270 / $315 / $400 — 4h
+- Monteverde ↔ Uvita — $355 / $400 / $485 — 5h
+- Monteverde ↔ Río Perdido (Bagaces) — $230 / $250 / $310 — 3h
+- Monteverde ↔ Esterillos — $235 / $280 / $365 — 5h
+- Monteverde ↔ Ojochal — $370 / $415 / $500 — 5h
+- Monteverde ↔ Herradura / Los Sueños — $235 / $280 / $365 — 3h
+- Monteverde ↔ Alajuela (ciudad) — $235 / $280 / $365 — 3h
+- Monteverde ↔ Malpaís — $400 / $445 / $530 — 5h 30min
+- Monteverde ↔ Puerto Jiménez (Osa) — $520 / $565 / $650 — 6h 30min
+- Monteverde ↔ Sámara / Playa Carrillo — $280 / $325 / $410 — 4h
+- Monteverde ↔ San José (centro) — $240 / $285 / $370 — 3h
+- Monteverde ↔ Río Celeste — $235 / $280 / $365 — 3h 30min
+- Monteverde ↔ Tamarindo — $270 / $315 / $400 — 4h
+- Monteverde ↔ Península Papagayo — $275 / $320 / $405 — 4h
+- Monteverde ↔ Playa Avellanas — $270 / $315 / $400 — 4h
+- Monteverde ↔ Manuel Antonio / Quepos — $310 / $375 / $440 — 4h
+- Monteverde ↔ Playa Conchal — $270 / $315 / $400 — 4h
+- Monteverde ↔ Brasilito — $270 / $335 / $400 — 4h
+- Monteverde ↔ Jacó — $240 / $285 / $370 — 3h
+- Monteverde ↔ Santa Teresa — $400 / $445 / $530 — 5h 30min
+- Monteverde ↔ Playa Flamingo — $270 / $315 / $400 — 4h
+- Monteverde ↔ Playa Potrero — $270 / $315 / $400 — 4h
+- Monteverde ↔ Playa Hermosa (Guanacaste) — $270 / $315 / $400 — 4h
+- Monteverde ↔ Playas del Coco — $270 / $335 / $400 — 4h
+- Monteverde ↔ JW Marriott Guanacaste — $270 / $315 / $400 — 4h
+- Monteverde ↔ Puerto Viejo (Caribe) — $480 / $525 / $610 — 7h 30min
+- Montezuma ↔ San José (centro) — $395 / $445 / $495 — 6h
+- Montezuma ↔ Alajuela (ciudad) — $375 / $420 / $495 — 6h
+- Montezuma ↔ Nosara / Playa Guiones — $375 / $440 / $505 — 5h
+- Montezuma ↔ Sámara / Playa Carrillo — $355 / $405 / $455 — 5h
+- Nosara / Playa Guiones ↔ San José (centro) — $390 / $440 / $490 — 5h
+- Ojochal ↔ Punta Islita — $610 / $655 / $740 — 7h 30min
+- Ojochal ↔ JW Marriott Guanacaste — $455 / $520 / $585 — 6h
+- Ojochal ↔ Hacienda Pinilla — $455 / $500 / $565 — 6h
+- Ojochal ↔ Las Catalinas — $455 / $505 / $555 — 6h
+- Ojochal ↔ San José (centro) — $385 / $430 / $515 — 3h 30min
+- Ojochal ↔ Alajuela (ciudad) — $365 / $410 / $495 — 3h 30min
+- Ojochal ↔ Sámara / Playa Carrillo — $610 / $680 / $740 — 7h 30min
+- Ojochal ↔ Nosara / Playa Guiones — $610 / $655 / $740 — 7h 30min
+- Península Papagayo ↔ Punta Islita — $315 / $380 / $445 — 2h 30min
+- Península Papagayo ↔ Hacienda Pinilla — $155 / $170 / $225 — 1h 9min
+- Península Papagayo ↔ Malpaís — $395 / $440 / $525 — 4h 30min
+- Península Papagayo ↔ RIU Guanacaste / RIU Palace — $120 / $135 / $190 — 30min
+- Península Papagayo ↔ Río Perdido (Bagaces) — $205 / $225 / $285 — 2h
+- Península Papagayo ↔ Alajuela (ciudad) — $340 / $385 / $465 — 5h
+- Península Papagayo ↔ San José (centro) — $360 / $405 / $465 — 5h
+- Península Papagayo ↔ Sámara / Playa Carrillo — $265 / $310 / $395 — 3h
+- Península Papagayo ↔ Playa Ocotal — $120 / $135 / $190 — 30min
+- Península Papagayo ↔ Uvita — $470 / $515 / $600 — 6h 30min
+- Península Papagayo ↔ Dominical — $455 / $500 / $585 — 6h
+- Península Papagayo ↔ Playa Grande — $145 / $160 / $215 — 55min
+- Península Papagayo ↔ Playa Hermosa (Guanacaste) — $120 / $135 / $190 — 30min
+- Península Papagayo ↔ Ojochal — $455 / $500 / $585 — 6h
+- Península Papagayo ↔ JW Marriott Guanacaste — $155 / $170 / $225 — 1h 9min
+- Península Papagayo ↔ Herradura / Los Sueños — $335 / $380 / $465 — 4h
+- Península Papagayo ↔ Esterillos — $410 / $455 / $540 — 6h
+- Península Papagayo ↔ Playa Potrero — $145 / $160 / $215 — 55min
+- Península Papagayo ↔ Playa Avellanas — $155 / $170 / $225 — 1h 9min
+- Península Papagayo ↔ Las Catalinas — $145 / $160 / $215 — 55min
+- Península Papagayo ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Península Papagayo ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Península Papagayo ↔ Playas del Coco — $120 / $135 / $190 — 30min
+- Península Papagayo ↔ Río Celeste — $245 / $290 / $375 — 3h
+- Península Papagayo ↔ Montezuma — $395 / $440 / $525 — 4h 30min
+- Península Papagayo ↔ Nosara / Playa Guiones — $280 / $325 / $410 — 2h
+- Península Papagayo ↔ Rincón de la Vieja — $260 / $305 / $390 — 2h 30min
+- Península Papagayo ↔ Jacó — $335 / $380 / $465 — 4h
+- Península Papagayo ↔ Playa Flamingo — $145 / $160 / $215 — 55min
+- Península Papagayo ↔ Santa Teresa — $395 / $440 / $525 — 4h 30min
+- Peñas Blancas (frontera Nicaragua) ↔ Sámara / Playa Carrillo — $240 / $285 / $370 — 3h
+- Peñas Blancas (frontera Nicaragua) ↔ San José (centro) — $340 / $385 / $470 — 6h
+- Peñas Blancas (frontera Nicaragua) ↔ Alajuela (ciudad) — $320 / $365 / $450 — 6h
+- Peñas Blancas (frontera Nicaragua) ↔ Nosara / Playa Guiones — $240 / $285 / $370 — 3h
+- Playa Avellanas ↔ Montezuma — $365 / $410 / $465 — 4h 30min
+- Playa Avellanas ↔ Herradura / Los Sueños — $325 / $385 / $455 — 4h
+- Playa Avellanas ↔ Punta Leona — $365 / $425 / $475 — 4h
+- Playa Avellanas ↔ Alajuela (ciudad) — $345 / $390 / $475 — 5h 30min
+- Playa Avellanas ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Playa Avellanas ↔ RIU Guanacaste / RIU Palace — $150 / $185 / $215 — 1h
+- Playa Avellanas ↔ Las Catalinas — $125 / $140 / $195 — 40min
+- Playa Avellanas ↔ Río Celeste — $275 / $340 / $405 — 3h 30min
+- Playa Avellanas ↔ San José (centro) — $365 / $410 / $495 — 5h 30min
+- Playa Avellanas ↔ Esterillos — $410 / $455 / $515 — 6h
+- Playa Avellanas ↔ Playa Ocotal — $150 / $165 / $220 — 1h
+- Playa Avellanas ↔ Dominical — $455 / $500 / $585 — 6h
+- Playa Avellanas ↔ Nosara / Playa Guiones — $235 / $300 / $365 — 2h
+- Playa Avellanas ↔ Uvita — $470 / $515 / $600 — 6h 30min
+- Playa Avellanas ↔ Punta Islita — $315 / $360 / $445 — 2h 30min
+- Playa Avellanas ↔ Rincón de la Vieja — $260 / $305 / $390 — 3h
+- Playa Avellanas ↔ Ojochal — $455 / $500 / $585 — 6h
+- Playa Conchal ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Playa Conchal ↔ Dominical — $455 / $500 / $585 — 6h
+- Playa Conchal ↔ Punta Islita — $305 / $350 / $435 — 2h 30min
+- Playa Conchal ↔ Herradura / Los Sueños — $325 / $385 / $455 — 4h
+- Playa Conchal ↔ Río Perdido (Bagaces) — $220 / $240 / $300 — 2h
+- Playa Conchal ↔ Rincón de la Vieja — $225 / $270 / $355 — 2h 30min
+- Playa Conchal ↔ Uvita — $470 / $515 / $600 — 6h 30min
+- Playa Conchal ↔ JW Marriott Guanacaste — $125 / $140 / $195 — 40min
+- Playa Conchal ↔ Jacó — $325 / $370 / $455 — 4h
+- Playa Conchal ↔ Playas del Coco — $130 / $145 / $200 — 45min
+- Playa Conchal ↔ Playa Hermosa (Guanacaste) — $130 / $145 / $200 — 45min
+- Playa Conchal ↔ RIU Guanacaste / RIU Palace — $130 / $145 / $200 — 45min
+- Playa Conchal ↔ Playa Ocotal — $130 / $145 / $200 — 45min
+- Playa Conchal ↔ Península Papagayo — $145 / $160 / $215 — 55min
+- Playa Conchal ↔ Alajuela (ciudad) — $345 / $390 / $475 — 5h
+- Playa Conchal ↔ San José (centro) — $365 / $410 / $495 — 5h
+- Playa Conchal ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Playa Conchal ↔ Río Celeste — $275 / $320 / $405 — 3h
+- Playa Conchal ↔ Playa Avellanas — $125 / $140 / $195 — 40min
+- Playa Conchal ↔ Sámara / Playa Carrillo — $220 / $265 / $350 — 3h
+- Playa Conchal ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Playa Conchal ↔ Santa Teresa — $365 / $410 / $495 — 4h 30min
+- Playa Conchal ↔ Ojochal — $455 / $500 / $585 — 6h
+- Playa Conchal ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Playa Conchal ↔ Hacienda Pinilla — $125 / $140 / $195 — 40min
+- Playa Conchal ↔ Nosara / Playa Guiones — $235 / $280 / $365 — 2h
+- Playa Conchal ↔ Esterillos — $410 / $455 / $540 — 6h
+- Playa Flamingo ↔ Esterillos — $410 / $455 / $540 — 6h
+- Playa Flamingo ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Playa Flamingo ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Playa Flamingo ↔ JW Marriott Guanacaste — $125 / $160 / $195 — 40min
+- Playa Flamingo ↔ Rincón de la Vieja — $225 / $270 / $355 — 2h 30min
+- Playa Flamingo ↔ Hacienda Pinilla — $125 / $140 / $195 — 40min
+- Playa Flamingo ↔ San José (centro) — $365 / $430 / $495 — 5h
+- Playa Flamingo ↔ Sámara / Playa Carrillo — $220 / $265 / $310 — 3h
+- Playa Flamingo ↔ Río Perdido (Bagaces) — $220 / $240 / $295 — 2h
+- Playa Flamingo ↔ Nosara / Playa Guiones — $235 / $280 / $365 — 2h
+- Playa Flamingo ↔ Río Celeste — $275 / $320 / $405 — 3h
+- Playa Flamingo ↔ Alajuela (ciudad) — $345 / $390 / $475 — 5h
+- Playa Flamingo ↔ Playa Ocotal — $130 / $145 / $200 — 45min
+- Playa Flamingo ↔ Dominical — $455 / $500 / $585 — 6h
+- Playa Flamingo ↔ Uvita — $470 / $515 / $600 — 6h 30min
+- Playa Flamingo ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Playa Flamingo ↔ Playa Hermosa (Guanacaste) — $130 / $145 / $215 — 45min
+- Playa Flamingo ↔ Playa Avellanas — $125 / $140 / $195 — 40min
+- Playa Flamingo ↔ RIU Guanacaste / RIU Palace — $130 / $180 / $230 — 45min
+- Playa Flamingo ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Playa Flamingo ↔ Punta Islita — $305 / $370 / $435 — 2h 30min
+- Playa Flamingo ↔ Ojochal — $455 / $500 / $585 — 6h
+- Playa Flamingo ↔ Herradura / Los Sueños — $325 / $370 / $455 — 4h
+- Playa Grande ↔ Esterillos — $410 / $460 / $510 — 6h
+- Playa Grande ↔ Herradura / Los Sueños — $325 / $370 / $455 — 4h
+- Playa Grande ↔ JW Marriott Guanacaste — $125 / $140 / $195 — 40min
+- Playa Grande ↔ Hacienda Pinilla — $125 / $160 / $195 — 40min
+- Playa Grande ↔ Punta Leona — $315 / $360 / $415 — 4h
+- Playa Grande ↔ Playa Ocotal — $130 / $165 / $195 — 45min
+- Playa Grande ↔ Dominical — $455 / $500 / $585 — 6h
+- Playa Grande ↔ Playa Avellanas — $125 / $140 / $195 — 40min
+- Playa Grande ↔ Uvita — $470 / $515 / $595 — 6h 30min
+- Playa Grande ↔ Ojochal — $455 / $500 / $585 — 6h
+- Playa Grande ↔ Punta Islita — $305 / $370 / $435 — 2h 30min
+- Playa Grande ↔ Alajuela (ciudad) — $345 / $410 / $475 — 5h
+- Playa Grande ↔ Sámara / Playa Carrillo — $220 / $265 / $315 — 3h
+- Playa Grande ↔ San José (centro) — $365 / $410 / $495 — 5h
+- Playa Grande ↔ Río Celeste — $275 / $320 / $405 — 3h
+- Playa Grande ↔ Nosara / Playa Guiones — $235 / $280 / $365 — 2h
+- Playa Grande ↔ Rincón de la Vieja — $225 / $270 / $355 — 2h 30min
+- Playa Grande ↔ RIU Guanacaste / RIU Palace — $130 / $180 / $230 — 45min
+- Playa Grande ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Playa Grande ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Playa Grande ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Playa Hermosa (Guanacaste) ↔ Alajuela (ciudad) — $340 / $385 / $435 — 5h
+- Playa Hermosa (Guanacaste) ↔ Río Perdido (Bagaces) — $205 / $225 / $285 — 2h
+- Playa Hermosa (Guanacaste) ↔ Dominical — $455 / $500 / $585 — 6h
+- Playa Hermosa (Guanacaste) ↔ Hacienda Pinilla — $150 / $165 / $220 — 1h
+- Playa Hermosa (Guanacaste) ↔ Ojochal — $455 / $500 / $585 — 6h
+- Playa Hermosa (Guanacaste) ↔ Las Catalinas — $130 / $145 / $200 — 45min
+- Playa Hermosa (Guanacaste) ↔ Herradura / Los Sueños — $335 / $380 / $465 — 4h
+- Playa Hermosa (Guanacaste) ↔ Playa Avellanas — $150 / $165 / $210 — 1h
+- Playa Hermosa (Guanacaste) ↔ Playa Grande — $130 / $180 / $230 — 45min
+- Playa Hermosa (Guanacaste) ↔ Playa Potrero — $130 / $145 / $200 — 45min
+- Playa Hermosa (Guanacaste) ↔ Esterillos — $410 / $455 / $540 — 6h
+- Playa Hermosa (Guanacaste) ↔ Uvita — $470 / $515 / $600 — 6h
+- Playa Hermosa (Guanacaste) ↔ JW Marriott Guanacaste — $150 / $165 / $220 — 1h
+- Playa Hermosa (Guanacaste) ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Playa Hermosa (Guanacaste) ↔ Malpaís — $395 / $440 / $525 — 4h 30min
+- Playa Hermosa (Guanacaste) ↔ Río Celeste — $305 / $350 / $435 — 3h 30min
+- Playa Hermosa (Guanacaste) ↔ San José (centro) — $360 / $410 / $460 — 5h
+- Playa Hermosa (Guanacaste) ↔ Montezuma — $395 / $440 / $495 — 4h 30min
+- Playa Hermosa (Guanacaste) ↔ Punta Islita — $315 / $360 / $445 — 2h 30min
+- Playa Hermosa (Guanacaste) ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Playa Hermosa (Guanacaste) ↔ Nosara / Playa Guiones — $270 / $335 / $400 — 2h
+- Playa Hermosa (Guanacaste) ↔ Rincón de la Vieja — $260 / $290 / $320 — 3h
+- Playa Hermosa (Guanacaste) ↔ Sámara / Playa Carrillo — $255 / $300 / $345 — 3h
+- Playa Ocotal ↔ Las Catalinas — $130 / $145 / $200 — 45min
+- Playa Ocotal ↔ Ojochal — $455 / $505 / $555 — 6h
+- Playa Ocotal ↔ Punta Islita — $315 / $360 / $415 — 2h 30min
+- Playa Ocotal ↔ JW Marriott Guanacaste — $150 / $185 / $220 — 1h
+- Playa Ocotal ↔ Hacienda Pinilla — $150 / $165 / $220 — 1h
+- Playa Ocotal ↔ Río Celeste — $305 / $350 / $435 — 3h 30min
+- Playa Ocotal ↔ Montezuma — $395 / $455 / $525 — 4h 30min
+- Playa Ocotal ↔ Sámara / Playa Carrillo — $255 / $300 / $385 — 3h
+- Playa Ocotal ↔ Alajuela (ciudad) — $340 / $385 / $470 — 5h
+- Playa Ocotal ↔ Dominical — $455 / $505 / $555 — 6h
+- Playa Ocotal ↔ Nosara / Playa Guiones — $270 / $320 / $360 — 2h
+- Playa Ocotal ↔ Peñas Blancas (frontera Nicaragua) — $240 / $280 / $320 — 3h
+- Playa Ocotal ↔ San José (centro) — $360 / $405 / $465 — 5h
+- Playa Ocotal ↔ Malpaís — $395 / $440 / $495 — 4h 30min
+- Playa Ocotal ↔ Rincón de la Vieja — $260 / $320 / $390 — 3h
+- Playa Ocotal ↔ Herradura / Los Sueños — $335 / $405 / $465 — 4h
+- Playa Ocotal ↔ Esterillos — $410 / $455 / $510 — 6h
+- Playa Ocotal ↔ Punta Leona — $315 / $365 / $415 — 4h
+- Playa Ocotal ↔ Uvita — $470 / $520 / $570 — 6h
+- Playa Panamá ↔ Río Perdido (Bagaces) — $205 / $225 / $285 — 2h
+- Playa Potrero ↔ Sámara / Playa Carrillo — $220 / $265 / $350 — 3h
+- Playa Potrero ↔ RIU Guanacaste / RIU Palace — $130 / $180 / $230 — 45min
+- Playa Potrero ↔ Nosara / Playa Guiones — $235 / $280 / $365 — 2h
+- Playa Potrero ↔ Herradura / Los Sueños — $325 / $370 / $425 — 4h
+- Playa Potrero ↔ JW Marriott Guanacaste — $125 / $160 / $190 — 40min
+- Playa Potrero ↔ Río Celeste — $275 / $320 / $405 — 3h
+- Playa Potrero ↔ Rincón de la Vieja — $225 / $270 / $325 — 2h 30min
+- Playa Potrero ↔ Hacienda Pinilla — $125 / $140 / $195 — 40min
+- Playa Potrero ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Playa Potrero ↔ Punta Leona — $315 / $360 / $415 — 4h
+- Playa Potrero ↔ Playa Avellanas — $125 / $140 / $195 — 40min
+- Playa Potrero ↔ Dominical — $455 / $500 / $585 — 6h
+- Playa Potrero ↔ Playa Ocotal — $130 / $145 / $200 — 45min
+- Playa Potrero ↔ Uvita — $470 / $515 / $600 — 6h 30min
+- Playa Potrero ↔ Punta Islita — $305 / $350 / $435 — 2h 30min
+- Playa Potrero ↔ Esterillos — $410 / $455 / $540 — 6h
+- Playa Potrero ↔ Ojochal — $455 / $520 / $585 — 6h
+- Playa Potrero ↔ San José (centro) — $365 / $420 / $495 — 5h
+- Playa Potrero ↔ Alajuela (ciudad) — $345 / $390 / $475 — 5h
+- Playa Potrero ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Playa Potrero ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Playas del Coco ↔ Alajuela (ciudad) — $340 / $405 / $470 — 5h
+- Playas del Coco ↔ Río Celeste — $305 / $350 / $435 — 3h 30min
+- Playas del Coco ↔ Playa Flamingo — $130 / $145 / $200 — 45min
+- Playas del Coco ↔ Punta Islita — $315 / $360 / $445 — 2h 30min
+- Playas del Coco ↔ Sámara / Playa Carrillo — $255 / $300 / $385 — 3h
+- Playas del Coco ↔ Río Perdido (Bagaces) — $205 / $245 / $285 — 2h
+- Playas del Coco ↔ Malpaís — $395 / $440 / $525 — 4h 30min
+- Playas del Coco ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Playas del Coco ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Playas del Coco ↔ JW Marriott Guanacaste — $150 / $180 / $220 — 1h
+- Playas del Coco ↔ Rincón de la Vieja — $260 / $305 / $390 — 3h
+- Playas del Coco ↔ Ojochal — $455 / $500 / $585 — 6h
+- Playas del Coco ↔ Las Catalinas — $130 / $145 / $200 — 45min
+- Playas del Coco ↔ Herradura / Los Sueños — $335 / $380 / $465 — 4h
+- Playas del Coco ↔ Uvita — $470 / $515 / $600 — 6h
+- Playas del Coco ↔ Hacienda Pinilla — $150 / $165 / $215 — 1h
+- Playas del Coco ↔ San José (centro) — $360 / $405 / $465 — 5h
+- Playas del Coco ↔ Playa Potrero — $130 / $145 / $200 — 45min
+- Playas del Coco ↔ Montezuma — $395 / $440 / $525 — 4h 30min
+- Playas del Coco ↔ Playa Avellanas — $150 / $165 / $220 — 1h
+- Playas del Coco ↔ Playa Grande — $130 / $145 / $200 — 45min
+- Playas del Coco ↔ Nosara / Playa Guiones — $270 / $315 / $400 — 2h
+- Playas del Coco ↔ Dominical — $455 / $500 / $585 — 6h
+- Playas del Coco ↔ Esterillos — $410 / $455 / $540 — 6h
+- Puerto Jiménez (Osa) ↔ Alajuela (ciudad) — $535 / $580 / $645 — 6h
+- Puerto Jiménez (Osa) ↔ San José (centro) — $555 / $595 / $645 — 6h
+- Puerto Jiménez (Osa) ↔ Sierpe (Osa) — $280 / $330 / $380 — 3h
+- Puerto Viejo (Caribe) ↔ Alajuela (ciudad) — $310 / $355 / $440 — 4h 30min
+- Puerto Viejo (Caribe) ↔ San José (centro) — $340 / $385 / $470 — 4h 30min
+- Puerto Viejo (Caribe) ↔ Tortuguero (La Pavona) — $545 / $605 / $665 — 4h 30min
+- Punta Islita ↔ Punta Leona — $350 / $400 / $450 — 4h
+- Punta Islita ↔ Peñas Blancas (frontera Nicaragua) — $280 / $330 / $380 — 3h
+- Punta Islita ↔ Río Celeste — $345 / $390 / $455 — 3h 30min
+- Punta Islita ↔ San José (centro) — $350 / $420 / $480 — 5h
+- Punta Islita ↔ Rincón de la Vieja — $285 / $330 / $385 — 3h
+- Punta Islita ↔ Malpaís — $355 / $405 / $455 — 5h
+- Punta Leona ↔ Nosara / Playa Guiones — $375 / $425 / $475 — 4h 30min
+- Punta Leona ↔ Sámara / Playa Carrillo — $350 / $395 / $455 — 4h
+- Punta Leona ↔ Alajuela (ciudad) — $180 / $225 / $275 — 2h
+- Rincón de la Vieja ↔ Nosara / Playa Guiones — $325 / $370 / $455 — 3h 30min
+- Rincón de la Vieja ↔ Alajuela (ciudad) — $350 / $400 / $450 — 4h
+- Rincón de la Vieja ↔ Sámara / Playa Carrillo — $285 / $350 / $415 — 3h
+- Rincón de la Vieja ↔ San José (centro) — $370 / $420 / $470 — 4h
+- Río Celeste ↔ Alajuela (ciudad) — $240 / $290 / $340 — 4h
+- Río Celeste ↔ San José (centro) — $260 / $305 / $390 — 4h
+- RIU Guanacaste / RIU Palace ↔ Montezuma — $395 / $460 / $525 — 4h 30min
+- RIU Guanacaste / RIU Palace ↔ Las Catalinas — $130 / $180 / $230 — 45min
+- RIU Guanacaste / RIU Palace ↔ Alajuela (ciudad) — $345 / $415 / $475 — 5h
+- RIU Guanacaste / RIU Palace ↔ Río Celeste — $235 / $285 / $335 — 3h 30min
+- RIU Guanacaste / RIU Palace ↔ San José (centro) — $365 / $415 / $465 — 5h
+- RIU Guanacaste / RIU Palace ↔ Punta Leona — $315 / $365 / $415 — 4h
+- RIU Guanacaste / RIU Palace ↔ Sámara / Playa Carrillo — $255 / $320 / $385 — 2h
+- RIU Guanacaste / RIU Palace ↔ Nosara / Playa Guiones — $270 / $315 / $365 — 2h
+- RIU Guanacaste / RIU Palace ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- RIU Guanacaste / RIU Palace ↔ Punta Islita — $280 / $330 / $380 — 3h
+- RIU Guanacaste / RIU Palace ↔ Malpaís — $395 / $445 / $495 — 4h 30min
+- Sámara / Playa Carrillo ↔ Alajuela (ciudad) — $355 / $420 / $485 — 4h 30min
+- San Gerardo de Dota ↔ San José (centro) — $240 / $285 / $335 — 3h 30min
+- San Gerardo de Dota ↔ Alajuela (ciudad) — $220 / $265 / $350 — 3h 30min
+- San José (centro) ↔ Sierpe (Osa) — $360 / $380 / $440 — 5h
+- San José · Aeropuerto (SJO) ↔ JW Marriott Costa Elena (La Cruz) — $345 / $390 / $450 — 4h 30min
+- San José · Aeropuerto (SJO) ↔ Malpaís — $375 / $420 / $505 — 6h
+- San José · Aeropuerto (SJO) ↔ Uvita — $335 / $380 / $450 — 4h
+- San José · Aeropuerto (SJO) ↔ Manuel Antonio / Quepos — $220 / $300 / $360 — 3h
+- San José · Aeropuerto (SJO) ↔ Ojochal — $365 / $415 / $465 — 4h 30min
+- San José · Aeropuerto (SJO) ↔ Playas del Coco — $340 / $390 / $440 — 5h
+- San José · Aeropuerto (SJO) ↔ Montezuma — $375 / $420 / $490 — 6h
+- San José · Aeropuerto (SJO) ↔ Esterillos — $195 / $240 / $325 — 2h
+- San José · Aeropuerto (SJO) ↔ Bajos del Toro — $165 / $215 / $265 — 2h
+- San José · Aeropuerto (SJO) ↔ Hacienda Pinilla — $345 / $395 / $445 — 5h 30min
+- San José · Aeropuerto (SJO) ↔ Jacó — $175 / $210 / $245 — 1h 30min
+- San José · Aeropuerto (SJO) ↔ Santa Teresa — $375 / $420 / $505 — 6h
+- San José · Aeropuerto (SJO) ↔ Playa Flamingo — $345 / $395 / $445 — 5h
+- San José · Aeropuerto (SJO) ↔ Punta Leona — $180 / $225 / $310 — 2h
+- San José · Aeropuerto (SJO) ↔ JW Marriott Guanacaste — $345 / $390 / $450 — 5h 30min
+- San José · Aeropuerto (SJO) ↔ Playa Ocotal — $340 / $390 / $440 — 5h
+- San José · Aeropuerto (SJO) ↔ San Gerardo de Dota — $220 / $265 / $350 — 3h 30min
+- San José · Aeropuerto (SJO) ↔ Dominical — $305 / $350 / $435 — 3h 30min
+- San José · Aeropuerto (SJO) ↔ Río Celeste — $240 / $285 / $365 — 4h
+- San José · Aeropuerto (SJO) ↔ Puerto Jiménez (Osa) — $535 / $580 / $665 — 6h
+- San José · Aeropuerto (SJO) ↔ Nosara / Playa Guiones — $370 / $415 / $500 — 5h
+- San José · Aeropuerto (SJO) ↔ Sámara / Playa Carrillo — $355 / $400 / $485 — 4h 30min
+- San José · Aeropuerto (SJO) ↔ Puntarenas / Caldera — $155 / $175 / $235 — 1h
+- San José · Aeropuerto (SJO) ↔ Herradura / Los Sueños — $180 / $195 / $250 — 1h 30min
+- San José · Aeropuerto (SJO) ↔ Playa Conchal — $345 / $390 / $475 — 5h
+- San José · Aeropuerto (SJO) ↔ Monteverde — $220 / $265 / $350 — 3h
+- San José · Aeropuerto (SJO) ↔ La Fortuna / Arenal — $220 / $275 / $360 — 3h
+- San José · Aeropuerto (SJO) ↔ La Paz Waterfall Gardens — $130 / $175 / $260 — 2h
+- San José · Aeropuerto (SJO) ↔ Sierpe (Osa) — $350 / $370 / $430 — 5h
+- San José · Aeropuerto (SJO) ↔ Playa Hermosa (Guanacaste) — $340 / $385 / $470 — 5h
+- San José · Aeropuerto (SJO) ↔ San José (centro) — $80 / $140 / $180 — 30min
+- San José · Aeropuerto (SJO) ↔ Playa Potrero — $345 / $390 / $475 — 5h
+- San José · Aeropuerto (SJO) ↔ Los Chiles (frontera Nicaragua) — $310 / $355 / $410 — 4h 30min
+- San José · Aeropuerto (SJO) ↔ Peñas Blancas (frontera Nicaragua) — $320 / $365 / $420 — 6h
+- San José · Aeropuerto (SJO) ↔ RIU Guanacaste / RIU Palace — $345 / $390 / $450 — 5h
+- San José · Aeropuerto (SJO) ↔ Tortuguero (La Pavona) — $240 / $285 / $355 — 4h
+- San José · Aeropuerto (SJO) ↔ Las Catalinas — $350 / $395 / $480 — 4h 30min
+- San José · Aeropuerto (SJO) ↔ Península Papagayo — $340 / $385 / $470 — 5h
+- San José · Aeropuerto (SJO) ↔ Sarapiquí — $170 / $215 / $275 — 2h 30min
+- San José · Aeropuerto (SJO) ↔ Playa Avellanas — $345 / $405 / $475 — 5h 30min
+- San José · Aeropuerto (SJO) ↔ Puerto Viejo (Caribe) — $320 / $365 / $450 — 4h 30min
+- San José · Aeropuerto (SJO) ↔ Tamarindo — $345 / $390 / $450 — 5h
+- San José · Aeropuerto (SJO) ↔ Rincón de la Vieja — $350 / $400 / $450 — 4h
+- San José · Aeropuerto (SJO) ↔ Brasilito — $345 / $390 / $450 — 5h
+- San José · Aeropuerto (SJO) ↔ Punta Islita — $330 / $375 / $460 — 5h
+- San José · Aeropuerto (SJO) ↔ Playa Grande — $345 / $390 / $450 — 5h
+- San José · Aeropuerto (SJO) ↔ Liberia · Aeropuerto (LIR) — $305 / $365 / $435 — 4h
+- Santa Teresa ↔ Sámara / Playa Carrillo — $355 / $400 / $485 — 5h
+- Santa Teresa ↔ Nosara / Playa Guiones — $375 / $420 / $505 — 5h
+- Santa Teresa ↔ Alajuela (ciudad) — $375 / $420 / $475 — 6h
+- Santa Teresa ↔ San José (centro) — $395 / $440 / $525 — 6h
+- Santa Teresa ↔ Las Catalinas — $365 / $410 / $495 — 4h 30min
+- Santa Teresa ↔ Playa Avellanas — $365 / $410 / $495 — 4h 30min
+- Santa Teresa ↔ Playa Potrero — $365 / $410 / $495 — 4h 30min
+- Santa Teresa ↔ Playa Hermosa (Guanacaste) — $395 / $440 / $495 — 4h 30min
+- Santa Teresa ↔ Playas del Coco — $395 / $440 / $495 — 4h 30min
+- Santa Teresa ↔ JW Marriott Guanacaste — $365 / $410 / $495 — 4h 30min
+- Santa Teresa ↔ Playa Ocotal — $395 / $440 / $525 — 4h 30min
+- Santa Teresa ↔ RIU Guanacaste / RIU Palace — $395 / $440 / $525 — 4h 30min
+- Santa Teresa ↔ Punta Islita — $355 / $400 / $485 — 5h
+- Santa Teresa ↔ Hacienda Pinilla — $365 / $410 / $495 — 4h 30min
+- Santa Teresa ↔ Playa Grande — $365 / $410 / $495 — 4h 30min
+- Santa Teresa ↔ Playa Flamingo — $365 / $410 / $495 — 4h 30min
+- Sarapiquí ↔ San José (centro) — $190 / $240 / $290 — 2h 30min
+- Sarapiquí ↔ Alajuela (ciudad) — $170 / $220 / $270 — 2h 30min
+- Tamarindo ↔ Hacienda Pinilla — $125 / $140 / $195 — 40min
+- Tamarindo ↔ Peñas Blancas (frontera Nicaragua) — $240 / $285 / $370 — 3h
+- Tamarindo ↔ Montezuma — $365 / $410 / $495 — 4h 30min
+- Tamarindo ↔ RIU Guanacaste / RIU Palace — $130 / $180 / $230 — 45min
+- Tamarindo ↔ Rincón de la Vieja — $225 / $270 / $355 — 2h 30min
+- Tamarindo ↔ Punta Islita — $305 / $350 / $435 — 2h 30min
+- Tamarindo ↔ Punta Leona — $315 / $360 / $445 — 4h
+- Tamarindo ↔ San José (centro) — $365 / $410 / $495 — 5h
+- Tamarindo ↔ Río Perdido (Bagaces) — $220 / $240 / $300 — 2h
+- Tamarindo ↔ Alajuela (ciudad) — $345 / $390 / $475 — 5h
+- Tamarindo ↔ Nosara / Playa Guiones — $235 / $280 / $365 — 2h
+- Tamarindo ↔ Malpaís — $365 / $410 / $495 — 4h 30min
+- Tamarindo ↔ Sámara / Playa Carrillo — $220 / $265 / $350 — 3h
+- Tamarindo ↔ Río Celeste — $275 / $320 / $405 — 3h
+- Tamarindo ↔ Ojochal — $455 / $500 / $585 — 6h
+- Tamarindo ↔ Playa Avellanas — $125 / $140 / $195 — 40min
+- Tamarindo ↔ Playas del Coco — $130 / $145 / $200 — 45min
+- Tamarindo ↔ Playa Hermosa (Guanacaste) — $130 / $145 / $200 — 45min
+- Tamarindo ↔ Península Papagayo — $145 / $160 / $215 — 55min
+- Tamarindo ↔ Santa Teresa — $365 / $410 / $495 — 4h 30min
+- Tamarindo ↔ Jacó — $325 / $370 / $455 — 4h
+- Tamarindo ↔ Esterillos — $410 / $455 / $540 — 6h
+- Tamarindo ↔ Playa Ocotal — $130 / $145 / $200 — 45min
+- Tamarindo ↔ JW Marriott Guanacaste — $125 / $140 / $195 — 40min
+- Tamarindo ↔ Herradura / Los Sueños — $325 / $370 / $455 — 4h
+- Tamarindo ↔ Dominical — $455 / $500 / $585 — 6h
+- Tamarindo ↔ Uvita — $470 / $520 / $570 — 6h 30min
+- Tortuguero (La Pavona) ↔ San José (centro) — $260 / $305 / $390 — 4h
+- Tortuguero (La Pavona) ↔ Alajuela (ciudad) — $240 / $285 / $370 — 4h
+- Uvita ↔ Sámara / Playa Carrillo — $610 / $660 / $720 — 7h 30min
+- Uvita ↔ Nosara / Playa Guiones — $610 / $655 / $740 — 7h 30min
+- Uvita ↔ Alajuela (ciudad) — $335 / $385 / $435 — 4h
+- Uvita ↔ Sierpe (Osa) — $150 / $170 / $230 — 2h
+- Uvita ↔ San José (centro) — $355 / $420 / $485 — 4h
+- Uvita ↔ Las Catalinas — $470 / $515 / $600 — 6h 30min
+- Uvita ↔ Hacienda Pinilla — $470 / $515 / $600 — 6h 30min
+- Uvita ↔ JW Marriott Guanacaste — $470 / $515 / $600 — 6h 30min
+- Uvita ↔ Punta Islita — $610 / $685 / $740 — 7h 30min
+- Uvita ↔ RIU Guanacaste / RIU Palace — $470 / $515 / $600 — 6h 30min
+
+## Hoteles conocidos (para ubicar la zona/precio del cliente)
+
+Si el cliente menciona un hotel de esta lista, usa el precio de SU ZONA (entre parentesis) para cotizar.
+
+- Alajuela (ciudad)): Xandari Resort & Spa, Costa Rica Marriott Hotel Hacienda Belén
+- Dominical): Hacienda Barú
+- Herradura / Los Sueños): Los Sueños Marriott
+- Jacó): Croc's Resort & Casino, Best Western Jaco Beach Resort, Club del Mar Oceanfront Resort, DoceLunas Hotel
+- La Fortuna / Arenal): Tabacón Thermal Resort, Nayara Springs / Nayara Gardens, Nayara Tented Camp, The Springs Resort & Spa, Arenal Springs Resort, Hotel Arenal Kioro, Baldí Hot Springs, Volcano Lodge & Springs, Arenal Manoa, Los Lagos Hotel, The Royal Corin Thermal Water Spa & Resort, Arenal Observatory Lodge & Trails, Lost Iguana Resort & Spa, Arenal Paraiso Resort & Spa, Hotel El Silencio del Campo, Rancho Margot, Hotel Montaña de Fuego, Lomas del Volcán
+- Liberia · Aeropuerto (LIR)): Hilton Garden Inn Liberia Airport, Hampton by Hilton Guanacaste Airport
+- Manuel Antonio / Quepos): Si Como No Resort, Tulemar Resort, Parador Resort & Spa, Arenas del Mar, Hotel Costa Verde, Gaia Hotel & Reserve, Makanda by the Sea, Hotel La Mariposa, Shana by the Beach, Karahe Beach Hotel, Villa Roca Boutique Resort, Hotel San Bada
+- Monteverde): Hotel Belmar, Monteverde Lodge & Gardens, El Establo Mountain Hotel, Senda Monteverde, Hotel Fonda Vela, Trapp Family Lodge, Hotel Poco a Poco, Koora Hotel by Sandglass, Cloud Forest Lodge
+- Montezuma): Ylang Ylang Beach Resort, Hotel Amor de Mar
+- Nosara / Playa Guiones): The Harmony Hotel, Bodhi Tree Yoga Resort, Lagarta Lodge
+- Península Papagayo): Four Seasons Papagayo, Andaz Peninsula Papagayo, Planet Hollywood Costa Rica, El Mangroove, Secrets Papagayo
+- Playa Conchal): Westin Reserva Conchal, W Costa Rica (Reserva Conchal)
+- Playa Flamingo): Margaritaville Beach Resort, Flamingo Beach Resort, Flamingo Marina Resort
+- Playa Hermosa (Guanacaste)): Hotel Bosque del Mar, Villas Sol Beach Resort, Condovac La Costa
+- Playa Ocotal): Ocotal Beach Resort
+- Playa Potrero): Bahía del Sol Beachfront Boutique Hotel
+- Playas del Coco): Café de Playa Beachfront Hotel, Bahia Pez Vela
+- Puerto Jiménez (Osa)): Lapa Rios Lodge, Crocodile Bay Resort
+- Puerto Viejo (Caribe)): Le Caméléon Boutique Hotel, Hotel Banana Azul, Cariblue Beach & Jungle Resort, Tree House Lodge
+- Rincón de la Vieja): Hacienda Guachipelín, Borinquen Thermal Resort, Blue River Resort & Hot Springs
+- Río Celeste): Celeste Mountain Lodge, Rio Celeste Hideaway
+- Sámara / Playa Carrillo): Villas Playa Samara
+- San José (centro)): Gran Hotel Costa Rica, Hotel Grano de Oro, Hotel Presidente, Barceló San José
+- San José · Aeropuerto (SJO)): Hampton by Hilton San José Airport, Courtyard by Marriott San José Airport
+- Santa Teresa): Hotel Nantipa, Florblanca Resort, Hotel Casa Chameleon, Pranamar Villas & Yoga Retreat, Tropico Latino
+- Tamarindo): Tamarindo Diriá, Wyndham Tamarindo, Hotel Capitán Suizo, Cala Luna Boutique Hotel, Jardín del Edén Boutique Hotel, The Coast Beachfront Hotel, Los Altos de Eros Boutique Hotel & Spa
+- Uvita): Kurà Design Villas, Cristal Ballena Boutique Hotel & Spa, Rancho Pacifico
