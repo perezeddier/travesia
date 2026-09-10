@@ -12,6 +12,7 @@ import routesData from '../routes-data.js';
 import { rateLimited } from './_ratelimit.js';
 
 const { PT_ROWS } = routesData;
+const X4_FEE = 40;   // recargo por hoteles que solo se alcanzan en 4x4 (transbordo)
 
 // índice de precios por ruta (i-j) -> {staria, hiace, maxus}
 const LOOKUP = {};
@@ -75,13 +76,17 @@ export default async function handler(req, res) {
       const p = legPrice(+it.i, +it.j, it.vkey);
       if (p == null) { res.status(400).json({ ok: false, error: 'bad-leg' }); return; }
       const isVip = it.vip === true || it.vip === '1' || it.vip === 1;
+      // 4x4: hoteles de camino de montana que exigen transbordo a 4x4 (+$40)
+      const isX4 = it.x4 === true || it.x4 === '1' || it.x4 === 1;
       amount += p;
       if (isVip) { amount += 80; vipCount++; }  // VIP por tramo
+      if (isX4) { amount += X4_FEE; }           // recargo 4x4 por tramo
       const cl = clientLegs[idx] || {};
       legs.push({
         from: String(cl.from || '').slice(0, 80), to: String(cl.to || '').slice(0, 80),
         vname: String(cl.vname || '').slice(0, 40), vip: isVip,
-        price: p + (isVip ? 80 : 0),   // precio del tramo verificado en el servidor, no el que mando el cliente
+        x4: isX4, x4hotel: String(it.x4hotel || cl.x4hotel || '').slice(0, 80),
+        price: p + (isVip ? 80 : 0) + (isX4 ? X4_FEE : 0),   // precio del tramo verificado en el servidor, no el que mando el cliente
         date: String(cl.date || '').slice(0, 20), time: String(cl.time || '').slice(0, 20),
         pickup: String(cl.pickup || '').slice(0, 120), dropoff: String(cl.dropoff || '').slice(0, 120),
       });

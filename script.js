@@ -278,6 +278,13 @@ const I18N = {
     "finder.notfound": "We don't have a set price for that pair yet — send it to us on WhatsApp and we'll quote it in minutes.",
     "finder.notfoundBtn": "Quote this route on WhatsApp",
     "finder.taxes": "Final price per vehicle · taxes included",
+    "finder.need4x4": "⚠️ {hotel} is reached by a steep unpaved road that requires a 4x4 vehicle — that leg has a <strong>+$40</strong> surcharge, already included in your total.",
+    "x4.title": "This hotel needs a 4x4",
+    "x4.body": "The last stretch to this hotel is a steep unpaved mountain road that only a 4x4 can drive. We take you in your vehicle up to where the road changes, and there you switch to a 4x4 for the final climb.",
+    "x4.fee": "4x4 leg &amp; transfer",
+    "x4.note": "It's already added to your total — no surprises later.",
+    "x4.ok": "Got it",
+    "cart.x4": "4x4 transfer",
     "finder.a1": "Free cancellation up to 48h",
     "finder.a2": "We track your flight",
     "finder.a3": "Instant WhatsApp confirmation",
@@ -594,6 +601,13 @@ const I18N = {
     "finder.notfound": "Aún no tenemos precio fijo para ese par — mándanoslo por WhatsApp y te cotizamos en minutos.",
     "finder.notfoundBtn": "Cotizar esta ruta por WhatsApp",
     "finder.taxes": "Precio final por vehículo · impuestos incluidos",
+    "finder.need4x4": "⚠️ A {hotel} se llega por un camino empinado sin asfaltar que requiere vehículo 4x4 — ese tramo lleva un cargo de <strong>+$40</strong>, ya incluido en tu total.",
+    "x4.title": "Este hotel requiere 4x4",
+    "x4.body": "El último tramo hasta este hotel es un camino de montaña empinado y sin asfaltar, que solo se puede subir en 4x4. Te llevamos en tu vehículo hasta donde cambia el camino, y ahí se hace el transbordo a un 4x4 para la subida final.",
+    "x4.fee": "Tramo en 4x4 y transbordo",
+    "x4.note": "Ya está sumado a tu total — sin sorpresas después.",
+    "x4.ok": "Entendido",
+    "cart.x4": "Transbordo 4x4",
     "finder.a1": "Cancelación gratis hasta 48 h",
     "finder.a2": "Seguimos tu vuelo",
     "finder.a3": "Confirmación inmediata por WhatsApp",
@@ -917,7 +931,7 @@ function buildComboOptions() {
     COMBO_OPTS.push({ label: ptName(i), place: i, hotel: false, search: normTxt(ptName(i)) }));
   if (typeof PT_HOTELS !== "undefined") {
     PT_HOTELS.forEach((h) =>
-      COMBO_OPTS.push({ label: h.name, place: h.place, hotel: true, zone: ptName(h.place), search: normTxt(h.name) }));
+      COMBO_OPTS.push({ label: h.name, place: h.place, hotel: true, zone: ptName(h.place), req4x4: !!h.req4x4, search: normTxt(h.name) }));
   }
 }
 
@@ -1007,6 +1021,19 @@ function setupCombo(inputId, listId) {
   }, 120));
 }
 
+/* Hoteles con acceso solo en 4x4: devuelve los nombres elegidos por el cliente */
+function hotels4x4Selected() {
+  const found = [];
+  ["fromInput", "toInput"].forEach((id) => {
+    const input = document.getElementById(id);
+    const val = input && input.value ? normTxt(input.value.trim()) : "";
+    if (!val) return;
+    const hit = COMBO_OPTS.find((o) => o.hotel && o.req4x4 && o.search === val);
+    if (hit && !found.includes(hit.label)) found.push(hit.label);
+  });
+  return found;
+}
+
 function renderFinder() {
   const box = document.getElementById("finderResult");
   if (!box) return;
@@ -1068,6 +1095,12 @@ function renderFinder() {
       <span>${t("finder.a3")}</span>
     </div>
     <p class="finder-note">${t("finder.taxes")}</p>
+    ${(() => {
+      const h4 = hotels4x4Selected();
+      return h4.length
+        ? `<p class="finder-4x4">${t("finder.need4x4").replace("{hotel}", h4.join(", "))}</p>`
+        : "";
+    })()}
     <button class="finder-continue" type="button" data-continue="${j}">
       <span>${t("finder.continue")} ${ptName(j)}</span>
       <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -1078,7 +1111,30 @@ function renderFinder() {
 let CART = [];
 try { CART = JSON.parse(localStorage.getItem("travesia-cart") || "[]"); } catch (e) { CART = []; }
 function saveCart() { try { localStorage.setItem("travesia-cart", JSON.stringify(CART)); } catch (e) {} }
-function cartTotal() { return CART.reduce((s, it) => s + it.price + (it.vip ? 80 : 0), 0); }
+const X4_FEE = 40;
+/* Burbuja de aviso 4x4: la lee el cliente y la cierra */
+function showX4Notice(hotelName) {
+  const ov = document.getElementById("x4Overlay");
+  if (!ov) return;
+  const h = document.getElementById("x4Hotel");
+  if (h) h.textContent = hotelName || "";
+  ov.classList.add("open");
+  ov.setAttribute("aria-hidden", "false");
+  document.getElementById("x4Close")?.focus();
+}
+function hideX4Notice() {
+  const ov = document.getElementById("x4Overlay");
+  if (!ov) return;
+  ov.classList.remove("open");
+  ov.setAttribute("aria-hidden", "true");
+}
+document.addEventListener("click", (e) => {
+  if (e.target.closest("#x4Close")) hideX4Notice();
+  else if (e.target.id === "x4Overlay") hideX4Notice();
+});
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") hideX4Notice(); });
+
+function cartTotal() { return CART.reduce((s, it) => s + it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0), 0); }
 
 function updateCartCount() {
   const n = CART.length;
@@ -1092,9 +1148,10 @@ function addToCart(i, j, vkey) {
   const p = ptPrice(i, j);
   if (!p || p[vkey] == null) return;
   const v = VEHICLES.find((x) => x.key === vkey);
-  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey], vip: false, date: "", time: "", pickup: "", dropoff: "" });
+  const h4 = hotels4x4Selected();
+  CART.push({ i, j, from: comboLabel("fromInput", i), to: comboLabel("toInput", j), vkey, vname: v.name, price: p[vkey], vip: false, x4: h4.length > 0, x4hotel: h4[0] || "", date: "", time: "", pickup: "", dropoff: "" });
   saveCart(); updateCartCount(); renderCart();
-  toast(t("cart.added"));
+  if (h4.length) showX4Notice(h4.join(", ")); else toast(t("cart.added"));
   gaEvent("add_to_cart", { currency: "USD", value: p[vkey], vehicle: v.name, route: `${comboLabel("fromInput", i)} -> ${comboLabel("toInput", j)}` });
   const badge = document.querySelector(".cart-btn");
   if (badge) { badge.classList.remove("pulse"); void badge.offsetWidth; badge.classList.add("pulse"); }
@@ -1120,9 +1177,9 @@ function renderCart() {
       <div class="cart-item">
         <div class="cart-item-main">
           <div class="cart-route"><span>${it.from}</span> ${ARROW} <span>${it.to}</span></div>
-          <div class="cart-veh">${it.vname}${it.vip ? ' · <b style="color:var(--gold-2)">Travesía VIP</b>' : ''}</div>
+          <div class="cart-veh">${it.vname}${it.vip ? ' · <b style="color:var(--gold-2)">Travesía VIP</b>' : ''}${it.x4 ? ` · <b style="color:var(--gold-2)">${t("cart.x4")} +$${X4_FEE}</b>` : ''}</div>
         </div>
-        <div class="cart-item-price">$${it.price + (it.vip ? 80 : 0)}</div>
+        <div class="cart-item-price">$${it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0)}</div>
         <button class="cart-remove" type="button" data-remove="${idx}" aria-label="${t("cart.remove")}" title="${t("cart.remove")}">&times;</button>
       </div>`).join("");
   }
@@ -1146,7 +1203,7 @@ function renderCheckoutSummary() {
     <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${cartTotal()}</strong></div>
     ${CART.map((it, idx) => `
       <div class="co-sum-leg">
-        <div class="co-sum-row"><span>${it.from} → ${it.to} · ${it.vname}</span><span>$${it.price + (it.vip ? 80 : 0)}</span></div>
+        <div class="co-sum-row"><span>${it.from} → ${it.to} · ${it.vname}${it.x4 ? ` · ${t("cart.x4")} +$${X4_FEE}` : ""}</span><span>$${it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0)}</span></div>
         <label class="co-sum-vip"><input type="checkbox" data-vip="${idx}" ${it.vip ? "checked" : ""}> <span>${t("co.vipAdd")} <b>+$80</b></span></label>
         ${idx === 0 ? "" : `
         <div class="co-sum-legfields">
@@ -1221,7 +1278,7 @@ function buildItinerary(d) {
 }
 
 function checkoutOrderMessage(d) {
-  const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · Travesía VIP (+$80)" : ""} · $${it.price + (it.vip ? 80 : 0)}`).join("\n");
+  const legs = CART.map((it, n) => `${n + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · Travesía VIP (+$80)" : ""}${it.x4 ? ` · 4x4 ${it.x4hotel || ""} (+$${X4_FEE})` : ""} · $${it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0)}`).join("\n");
   const total = cartTotal();
   const itin = buildItinerary(d);
   return `Hi Travesía! New booking:\n${legs}\nTotal: $${total}\n\n` +
@@ -1254,7 +1311,8 @@ function reservaPayload(d) {
   // campos generales del formulario, del 2do en adelante usa los propios de esa tarjeta.
   const legs = CART.map((it, idx) => ({
     from: it.from, to: it.to, vname: it.vname, vip: !!it.vip,
-    price: it.price + (it.vip ? 80 : 0),
+    x4: !!it.x4, x4hotel: it.x4hotel || "",
+    price: it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0),
     date: idx === 0 ? d.date : it.date,
     time: idx === 0 ? d.time : it.time,
     pickup: idx === 0 ? d.pickup : it.pickup,
@@ -1284,7 +1342,7 @@ function postReserva(payload) {
    recalcule el precio, más los datos de la reserva (sin tarjeta). */
 function pagarPayload(d) {
   const base = reservaPayload(d);
-  base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey, vip: !!it.vip }));  // VIP por tramo
+  base.cart = CART.map((it) => ({ i: it.i, j: it.j, vkey: it.vkey, vip: !!it.vip, x4: !!it.x4, x4hotel: it.x4hotel || "" }));  // VIP y 4x4 por tramo
   base.zip = d.zip || "";           // código postal de la tarjeta (país ya viene en reservaPayload)
   return base;
 }

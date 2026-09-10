@@ -169,10 +169,11 @@ const PT_HOTELS = [
   { name: "Hotel Banana Azul", place: 9 },
   { name: "Cariblue Beach & Jungle Resort", place: 9 },
   { name: "Tree House Lodge", place: 9 },
-  // Uvita (20)
-  { name: "Kurà Design Villas", place: 20 },
+  // Uvita (20)  — req4x4: verificado, el ultimo tramo es camino de montana empinado
+  { name: "Kurà Design Villas", place: 20, req4x4: true },
   { name: "Cristal Ballena Boutique Hotel & Spa", place: 20 },
-  { name: "Rancho Pacifico", place: 20 },
+  { name: "Rancho Pacifico", place: 20, req4x4: true },
+  { name: "Oxygen Jungle Villas & Spa", place: 20, req4x4: true },
   // Jaco (11)
   { name: "Croc's Resort & Casino", place: 11 },
   { name: "Best Western Jaco Beach Resort", place: 11 },
@@ -197,8 +198,12 @@ const PT_HOTELS = [
   // Samara (40)
   { name: "Villas Playa Samara", place: 40 },
   // Puerto Jimenez / Osa (41)
-  { name: "Lapa Rios Lodge", place: 41 },
+  { name: "Lapa Rios Lodge", place: 41, req4x4: true },
+  { name: "Luna Lodge (Carate)", place: 41, req4x4: true },
   { name: "Crocodile Bay Resort", place: 41 },
+  { name: "Botanika Osa Peninsula, Curio Collection by Hilton", place: 41 },
+  { name: "Iguana Lodge Beach Resort", place: 41 },
+  { name: "Cabinas Jiménez", place: 41 },
   // Rincon de la Vieja (30)
   { name: "Hacienda Guachipelín", place: 30 },
   { name: "Borinquen Thermal Resort", place: 30 },
