@@ -7,6 +7,13 @@
     { "source": "/contact-us", "destination": "/#contact", "permanent": true },
     { "source": "/private-shuttle/routes", "destination": "/#routes", "permanent": true },
 
+    { "source": "/contact", "destination": "/#contact", "permanent": true },
+    { "source": "/booking", "destination": "/#routes", "permanent": true },
+    { "source": "/book-now.php", "destination": "/#routes", "permanent": true },
+    { "source": "/blog", "destination": "/guide", "permanent": true },
+    { "source": "/post/top-20-best-restaurants-in-la-fortuna-costa-rica-a-culinary-guide-by-travesia-cr", "destination": "/guide/best-restaurants-costa-rica", "permanent": true },
+    { "source": "/post/:slug*", "destination": "/guide", "permanent": true },
+
     { "source": "/private-shuttle/sjo-airport/la-fortuna-arenal", "destination": "/shuttle/san-jose-airport-to-la-fortuna", "permanent": true },
     { "source": "/private-shuttle/sjo-airport/manuel-antonio", "destination": "/shuttle/san-jose-airport-to-manuel-antonio", "permanent": true },
     { "source": "/private-shuttle/sjo-airport/monteverde", "destination": "/shuttle/san-jose-airport-to-monteverde", "permanent": true },
