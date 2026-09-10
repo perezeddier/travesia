@@ -185,8 +185,11 @@ foreach($p in $pages){
 }
 
 # --- Guias del blog ---
-$guides=@("guide","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","guide/how-to-get-to-monteverde","guide/how-to-get-to-osa-peninsula","guide/traveling-with-a-surfboard-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","tours/rio-celeste","tours/coffee-chocolate","tours/bridges-waterfall-combo","terms","privacy")
+$guides=@("guide","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","guide/how-to-get-to-monteverde","guide/how-to-get-to-osa-peninsula","guide/traveling-with-a-surfboard-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","tours/rio-celeste","tours/coffee-chocolate","tours/bridges-waterfall-combo","terms","privacy","full-trip-chauffeur","private-shuttle-costa-rica")
 foreach($g in $guides){ [void]$urls.Add("$base/$g") }
+
+# Paginas hub y de aterrizaje: prioridad alta y revision semanal (se respeta al regenerar)
+$hiPri = @("$base/shuttle","$base/hotel","$base/full-trip-chauffeur","$base/private-shuttle-costa-rica")
 
 # --- Conservar URLs de otras herramientas (hoteles, shuttle-to, etc.) ya presentes en el sitemap ---
 $smPath = Join-Path $root "sitemap.xml"
@@ -201,8 +204,9 @@ if (Test-Path $smPath) {
 # --- Sitemap ---
 $sm="<?xml version=""1.0"" encoding=""UTF-8""?>`n<urlset xmlns=""http://www.sitemaps.org/schemas/sitemap/0.9"">`n"
 foreach($u in $urls){
-  $pri= if($u -eq "$base/"){"1.0"} elseif($u -like "*/guide*"){"0.7"} else {"0.8"}
-  $sm+="  <url><loc>$u</loc><lastmod>2026-08-07</lastmod><changefreq>monthly</changefreq><priority>$pri</priority></url>`n"
+  $pri= if($u -eq "$base/"){"1.0"} elseif($hiPri -contains $u){"0.9"} elseif($u -like "*/guide*"){"0.7"} else {"0.8"}
+  $freq = if($hiPri -contains $u -or $u -eq "$base/"){"weekly"} else {"monthly"}
+  $sm+="  <url><loc>$u</loc><lastmod>2026-08-07</lastmod><changefreq>$freq</changefreq><priority>$pri</priority></url>`n"
 }
 $sm+="</urlset>`n"
 $sm | Out-File -FilePath (Join-Path $root "sitemap.xml") -Encoding utf8
