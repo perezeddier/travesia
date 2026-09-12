@@ -321,6 +321,15 @@ async function sendEmail(to, subject, html, replyTo) {
   return r.json();
 }
 
+// Google Sheets interpreta como FORMULA cualquier celda que empiece con = + - @
+// (un telefono "+1 555..." acababa en #ERROR! y se perdia el dato), y ademas alguien
+// podria escribir "=IMPORTXML(...)" en el formulario y ejecutarlo dentro de la hoja.
+// El apostrofo inicial le dice a Sheets "esto es texto"; no se ve en la celda.
+function sheetText(v) {
+  const s = String(v == null ? '' : v);
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+
 // Guarda la reserva en la hoja de Google (si está configurada). No rompe si falla.
 async function logToSheet(d, paid) {
   const url = process.env.SHEETS_WEBHOOK_URL;
@@ -331,11 +340,11 @@ async function logToSheet(d, paid) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         estado: paid ? 'Pagado' : 'Solicitud',
-        nombre: d.name || '', email: d.email || '', telefono: d.phone || '',
-        ruta: d.summary || '', fecha: d.date || '', hora: d.time || '', pax: d.pax || '',
-        recogida: d.pickup || '', destino: d.dropoff || '', itinerario: d.itinerary || '', vuelo: d.flight || '', servicio: d.tier || '',
-        total: d.total || '', orden: d.orderNumber || '',
-        notas: (d.seats ? 'Sillas: ' + d.seats + ' · ' : '') + (d.notes || ''),
+        nombre: sheetText(d.name), email: sheetText(d.email), telefono: sheetText(d.phone),
+        ruta: sheetText(d.summary), fecha: sheetText(d.date), hora: sheetText(d.time), pax: sheetText(d.pax),
+        recogida: sheetText(d.pickup), destino: sheetText(d.dropoff), itinerario: sheetText(d.itinerary), vuelo: sheetText(d.flight), servicio: sheetText(d.tier),
+        total: sheetText(d.total), orden: sheetText(d.orderNumber),
+        notas: sheetText((d.seats ? 'Sillas: ' + d.seats + ' · ' : '') + (d.notes || '')),
       }),
     });
   } catch (e) { /* la hoja es un extra: si falla, no afecta correo ni pago */ }
