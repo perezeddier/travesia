@@ -122,3 +122,5 @@ a.rp-price:hover{border-color:var(--or);transform:translateY(-2px)}
 .bfig{margin:0 0 22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
 .bfig img{width:100%;height:auto;display:block}
 .bfig figcaption{padding:11px 14px;color:var(--muted-2);font-size:.88rem}
+.bgal.tall img{height:300px}
+.bfig.portrait{max-width:420px;margin-left:auto;margin-right:auto}
