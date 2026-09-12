@@ -767,6 +767,8 @@ function closeLightbox() {
 /* ---------- RESEÑAS reales (Google y TripAdvisor) ----------
    Texto TEXTUAL, tal como lo escribió el cliente. Nunca se traduce ni se edita. */
 const REVIEWS = [
+  { name: "Beatriz Nava-Villaseñor", when: { es: "setiembre 2026", en: "September 2026" },
+    text: "Excellent transportation service throughout our trip to Costa Rica: San José to La Fortuna; La Fortuna to Manuel Antonio, including an overnight transfer; Manuel Antonio to Alajuela and San José. They were always available to answer my calls and accommodate our requests, even on very short notice. Thank you for being so responsive, reliable, flexible, and punctual. I highly recommend them!" },
   { name: "melanie a", src: "TripAdvisor", when: { es: "setiembre 2026", en: "September 2026" },
     text: "We booked a transfer very last minute for our family of 5 from San Jose to La Fortuna. Communication with Eddie Perez was great. The driver was professional, friendly, safe and the van was clean, comfortable with AC and WIFI. We stopped at a lovely cafe/restaurant called MI Rancho which had beautiful views but best of all a visiting toucan on the next table! We were informed he is a regular visitor. Great transfer." },
   { name: "Judith Berenstein", when: { es: "hace 4 meses", en: "4 months ago" },
