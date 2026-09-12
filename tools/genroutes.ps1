@@ -74,6 +74,14 @@ foreach($p in $pages){ if(-not $byOrigin.ContainsKey($p.f)){ $byOrigin[$p.f]=New
 # Resenas reales de Google (verificadas en el perfil de negocio 2026-08-29), asociadas a una ruta especifica.
 # Clave = "min-max" de los indices de zona (aplica a las 2 direcciones de esa ruta).
 # Cada valor es un ARRAY de resenas (1 a 3 por ruta). Texto VERBATIM del perfil (recortado en limites de oracion).
+# Paradas de cortesia reales que Eddie usa siempre en ciertas rutas. Clave = "menor-mayor".
+$MIRANCHO = "<p class='rp-note'><strong>The stop we usually make on this route:</strong> <em>Mi Rancho</em>, a roadside cafe and restaurant with wide mountain views &mdash; and a toucan that turns up at the tables often enough that the staff call him a regular. It is an ordinary courtesy stop: no extra charge, no schedule, just tell your driver you would like to break the drive there.</p>"
+$ROUTE_STOPS = @{
+  "0-2"  = $MIRANCHO   # SJO <-> La Fortuna
+  "2-44" = $MIRANCHO   # San Jose ciudad <-> La Fortuna
+  "2-4"  = $MIRANCHO   # La Fortuna <-> Manuel Antonio
+}
+
 $ROUTE_REVIEWS = @{
   "0-2" = @(
     @{ quote = "We booked a transfer very last minute for our family of 5 from San Jose to La Fortuna. Communication with Eddie Perez was great. The driver was professional, friendly, safe and the van was clean, comfortable with AC and WIFI. We stopped at a lovely cafe/restaurant called MI Rancho which had beautiful views but best of all a visiting toucan on the next table! We were informed he is a regular visitor. Great transfer."; author = "melanie a"; source = "TripAdvisor" },
@@ -188,6 +196,8 @@ foreach($p in $pages){
   $html=$html.Replace("{{INTRO}}",$intro).Replace("{{PRICECARDS}}",$cards)
   $html=$html.Replace("{{FAQ}}",$faq).Replace("{{RELATED}}",$rel)
   $html=$html.Replace("{{REVIEW}}",$reviewHtml)
+  $stopNote = if ($ROUTE_STOPS.ContainsKey($rkey)) { $ROUTE_STOPS[$rkey] } else { "" }
+  $html=$html.Replace("{{STOPNOTE}}",$stopNote)
   $html=$html.Replace("{{WAHREF}}",$waHref).Replace("{{BOOKHREF}}",$bookHref).Replace("{{YEAR}}",$year)
   [System.IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
   [void]$urls.Add($url)

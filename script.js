@@ -385,7 +385,7 @@ const I18N = {
     "why.5.t": "24/7 WhatsApp support",
     "why.5.d": "Message us anytime — before, during or after your trip. We usually reply in minutes.",
     "why.6.t": "Loved by travelers",
-    "why.6.d": "A perfect 5.0 on both Google and TripAdvisor — from 150+ real guest reviews.",
+    "why.6.d": "All 55 of our TripAdvisor reviews are 5 stars, and Google is a perfect 5.0 too — 150+ real guests.",
   },
   es: {
     "nav.routes": "Rutas",
@@ -708,7 +708,7 @@ const I18N = {
     "why.5.t": "Soporte 24/7 por WhatsApp",
     "why.5.d": "Escríbenos cuando quieras — antes, durante o después de tu viaje. Respondemos en minutos.",
     "why.6.t": "Amado por los viajeros",
-    "why.6.d": "Un 5.0 perfecto en Google y TripAdvisor — de más de 150 reseñas reales.",
+    "why.6.d": "Las 55 opiniones que tenemos en TripAdvisor son de 5 estrellas, y en Google también somos 5.0 — más de 150 clientes reales.",
   },
 };
 
