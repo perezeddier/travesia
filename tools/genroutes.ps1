@@ -76,6 +76,7 @@ foreach($p in $pages){ if(-not $byOrigin.ContainsKey($p.f)){ $byOrigin[$p.f]=New
 # Cada valor es un ARRAY de resenas (1 a 3 por ruta). Texto VERBATIM del perfil (recortado en limites de oracion).
 $ROUTE_REVIEWS = @{
   "0-2" = @(
+    @{ quote = "We booked a transfer very last minute for our family of 5 from San Jose to La Fortuna. Communication with Eddie Perez was great. The driver was professional, friendly, safe and the van was clean, comfortable with AC and WIFI. We stopped at a lovely cafe/restaurant called MI Rancho which had beautiful views but best of all a visiting toucan on the next table! We were informed he is a regular visitor. Great transfer."; author = "melanie a"; source = "TripAdvisor" },
     @{ quote = "Very good service got us safe and sound from La Fortuna to San Jose. Steven was our driver, he was amazing, a very nice person and a very good driver. Would definitely recommend if you're looking for a short or long distance shuttle service."; author = "Diego R." },
     @{ quote = "Eddier was an amazing driver! He was so kind and got me from La Fortuna to SJO airport safely. The car was clean and comfortable. As a solo female traveler I felt very safe and I am so thankful to him for helping me with my Spanish and for getting me back safely!"; author = "Grace" },
     @{ quote = "Mr. Eddie was our driver and he was so amazing! He drove us 3 hours from the main airport to Lost Iguana Resort around the La Fortuna area. He knew a lot about the history and scenery of Costa Rica as we drove through the country. It was a very engaging ride!"; author = "Mayah M." }
@@ -154,12 +155,20 @@ foreach($p in $pages){
   }
   $rkey = "$([Math]::Min($p.f,$p.t))-$([Math]::Max($p.f,$p.t))"
   $reviewHtml = ""
+  $reviewLd = ""
   if ($ROUTE_REVIEWS.ContainsKey($rkey)) {
     $figs = ""
+    $lds = @()
     foreach($rv in @($ROUTE_REVIEWS[$rkey])) {
       $rvSource = if ($rv.source) { $rv.source } else { "Google Reviews" }
       $figs += "<figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on $rvSource</figcaption></figure>"
+      # mismo texto para el JSON-LD: sin entidades HTML y con las comillas escapadas
+      $q = $rv.quote -replace '&oacute;','o' -replace '&aacute;','a' -replace '&eacute;','e' -replace '&iacute;','i' -replace '&uacute;','u' -replace '&ntilde;','n' -replace '&iexcl;','' -replace '&iquest;','' -replace '\\','\\\\' -replace '"','\"'
+      $a = ($rv.author -replace '\\','\\\\' -replace '"','\"')
+      $s = ($rvSource -replace '"','\"')
+      $lds += '{"@type":"Review","reviewRating":{"@type":"Rating","ratingValue":"5","bestRating":"5"},"author":{"@type":"Person","name":"'+$a+'"},"publisher":{"@type":"Organization","name":"'+$s+'"},"reviewBody":"'+$q+'"}'
     }
+    $reviewLd = ',"review":[' + ($lds -join ',') + ']'
     $revTitle = if (@($ROUTE_REVIEWS[$rkey]).Count -gt 1) { "<h2>What travelers say about this route</h2>" } else { "" }
     $reviewHtml = "<section class='rp-sec'><div class='wrap'>$revTitle$figs</div></section>"
   }
@@ -168,7 +177,7 @@ foreach($p in $pages){
   $bookHref="/?from=$($p.f)&to=$($p.t)"
   $title="$($o.n) to $($d.n) Shuttle - Private Transfer from `$$($p.s) (2026) | Travesia"
   $desc="Private shuttle from $($o.n) to $($d.n) in Costa Rica. Door-to-door, about $($p.dur), from `$$($p.s) per vehicle. Bilingual driver, flat rate, book online or on WhatsApp."
-  $jsonld='{"@context":"https://schema.org","@type":"Service","serviceType":"Private airport shuttle transfer","name":"'+$o.n+' to '+$d.n+' Private Shuttle","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"'+$base+'/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"'+$p.s+'","priceCurrency":"USD","url":"'+$url+'"}}'
+  $jsonld='{"@context":"https://schema.org","@type":"Service","serviceType":"Private airport shuttle transfer","name":"'+$o.n+' to '+$d.n+' Private Shuttle","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"'+$base+'/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"'+$p.s+'","priceCurrency":"USD","url":"'+$url+'"}'+$reviewLd+'}'
   $bc='{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"'+$base+'/"},{"@type":"ListItem","position":2,"name":"All routes","item":"'+$base+'/shuttle"},{"@type":"ListItem","position":3,"name":"'+$o.n+' to '+$d.n+'","item":"'+$url+'"}]}'
 
   $html=$tpl

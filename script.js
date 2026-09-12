@@ -175,7 +175,7 @@ const I18N = {
     "wp.sHigh": "😰 High",
     "wp.sMed": "😐 Medium",
     "wp.legend": "✓ Included · ~ Sometimes / limited · ✕ Not available",
-    "rev.taCount": "54 reviews on TripAdvisor",
+    "rev.taCount": "55 reviews on TripAdvisor",
     "rev.gCount": "99 reviews on Google",
     "about.p2": "When you book, you're not talking to a call center — you're talking directly with me on WhatsApp. I make sure every trip across Costa Rica is safe, comfortable and stress-free. Pura vida!",
     "about.pt1": "Local driver, based in La Fortuna",
@@ -214,7 +214,7 @@ const I18N = {
     "finder.trust": "on Google · 🏆 Travelers' Choice 2025 · Licensed & insured",
     "finder.guar": "⚡ Instant price · Free cancellation up to 48h · No hidden fees",
     "ts.google": "Google · 99 reviews",
-    "ts.ta": "TripAdvisor · 54 reviews",
+    "ts.ta": "TripAdvisor · 55 reviews",
     "ts.tc": "Travelers' Choice 2025",
     "ts.insured": "Licensed, insured &amp; ICT certified",
     "ts.private": "100% private · door-to-door",
@@ -503,7 +503,7 @@ const I18N = {
     "wp.sHigh": "😰 Alto",
     "wp.sMed": "😐 Medio",
     "wp.legend": "✓ Incluido · ~ A veces / limitado · ✕ No disponible",
-    "rev.taCount": "54 opiniones en TripAdvisor",
+    "rev.taCount": "55 opiniones en TripAdvisor",
     "rev.gCount": "99 opiniones en Google",
     "faq.eyebrow": "Bueno saberlo",
     "faq.title": "Preguntas frecuentes",
@@ -537,7 +537,7 @@ const I18N = {
     "finder.trust": "en Google · 🏆 Travelers' Choice 2025 · Con seguro y permisos",
     "finder.guar": "⚡ Precio al instante · Cancelación gratis 48 h · Sin cargos ocultos",
     "ts.google": "Google · 99 reseñas",
-    "ts.ta": "TripAdvisor · 54 opiniones",
+    "ts.ta": "TripAdvisor · 55 opiniones",
     "ts.tc": "Travelers' Choice 2025",
     "ts.insured": "Con seguro, permisos y certificación ICT",
     "ts.private": "100% privado · puerta a puerta",
@@ -708,7 +708,7 @@ const I18N = {
     "why.5.t": "Soporte 24/7 por WhatsApp",
     "why.5.d": "Escríbenos cuando quieras — antes, durante o después de tu viaje. Respondemos en minutos.",
     "why.6.t": "Amado por los viajeros",
-    "why.6.d": "Un 5.0 perfecto en Google y TripAdvisor — de más de 140 reseñas reales.",
+    "why.6.d": "Un 5.0 perfecto en Google y TripAdvisor — de más de 150 reseñas reales.",
   },
 };
 
@@ -764,8 +764,11 @@ function closeLightbox() {
   document.body.classList.remove("no-scroll");
 }
 
-/* ---------- RESEÑAS reales de Google ---------- */
+/* ---------- RESEÑAS reales (Google y TripAdvisor) ----------
+   Texto TEXTUAL, tal como lo escribió el cliente. Nunca se traduce ni se edita. */
 const REVIEWS = [
+  { name: "melanie a", src: "TripAdvisor", when: { es: "setiembre 2026", en: "September 2026" },
+    text: "We booked a transfer very last minute for our family of 5 from San Jose to La Fortuna. Communication with Eddie Perez was great. The driver was professional, friendly, safe and the van was clean, comfortable with AC and WIFI. We stopped at a lovely cafe/restaurant called MI Rancho which had beautiful views but best of all a visiting toucan on the next table! We were informed he is a regular visitor. Great transfer." },
   { name: "Judith Berenstein", when: { es: "hace 4 meses", en: "4 months ago" },
     text: "Excelente día pasamos entre amigas con Roy y Fabián! Roy nos guió de maravilla y conocimos lugares mágicos!! Súper recomendable! Destacamos el lugar del almuerzo, una experiencia inolvidable! Gracias" },
   { name: "Odaly Castillo", when: { es: "hace 2 meses", en: "2 months ago" },
@@ -783,7 +786,7 @@ function renderReviews() {
       <blockquote>${r.text}</blockquote>
       <figcaption>
         <strong>${r.name}</strong>
-        <span>${(r.when[currentLang] || r.when.en)} · Google</span>
+        <span>${(r.when[currentLang] || r.when.en)} · ${r.src || "Google"}</span>
       </figcaption>
     </figure>`).join("");
 }
