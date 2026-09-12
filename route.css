@@ -112,3 +112,13 @@ a.rp-price:hover{border-color:var(--or);transform:translateY(-2px)}
 .rp-footer{padding:30px 0;text-align:center;color:var(--muted-2);font-size:.9rem}
 .rp-footer a{color:var(--muted)}
 .rp-footer a:hover{color:var(--text)}
+
+/* Galeria con pie de foto (aves) */
+.bgal{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin:0 0 22px}
+.bgal figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.bgal img{width:100%;height:210px;object-fit:cover;display:block}
+.bgal figcaption{padding:10px 12px;color:var(--muted);font-size:.88rem;line-height:1.45}
+.bgal figcaption b{color:var(--text);font-weight:600;display:block}
+.bfig{margin:0 0 22px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.bfig img{width:100%;height:auto;display:block}
+.bfig figcaption{padding:11px 14px;color:var(--muted-2);font-size:.88rem}
