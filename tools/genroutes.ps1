@@ -131,7 +131,7 @@ $CORRIDORS = @{
     intro = "This is the classic arrival drive, and we do it through San Ram&oacute;n: from Alajuela along Route 1 to San Ram&oacute;n, then up over the mountain through Los &Aacute;ngeles de San Ram&oacute;n and down onto the San Carlos plains."
     see = @("The dairy hills of San Ram&oacute;n on the climb","The cool green forest of Los &Aacute;ngeles de San Ram&oacute;n","Pineapple and sugar cane fields as far as you can see across the San Carlos plains","The cone of Arenal appearing straight ahead - from there it is about thirty minutes")
     road = "Paved the whole way: mountain curves on the San Ram&oacute;n climb, then flat road into La Fortuna."
-    tip = "Our stop on this drive is Mi Rancho, in Los &Aacute;ngeles de San Ram&oacute;n - and the toucan that shows up at the tables often enough that the staff call him a regular. Would you rather come up the other way, by Vara Blanca and the La Paz waterfalls on the Po&aacute;s side of the mountain? Tell us when you book and we will take that road instead."
+    tip = "Our stop on this drive is Mi Rancho, in Los &Aacute;ngeles de San Ram&oacute;n - and the toucan that shows up at the tables often enough that the staff call him a regular. Would you rather come up the other way, by Vara Blanca and the La Paz waterfalls on the Po&aacute;s side of the mountain? Tell us when you book and we take that road instead - same price, no surcharge."
   }
   "SUR-VC" = @{
     intro = "From {{ORIGIN}} to {{DEST}} we go out on Route 27 and down the Costanera along the coast, through Jac&oacute; and Quepos and on into the south."
