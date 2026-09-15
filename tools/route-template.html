@@ -26,6 +26,14 @@
 <header class="rp-header">
   <div class="wrap">
     <a class="rp-brand" href="/"><img src="/assets/logo-travesia.webp" alt="Travesía Costa Rica"></a>
+    <nav class="rp-nav">
+      <a href="/shuttle">Routes</a>
+      <a href="/hotel">Hotels</a>
+      <a href="/tours">Tours</a>
+      <a href="/guide">Guides</a>
+      <a href="/reviews">Reviews</a>
+      <a href="/">Book</a>
+    </nav>
     <a class="rp-cta" href="{{WAHREF}}" target="_blank" rel="noopener">
       <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
       Book on WhatsApp
@@ -64,7 +72,7 @@
   <div class="wrap">
     <h2>Prices for this route</h2>
     <div class="rp-prices">{{PRICECARDS}}</div>
-    <p class="rp-note">Final price per vehicle &middot; taxes &amp; tolls included &middot; not per person.</p>
+    <p class="rp-note">Final price per vehicle &middot; taxes &amp; tolls included &middot; not per person. {{PERPERSON}}</p>
   </div>
 </section>
 
@@ -108,6 +116,8 @@
   </div>
 </section>
 
+{{HOTELS}}
+
 <section class="rp-sec">
   <div class="wrap">
     <h2>Popular routes</h2>
@@ -115,10 +125,62 @@
   </div>
 </section>
 
+{{GUIDES}}
+
 <footer class="rp-footer">
   <div class="wrap">
-    <p>&copy; {{YEAR}} Travesía Costa Rica &middot; Private shuttles &amp; airport transfers<br>
-    <a href="/">travesiacr.online</a> &middot; WhatsApp +506 8502 8476 &middot; <a href="mailto:infotravesiacr@gmail.com">infotravesiacr@gmail.com</a></p>
+    <div class="ft-cols">
+      <div class="ft-col">
+        <h3>Traves&iacute;a Costa Rica</h3>
+        <p>Private shuttles, airport transfers and tours across Costa Rica. Owner-driven by Eddie, licensed and fully insured.</p>
+        <p class="ft-rate">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 on Google &amp; TripAdvisor</p>
+      </div>
+      <div class="ft-col">
+        <h3>Book a transfer</h3>
+        <ul>
+          <li><a href="/">Get your price &amp; book online</a></li>
+          <li><a href="/shuttle">All shuttle routes</a></li>
+          <li><a href="/hotel">Shuttles by hotel</a></li>
+          <li><a href="/full-trip-chauffeur">Full Trip Chauffeur</a></li>
+          <li><a href="/tours">Tours in La Fortuna</a></li>
+          <li><a href="/reviews">Traveler reviews</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h3>Popular transfers</h3>
+        <ul>
+          <li><a href="/shuttle/san-jose-airport-to-la-fortuna">SJO Airport &rarr; La Fortuna</a></li>
+          <li><a href="/shuttle/san-jose-airport-to-manuel-antonio">SJO Airport &rarr; Manuel Antonio</a></li>
+          <li><a href="/shuttle/san-jose-airport-to-monteverde">SJO Airport &rarr; Monteverde</a></li>
+          <li><a href="/shuttle/liberia-airport-to-tamarindo">Liberia Airport &rarr; Tamarindo</a></li>
+          <li><a href="/shuttle/la-fortuna-to-monteverde">La Fortuna &rarr; Monteverde</a></li>
+          <li><a href="/shuttle/la-fortuna-to-manuel-antonio">La Fortuna &rarr; Manuel Antonio</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h3>Plan your trip</h3>
+        <ul>
+          <li><a href="/guide">Costa Rica travel guides</a></li>
+          <li><a href="/guide/sjo-vs-lir-which-airport">SJO or LIR: which airport?</a></li>
+          <li><a href="/guide/how-much-do-shuttles-cost-in-costa-rica">How much do shuttles cost?</a></li>
+          <li><a href="/guide/costa-rica-7-day-itinerary">7-day Costa Rica itinerary</a></li>
+          <li><a href="/guide/costa-rica-with-kids">Costa Rica with kids</a></li>
+          <li><a href="/guide/do-you-need-a-car-in-costa-rica">Do you need a car?</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h3>Contact</h3>
+        <ul>
+          <li><a href="https://wa.me/50685028476" target="_blank" rel="noopener">WhatsApp +506 8502 8476</a></li>
+          <li><a href="mailto:infotravesiacr@gmail.com">infotravesiacr@gmail.com</a></li>
+          <li><a href="/costa-rica-airport-transfers">Airport transfers</a></li>
+          <li><a href="/costa-rica-private-transportation">Private transportation</a></li>
+          <li><a href="/terms">Terms &amp; conditions</a></li>
+          <li><a href="/privacy">Privacy policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="ft-legal">&copy; {{YEAR}} Traves&iacute;a Costa Rica &middot; Private shuttles &amp; airport transfers in Costa Rica &middot; <a href="/">travesiacr.online</a></p>
   </div>
 </footer>
 </body>

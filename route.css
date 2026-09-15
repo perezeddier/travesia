@@ -124,3 +124,31 @@ a.rp-price:hover{border-color:var(--or);transform:translateY(-2px)}
 .bfig figcaption{padding:11px 14px;color:var(--muted-2);font-size:.88rem}
 .bgal.tall img{height:300px}
 .bfig.portrait{max-width:420px;margin-left:auto;margin-right:auto}
+
+/* --- Menu de cabecera en paginas internas --- */
+.rp-nav{display:none;gap:18px;align-items:center;margin-left:auto;margin-right:18px}
+.rp-nav a{color:var(--muted);font-size:.9rem;font-weight:500}
+.rp-nav a:hover{color:var(--or-2)}
+@media(min-width:860px){.rp-nav{display:flex}}
+
+/* --- Pie de pagina con enlaces (SEO + navegacion) --- */
+.rp-footer{padding:44px 0 26px;text-align:left;border-top:1px solid var(--line)}
+.ft-cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:26px 30px;margin-bottom:26px}
+.ft-col h3{font-family:var(--font-head);font-size:1rem;font-weight:600;color:var(--text);margin:0 0 10px}
+.ft-col p{color:var(--muted-2);font-size:.88rem;line-height:1.6;margin:0 0 8px;max-width:34ch}
+.ft-col ul{list-style:none;margin:0;padding:0}
+.ft-col li{margin-bottom:7px;font-size:.88rem;line-height:1.4}
+.ft-rate{color:#f5b301!important;font-weight:600}
+.ft-legal{text-align:center;color:var(--muted-2);font-size:.85rem;padding-top:20px;border-top:1px solid var(--line);line-height:1.7}
+
+/* --- Bloques nuevos de pagina de ruta --- */
+.rp-hotels{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:6px}
+.rp-hotels a{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:14px 16px;transition:border-color .2s,transform .2s}
+.rp-hotels a:hover{border-color:var(--or);transform:translateY(-2px)}
+.rp-hotels .h-name{font-weight:600;line-height:1.35}
+.rp-hotels .h-sub{color:var(--muted-2);font-size:.84rem;margin-top:4px}
+.rp-guides{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:6px}
+.rp-guides a{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px 18px;transition:border-color .2s,transform .2s}
+.rp-guides a:hover{border-color:var(--or);transform:translateY(-2px)}
+.rp-guides .g-title{font-weight:600;line-height:1.4}
+.rp-guides .g-sub{color:var(--or-2);font-size:.82rem;margin-top:6px}

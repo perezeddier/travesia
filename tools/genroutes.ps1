@@ -10,6 +10,24 @@ $rd = Get-Content -Raw -Encoding UTF8 (Join-Path $root "routes-data.js")
 $mrx = [regex]::Match($rd, 'const PT_ROWS = (\[.*?\]);', [System.Text.RegularExpressions.RegexOptions]::Singleline)
 $rows = $mrx.Groups[1].Value | ConvertFrom-Json
 
+# --- Hoteles reales por zona (PT_HOTELS) para enlazar /hotel/... desde cada pagina de ruta ---
+function Slugify($text) {
+  $normalized = $text.Normalize([Text.NormalizationForm]::FormD)
+  $stripped = -join ($normalized.ToCharArray() | Where-Object { [Globalization.CharUnicodeInfo]::GetUnicodeCategory($_) -ne [Globalization.UnicodeCategory]::NonSpacingMark })
+  $t = $stripped.ToLower()
+  $t = $t -replace "[^a-z0-9]+", "-"
+  return $t.Trim("-")
+}
+$hotelsByZone = @{}
+foreach ($m in [regex]::Matches($rd, '\{\s*name:\s*"([^"]+)",\s*place:\s*(\d+)\s*\}')) {
+  $hn = $m.Groups[1].Value; $hp = [int]$m.Groups[2].Value
+  $hs = Slugify $hn
+  # solo enlazar si la pagina de hotel existe de verdad (genhotels omite los que no tienen precio)
+  if (-not (Test-Path (Join-Path $root "hotel\$hs.html"))) { continue }
+  if (-not $hotelsByZone.ContainsKey($hp)) { $hotelsByZone[$hp] = New-Object System.Collections.ArrayList }
+  [void]$hotelsByZone[$hp].Add(@{ name = $hn; slug = $hs })
+}
+
 # --- Destinos con pagina: nombre (ASCII), slug, blurb ---
 $meta = @{}
 $meta[0]  = @{ n="San Jose Airport (SJO)"; slug="san-jose-airport"; blurb="San Jose's Juan Santamaria International Airport (SJO) is Costa Rica's main gateway, just outside the capital." }
@@ -138,6 +156,61 @@ function PriceCard($v,$pax,$price){
   return "<div class='rp-price'><div class='v'>$v</div><div class='p'>Up to $pax passengers</div>$amt</div>"
 }
 
+# --- Guias del blog relacionadas con cada destino (enlaces internos reales) ---
+$G = @{
+  sjo      = @{ u="/guide/how-to-get-from-sjo-to-la-fortuna"; t="How to get from SJO airport to La Fortuna" }
+  lir      = @{ u="/guide/how-to-get-from-liberia-to-tamarindo"; t="How to get from Liberia airport (LIR) to Tamarindo" }
+  airports = @{ u="/guide/sjo-vs-lir-which-airport"; t="SJO vs LIR: which airport should you fly into?" }
+  arrival  = @{ u="/guide/sjo-airport-arrival-guide"; t="Landing at SJO: what happens after you get off the plane" }
+  around   = @{ u="/guide/getting-around-costa-rica"; t="Getting around Costa Rica: shuttle, rental car or bus" }
+  car      = @{ u="/guide/do-you-need-a-car-in-costa-rica"; t="Do you need a rental car in Costa Rica?" }
+  cost     = @{ u="/guide/how-much-do-shuttles-cost-in-costa-rica"; t="How much do private shuttles cost in Costa Rica?" }
+  days     = @{ u="/guide/how-many-days-in-la-fortuna"; t="How many days to spend in La Fortuna" }
+  monte    = @{ u="/guide/how-to-get-to-monteverde"; t="How to get to Monteverde" }
+  osa      = @{ u="/guide/how-to-get-to-osa-peninsula"; t="How to get to the Osa Peninsula" }
+  itin     = @{ u="/guide/costa-rica-7-day-itinerary"; t="Costa Rica 7-day itinerary" }
+  itinG    = @{ u="/guide/costa-rica-7-day-itinerary-guanacaste"; t="Costa Rica 7-day itinerary: Guanacaste" }
+  kids     = @{ u="/guide/costa-rica-with-kids"; t="Costa Rica with kids" }
+  sloths   = @{ u="/guide/where-to-see-sloths-in-costa-rica"; t="Where to see sloths in Costa Rica" }
+  surf     = @{ u="/guide/traveling-with-a-surfboard-in-costa-rica"; t="Traveling with a surfboard in Costa Rica" }
+  when     = @{ u="/guide/best-time-to-visit-costa-rica"; t="The best time to visit Costa Rica" }
+  pack     = @{ u="/guide/what-to-pack-for-costa-rica"; t="What to pack for Costa Rica" }
+  food     = @{ u="/guide/best-restaurants-costa-rica"; t="Best restaurants in Costa Rica" }
+  faq      = @{ u="/guide/costa-rica-travel-faq"; t="Costa Rica travel FAQ" }
+}
+$GUIDE_MAP = @{
+  0  = @($G.arrival, $G.airports, $G.car)
+  1  = @($G.airports, $G.lir, $G.car)
+  2  = @($G.days, $G.sjo, $G.sloths)
+  3  = @($G.monte, $G.around, $G.when)
+  4  = @($G.sloths, $G.itin, $G.food)
+  5  = @($G.lir, $G.itinG, $G.surf)
+  6  = @($G.itinG, $G.airports)
+  7  = @($G.itinG, $G.airports)
+  8  = @($G.itinG, $G.when)
+  9  = @($G.around, $G.when)
+  10 = @($G.surf, $G.around)
+  11 = @($G.surf, $G.itin)
+  12 = @($G.itinG, $G.airports)
+  13 = @($G.itinG, $G.when)
+  14 = @($G.itinG, $G.airports)
+  19 = @($G.sloths, $G.surf)
+  20 = @($G.sloths, $G.when)
+  23 = @($G.itin, $G.kids)
+  30 = @($G.itinG, $G.when)
+  32 = @($G.around, $G.sloths)
+  36 = @($G.sloths, $G.around)
+  39 = @($G.surf, $G.lir)
+  40 = @($G.surf, $G.around)
+  41 = @($G.osa, $G.sloths)
+  42 = @($G.days, $G.when)
+  44 = @($G.arrival, $G.car)
+  45 = @($G.arrival, $G.airports)
+  46 = @($G.around, $G.itin)
+  50 = @($G.itinG, $G.lir)
+}
+$GUIDE_DEFAULT = @($G.cost, $G.car, $G.faq, $G.pack, $G.kids)
+
 $year = "2026"
 $tpl = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot "route-template.html")
 $urls = New-Object System.Collections.ArrayList
@@ -154,6 +227,12 @@ foreach($p in $pages){
 <details><summary>How much is a shuttle from $($o.n) to $($d.n)?</summary><div class='a'>From `$$($p.s) per vehicle for up to 5 passengers (Hyundai Staria), with larger vehicles available. The price is per vehicle, not per person, and includes taxes and tolls.</div></details>
 <details><summary>Is the transfer private?</summary><div class='a'>Yes. The vehicle is exclusively for you and your group - no strangers and no extra stops. Door-to-door, hotel to hotel.</div></details>
 <details><summary>What if my flight is delayed?</summary><div class='a'>Just share your flight number when you book. We monitor it and adjust your pickup time at no extra cost.</div></details>
+<details><summary>Do you pick up at any address in $($o.n)?</summary><div class='a'>Yes. The transfer is door to door: we collect you at your hotel, villa, Airbnb or airport terminal in $($o.n) and drop you right at the door of where you are staying in $($d.n).</div></details>
+<details><summary>How many passengers fit in the vehicle?</summary><div class='a'>Up to 5 in the Hyundai Staria, up to 9 in the Toyota Hiace and up to 12 in the Maxus V90 - always with room for the luggage. Tell us how many bags you are carrying and we assign the right vehicle.</div></details>
+<details><summary>Are child seats included?</summary><div class='a'>Yes, and they are free. Tell us the ages of the children when you book and the seats are installed and ready in the vehicle.</div></details>
+<details><summary>Can we stop along the way?</summary><div class='a'>Yes. Courtesy stops for the restroom, a coffee, food or a photo are included on every transfer - just ask your driver. If you want a guided stop at a real attraction on the way, the VIP upgrade adds a guide, tourist stops and a welcome kit for `$80 more.</div></details>
+<details><summary>How do I pay?</summary><div class='a'>You can book and pay by card online on our secure payment page, or arrange it with us on WhatsApp. Payment is in full at booking, and the price you see is the final price - taxes and tolls included, with no hidden fees.</div></details>
+<details><summary>What is the cancellation policy?</summary><div class='a'>Free cancellation up to 48 hours before your pickup time. Within 48 hours of the pickup the booking is non-refundable.</div></details>
 "@
   $rel=""; $count=0
   foreach($p2 in $byOrigin[$p.f]){
@@ -182,6 +261,42 @@ foreach($p in $pages){
     $revTitle = if (@($ROUTE_REVIEWS[$rkey]).Count -gt 1) { "<h2>What travelers say about this route</h2>" } else { "" }
     $reviewHtml = "<section class='rp-sec'><div class='wrap'>$revTitle$figs</div></section>"
   }
+  # Hoteles del destino (enlaces internos a /hotel/...)
+  $hotelsHtml = ""
+  if ($hotelsByZone.ContainsKey($p.t)) {
+    $hcards = ""; $hc = 0
+    foreach ($h in $hotelsByZone[$p.t]) {
+      if ($hc -ge 6) { break }
+      $hcards += "<a href='/hotel/$($h.slug)'><div class='h-name'>$($h.name)</div><div class='h-sub'>Private transfer &middot; $($d.n)</div></a>"
+      $hc++
+    }
+    if ($hcards -ne "") {
+      $hotelsHtml = "<section class='rp-sec'><div class='wrap'><h2>Hotels we drive to in $($d.n)</h2><p class='rp-lead'>We drop you at the door of any hotel, villa or Airbnb in $($d.n). These are some of the properties we drive to most on this route:</p><div class='rp-hotels'>$hcards</div><p class='rp-note'>Staying somewhere else? <a href='/hotel'>See every hotel we serve</a> &mdash; or just send us the name on WhatsApp.</p></div></section>"
+    }
+  }
+
+  # Guias relacionadas con el destino (y, si faltan, con el origen)
+  $gList = New-Object System.Collections.ArrayList
+  $gSeen = @{}
+  foreach ($src in @($GUIDE_MAP[$p.t], $GUIDE_MAP[$p.f], $GUIDE_DEFAULT)) {
+    if ($null -eq $src) { continue }
+    foreach ($g in @($src)) {
+      if ($gList.Count -ge 3) { break }
+      if ($null -eq $g -or $gSeen.ContainsKey($g.u)) { continue }
+      $gSeen[$g.u] = $true; [void]$gList.Add($g)
+    }
+  }
+  $gCards = ""
+  foreach ($g in $gList) { $gCards += "<a href='$($g.u)'><div class='g-title'>$($g.t)</div><div class='g-sub'>Read the guide &rarr;</div></a>" }
+  $guidesHtml = "<section class='rp-sec'><div class='wrap'><h2>Plan the rest of your trip</h2><div class='rp-guides'>$gCards</div></div></section>"
+
+  # Precio por persona (matematica real sobre el precio de la van chica)
+  $perPerson = ""
+  if ($p.s -gt 0) {
+    $pp = [Math]::Round($p.s / 4)
+    $perPerson = "For a group of 4 that works out to about `$$pp per person."
+  }
+
   $waMsg="Hi Travesia! I'd like to book a private transfer from $($o.n) to $($d.n). Date & passengers: "
   $waHref="https://wa.me/$WA"+"?text="+[uri]::EscapeDataString($waMsg)
   $bookHref="/?from=$($p.f)&to=$($p.t)"
@@ -197,6 +312,7 @@ foreach($p in $pages){
   $html=$html.Replace("{{DURATION}}",$p.dur).Replace("{{PRICEFROM}}","$($p.s)")
   $html=$html.Replace("{{INTRO}}",$intro).Replace("{{PRICECARDS}}",$cards)
   $html=$html.Replace("{{FAQ}}",$faq).Replace("{{RELATED}}",$rel)
+  $html=$html.Replace("{{HOTELS}}",$hotelsHtml).Replace("{{GUIDES}}",$guidesHtml).Replace("{{PERPERSON}}",$perPerson)
   $html=$html.Replace("{{REVIEW}}",$reviewHtml)
   $stopNote = if ($ROUTE_STOPS.ContainsKey($rkey)) { $ROUTE_STOPS[$rkey] } else { "" }
   $html=$html.Replace("{{STOPNOTE}}",$stopNote)
@@ -206,11 +322,11 @@ foreach($p in $pages){
 }
 
 # --- Guias del blog ---
-$guides=@("guide","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","guide/how-to-get-to-monteverde","guide/how-to-get-to-osa-peninsula","guide/traveling-with-a-surfboard-in-costa-rica","guide/getting-around-costa-rica-for-birders","guide/birding-stops-on-your-costa-rica-transfer","guide/where-to-see-sloths-in-costa-rica","guide/what-to-pack-for-costa-rica","guide/do-you-need-spanish-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","tours/rio-celeste","tours/coffee-chocolate","tours/bridges-waterfall-combo","terms","privacy","full-trip-chauffeur","private-shuttle-costa-rica","costa-rica-airport-transfers","costa-rica-private-transportation","costa-rica-birding-transportation")
+$guides=@("guide","tours","reviews","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","guide/how-to-get-to-monteverde","guide/how-to-get-to-osa-peninsula","guide/traveling-with-a-surfboard-in-costa-rica","guide/getting-around-costa-rica-for-birders","guide/birding-stops-on-your-costa-rica-transfer","guide/where-to-see-sloths-in-costa-rica","guide/what-to-pack-for-costa-rica","guide/do-you-need-spanish-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","tours/rio-celeste","tours/coffee-chocolate","tours/bridges-waterfall-combo","terms","privacy","full-trip-chauffeur","private-shuttle-costa-rica","costa-rica-airport-transfers","costa-rica-private-transportation","costa-rica-birding-transportation")
 foreach($g in $guides){ [void]$urls.Add("$base/$g") }
 
 # Paginas hub y de aterrizaje: prioridad alta y revision semanal (se respeta al regenerar)
-$hiPri = @("$base/shuttle","$base/hotel","$base/full-trip-chauffeur","$base/private-shuttle-costa-rica","$base/costa-rica-airport-transfers","$base/costa-rica-private-transportation","$base/costa-rica-birding-transportation")
+$hiPri = @("$base/shuttle","$base/hotel","$base/tours","$base/reviews","$base/full-trip-chauffeur","$base/private-shuttle-costa-rica","$base/costa-rica-airport-transfers","$base/costa-rica-private-transportation","$base/costa-rica-birding-transportation")
 
 # --- Conservar URLs de otras herramientas (hoteles, shuttle-to, etc.) ya presentes en el sitemap ---
 $smPath = Join-Path $root "sitemap.xml"
