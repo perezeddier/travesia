@@ -92,6 +92,9 @@ function Process-File($path) {
 $rf = Process-File "$root/faq.html"
 Write-Host "faq.html: $rf agregada"
 
+$rEs = Process-Dir "$root/es/shuttle"
+Write-Host "es/shuttle/: $($rEs.done) agregadas, $($rEs.skipped) ya tenian"
+
 $r1 = Process-Dir "$root/shuttle"
 $r2 = Process-Dir "$root/shuttle-to"
 $r3 = Process-Dir "$root/hotel"

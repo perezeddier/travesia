@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="description" content="{{DESC}}">
+<link rel="canonical" href="{{CANON}}">
+<link rel="alternate" hreflang="es" href="{{CANON}}">
+<link rel="alternate" hreflang="en" href="{{CANONEN}}">
+<link rel="alternate" hreflang="x-default" href="{{CANONEN}}">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{TITLE}}">
+<meta property="og:description" content="{{DESC}}">
+<meta property="og:url" content="{{CANON}}">
+<meta property="og:image" content="https://travesiacr.online/assets/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/route.css">
+<script type="application/ld+json">{{JSONLD}}</script>
+<script type="application/ld+json">{{BREADCRUMB}}</script>
+<script defer src="/analytics.js"></script>
+</head>
+<body>
+<header class="rp-header">
+  <div class="wrap">
+    <a class="rp-brand" href="/"><img src="/assets/logo-travesia.webp" alt="Travesía Costa Rica"></a>
+    <nav class="rp-nav">
+      <a href="/es/shuttle">Rutas</a>
+      <a href="/hotel">Hoteles</a>
+      <a href="/tours">Tours</a>
+      <a href="/reviews">Reseñas</a>
+      <a href="{{CANONEN}}">English</a>
+      <a href="/">Reservar</a>
+    </nav>
+    <a class="rp-cta" href="{{WAHREF}}" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
+      Reservar por WhatsApp
+    </a>
+  </div>
+</header>
+
+<section class="rp-hero">
+  <div class="wrap">
+    <nav class="rp-crumbs"><a href="/">Inicio</a> &rsaquo; <a href="/es/shuttle">Todas las rutas</a> &rsaquo; {{ORIGIN}} a {{DEST}}</nav>
+    <h1>Traslado privado de {{ORIGIN}} a <span class="to">{{DEST}}</span></h1>
+    <div class="rp-meta">
+      <span class="rp-chip"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2" stroke-linecap="round"/></svg> <strong>{{DURATION}}</strong> aprox.</span>
+      <span class="rp-chip price">Desde <strong>${{PRICEFROM}}</strong> por vehículo</span>
+      <span class="rp-chip">100% privado &middot; puerta a puerta</span>
+    </div>
+  </div>
+</section>
+
+<section class="rp-sec">
+  <div class="wrap">
+    <h2>Tu traslado privado</h2>
+    <p class="rp-lead">{{INTRO}}</p>
+  </div>
+</section>
+
+<section class="rp-sec">
+  <div class="wrap">
+    <h2>Cómo es el viaje de {{ORIGIN}} a {{DEST}}</h2>
+    <p>El traslado privado de {{ORIGIN}} a {{DEST}} toma alrededor de {{DURATION}} y el chofer te lleva directo &mdash; sin trasbordos y sin esperar a otros pasajeros. ¿Prefieres partir el viaje? Las <strong>paradas de cortesía</strong> para el baño, un café o una foto van incluidas: solo pídeselo al chofer. Le damos seguimiento a tu vuelo, así que un atraso nunca es problema, y las sillas de bebé son gratis.</p>
+    {{STOPNOTE}}
+  </div>
+</section>
+
+{{SEEN}}
+
+<section class="rp-sec">
+  <div class="wrap">
+    <h2>Precios de esta ruta</h2>
+    <div class="rp-prices">{{PRICECARDS}}</div>
+    <p class="rp-note">Precio final por vehículo &middot; impuestos y peajes incluidos &middot; no es por persona. {{PERPERSON}}</p>
+  </div>
+</section>
+
+{{REVIEW}}
+
+<section class="rp-sec">
+  <div class="wrap">
+    <h2>Qué incluye</h2>
+    <ul class="rp-incl">
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Chofer profesional y amable</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Puerta a puerta, de hotel a hotel</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Seguimiento de vuelos</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Sillas de bebé gratis</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Equipaje incluido</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Con permisos y seguro completo</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Agua embotellada y WiFi a bordo</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Cargadores USB y aire acondicionado</li>
+      <li><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg> Paradas de cortesía en el camino</li>
+    </ul>
+  </div>
+</section>
+
+<section class="rp-cta-band">
+  <div class="wrap">
+    <h2>Reserva tu traslado de {{ORIGIN}} a {{DEST}}</h2>
+    <p>Reserva en línea en un minuto, o escríbenos &mdash; contestamos rápido.</p>
+    <div class="rp-btns">
+      <a class="btn btn-primary" href="{{BOOKHREF}}">Reservar y pagar en línea</a>
+      <a class="btn btn-wa" href="{{WAHREF}}" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22c5.46 0 9.9-4.45 9.9-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Z"/></svg>
+        WhatsApp
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="rp-sec rp-faq">
+  <div class="wrap">
+    <h2>Preguntas frecuentes</h2>
+    {{FAQ}}
+  </div>
+</section>
+
+{{HOTELS}}
+
+<section class="rp-sec">
+  <div class="wrap">
+    <h2>Rutas populares</h2>
+    <div class="rp-related">{{RELATED}}</div>
+    {{HUB}}
+  </div>
+</section>
+
+<footer class="rp-footer">
+  <div class="wrap">
+    <div class="ft-cols">
+      <div class="ft-col">
+        <h3>Traves&iacute;a Costa Rica</h3>
+        <p>Traslados privados, transporte de aeropuerto y tours en todo Costa Rica. Lo maneja Eddie, con permisos y seguro completo.</p>
+        <p class="ft-rate">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 en Google y TripAdvisor</p>
+      </div>
+      <div class="ft-col">
+        <h3>Reservar</h3>
+        <ul>
+          <li><a href="/">Ver precio y reservar</a></li>
+          <li><a href="/es/shuttle">Todas las rutas</a></li>
+          <li><a href="/hotel">Traslados por hotel</a></li>
+          <li><a href="/full-trip-chauffeur">Chofer por varios días</a></li>
+          <li><a href="/tours">Tours en La Fortuna</a></li>
+          <li><a href="/reviews">Reseñas de viajeros</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h3>Rutas más pedidas</h3>
+        <ul>
+          <li><a href="/es/shuttle/san-jose-airport-to-la-fortuna">Aeropuerto SJO &rarr; La Fortuna</a></li>
+          <li><a href="/es/shuttle/san-jose-airport-to-manuel-antonio">Aeropuerto SJO &rarr; Manuel Antonio</a></li>
+          <li><a href="/es/shuttle/san-jose-airport-to-monteverde">Aeropuerto SJO &rarr; Monteverde</a></li>
+          <li><a href="/es/shuttle/liberia-airport-to-tamarindo">Aeropuerto Liberia &rarr; Tamarindo</a></li>
+          <li><a href="/es/shuttle/la-fortuna-to-monteverde">La Fortuna &rarr; Monteverde</a></li>
+          <li><a href="/es/shuttle/la-fortuna-to-manuel-antonio">La Fortuna &rarr; Manuel Antonio</a></li>
+        </ul>
+      </div>
+      <div class="ft-col">
+        <h3>Contacto</h3>
+        <ul>
+          <li><a href="https://wa.me/50685028476" target="_blank" rel="noopener">WhatsApp +506 8502 8476</a></li>
+          <li><a href="mailto:infotravesiacr@gmail.com">infotravesiacr@gmail.com</a></li>
+          <li><a href="/about">Sobre Eddie</a></li>
+          <li><a href="/fleet">Nuestra flota</a></li>
+          <li><a href="/terms">Términos y condiciones</a></li>
+          <li><a href="/privacy">Política de privacidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="ft-legal">&copy; {{YEAR}} Traves&iacute;a Costa Rica &middot; Traslados privados y transporte de aeropuerto en Costa Rica &middot; <a href="/">travesiacr.online</a> &middot; <a href="{{CANONEN}}">Read this page in English</a></p>
+  </div>
+</footer>
+</body>
+</html>
