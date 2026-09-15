@@ -60,6 +60,207 @@ $meta[46] = @{ n="Puntarenas / Caldera"; slug="puntarenas"; blurb="Puntarenas (C
 $meta[50] = @{ n="JW Marriott Costa Elena (La Cruz)"; slug="jw-marriott-costa-elena"; blurb="JW Marriott Costa Elena Resort & Spa is an all-inclusive resort at Playa El Jobo in La Cruz, on Costa Rica's northern Guanacaste coast near the Nicaragua border - the former Dreams Las Mareas property." }
 $meta[41] = @{ n="Puerto Jimenez (Osa)"; slug="puerto-jimenez"; blurb="Puerto Jimenez is the gateway to the Osa Peninsula and Corcovado National Park, on Costa Rica's remote southern Pacific coast." }
 
+# --- Corredores: el camino real que maneja Eddie, confirmado por el 2026-09-15 ---
+# Cada zona pertenece a un grupo; el par de grupos (ordenado alfabeticamente) elige el texto.
+# Reglas confirmadas por Eddie: al Arenal se sube por SAN RAMON (no Zarcero, no Vara Blanca);
+# a Monteverde se sube por la Interamericana / Sardinal / Guacimal, salvo desde La Fortuna
+# que se va por el lago y Tilaran; a Osa se va por la Costanera; a Nosara/Samara por el
+# puente de la Amistad; a Guanacaste por Ruta 1 o Ruta 27 segun el trafico; a Santa Teresa
+# por ferry o por tierra segun el dia. Paradas de siempre: Mi Rancho (Los Angeles de San
+# Ramon) y Cafe y Macadamia (orilla del lago Arenal).
+$ZGROUP = @{}
+foreach($z in @(0,44,45,32)){ $ZGROUP[$z]="VC" }
+foreach($z in @(2,42,36)){ $ZGROUP[$z]="ARENAL" }
+foreach($z in @(3)){ $ZGROUP[$z]="MV" }
+foreach($z in @(1,5,6,7,8,12,13,14,30,50)){ $ZGROUP[$z]="GUA" }
+foreach($z in @(39,40,10)){ $ZGROUP[$z]="NIC" }
+foreach($z in @(11,23,46,4)){ $ZGROUP[$z]="PAC" }
+foreach($z in @(19,20,41)){ $ZGROUP[$z]="SUR" }
+foreach($z in @(9)){ $ZGROUP[$z]="CAR" }
+
+$CORRIDORS = @{
+  "GUA-GUA" = @{
+    intro = "The drive between {{ORIGIN}} and {{DEST}} stays inside Guanacaste, on the short coastal roads through Comunidad, Sardinal, Filadelfia and the junctions at Huacas and Villarreal."
+    see = @("The dry tropical savanna, with Brahman cattle grazing right by the road","Guanacaste trees, and the yellow cortez in bloom in the dry season","Filadelfia and Santa Cruz, working sabanero towns rather than resort strips","The Gulf of Papagayo opening up as you come down to the coast")
+    road = "Paved for nearly the whole way, with a few short gravel stretches on the last access road to some beaches."
+    tip = "These are short hops - twenty minutes to about an hour - so there is room to stop and eat without missing your check-in."
+  }
+  "GUA-VC" = @{
+    intro = "Between {{ORIGIN}} and {{DEST}} we cross the country from the Central Valley out to Guanacaste. Depending on how the traffic is running that day we take the Pan-American (Route 1) through Esparza and Ca&ntilde;as, or Route 27 down to Caldera and north from there."
+    see = @("The descent out of the Central Valley - cool mountain air to Guanacaste heat in about an hour","The Gulf of Nicoya on your left around Esparza","Sugar cane and rice fields through Ca&ntilde;as and Bagaces","The Miravalles and Rinc&oacute;n de la Vieja volcanoes standing on the right","Liberia, the white city, before you turn off for the coast")
+    road = "Paved from end to end and one of the easiest long drives in the country, with long straight stretches."
+    tip = "It is a four to five hour drive, so your driver plans a proper stop along the way for the restroom and something to eat."
+  }
+  "GUA-PAC" = @{
+    intro = "From {{ORIGIN}} to {{DEST}} we come down the Pan-American to the Caldera and Orotina area, then pick up the Costanera Sur (Route 34), which runs along the Pacific all the way to Quepos."
+    see = @("The T&aacute;rcoles river bridge, where you can look down on wild crocodiles","Your first look at the Pacific on the drop toward Herradura","Jac&oacute; and its long grey-sand surf beach","The African palm plantations around Parrita - kilometres of palms in perfect rows","The fishing port at Quepos, right before the hill up to Manuel Antonio")
+    road = "Paved the whole way. The Costanera is flat and easy; the only slow part is getting out of Guanacaste."
+    tip = "Ask your driver to stop at the T&aacute;rcoles bridge. It takes ten minutes, it costs nothing, and there are almost always big crocodiles on the sandbank below."
+  }
+  "GUA-NIC" = @{
+    intro = "The road between {{ORIGIN}} and {{DEST}} goes into the Nicoya Peninsula through Santa Cruz and Nicoya. For S&aacute;mara and Nosara you drop down to the coast from there; for Santa Teresa you cross the whole peninsula through Jicaral and C&oacute;bano."
+    see = @("Nicoya, one of the oldest towns in Costa Rica and the heart of the Blue Zone","Dry hills and cattle pasture - a very different Costa Rica from the green of the north","Howler monkeys in the roadside trees, especially early in the morning","The drop down into S&aacute;mara's calm, reef-protected bay")
+    road = "Paved as far as Nicoya and S&aacute;mara; the last stretches into some of the beach towns are slower going."
+    tip = "This part of the country is slower than the map suggests - it is curves and small towns, not highway. Leaving early changes the whole trip."
+  }
+  "ARENAL-GUA" = @{
+    intro = "Between {{ORIGIN}} and {{DEST}} we normally go around Lake Arenal through Tilar&aacute;n and come out at Ca&ntilde;as. On some days we take the Bijagua road instead, on the flank of Tenorio volcano."
+    see = @("Arenal volcano in the mirror for the first twenty minutes","The whole of Lake Arenal, with the wind turbines lined up on the ridge","Tilar&aacute;n, a windy cattle town above the lake","The switch from rainforest to dry savanna in under an hour")
+    road = "Paved for most of the way - there are some unpaved stretches along the lake - and one curve after another. What costs time here is the bends, not the distance."
+    tip = "If we go around the lake, the stop is Caf&eacute; y Macadamia on the shore: fresh food and one of the best views of the drive."
+  }
+  "GUA-SUR" = @{
+    intro = "{{ORIGIN}} to {{DEST}} is the long one: all the way down the Pan-American, across to the Costanera at Caldera, and then south past Jac&oacute;, Quepos and Dominical."
+    see = @("The entire Pacific side of Costa Rica in a single day, from dry savanna to the wet forest of the south","The T&aacute;rcoles bridge and its crocodiles","The palm plantations of Parrita and the port at Quepos","The open coast past Dominical, where the beaches are nearly empty")
+    road = "Paved the whole way, but it is seven to nine hours depending on where you start. Treat it as a travel day."
+    tip = "On a run like this we leave at first light and plan two good stops instead of one."
+  }
+  "PAC-VC" = @{
+    intro = "From {{ORIGIN}} to {{DEST}} we take Route 27, the toll highway out of the Central Valley, cross Orotina and join the Costanera Sur toward the beach."
+    see = @("The descent out of the mountains with the Gulf of Nicoya ahead of you","The T&aacute;rcoles river bridge and its crocodiles","Playa Herradura and the Los Sue&ntilde;os marina","Jac&oacute;, and further south the palm plantations of Parrita")
+    road = "Among the best roads in the country: highway to the coast and good pavement on the Costanera. The tolls are already included in your price."
+    tip = "This is the shortest transfer from the airport to a Pacific beach, so even a late-night arrival works without a problem."
+  }
+  "GUA-MV" = @{
+    intro = "Between {{ORIGIN}} and {{DEST}} we run down the Pan-American to the Sardinal junction and then climb through Guacimal up to Santa Elena and Monteverde."
+    see = @("The Gulf of Nicoya spreading out below you for the whole climb","Dairy farms, and the Quaker community that founded Monteverde","The moment you drive into the cloud and the temperature drops")
+    road = "Highway as far as the junction; from there the climb is winding, narrow and slow - the curves are what cost you time."
+    tip = "Keep a light jacket where you can reach it: you leave the coast at around 32&deg;C and arrive in the cloud forest at about 16&deg;C."
+  }
+  "ARENAL-VC" = @{
+    intro = "This is the classic arrival drive, and we do it through San Ram&oacute;n: from Alajuela along Route 1 to San Ram&oacute;n, then up over the mountain through Los &Aacute;ngeles de San Ram&oacute;n and down onto the San Carlos plains."
+    see = @("The dairy hills of San Ram&oacute;n on the climb","The cool green forest of Los &Aacute;ngeles de San Ram&oacute;n","Pineapple and sugar cane fields as far as you can see across the San Carlos plains","The cone of Arenal appearing straight ahead - from there it is about thirty minutes")
+    road = "Paved the whole way: mountain curves on the San Ram&oacute;n climb, then flat road into La Fortuna."
+    tip = "Our stop on this drive is Mi Rancho, in Los &Aacute;ngeles de San Ram&oacute;n - and the toucan that shows up at the tables often enough that the staff call him a regular. Would you rather come up the other way, by Vara Blanca and the La Paz waterfalls on the Po&aacute;s side of the mountain? Tell us when you book and we will take that road instead."
+  }
+  "SUR-VC" = @{
+    intro = "From {{ORIGIN}} to {{DEST}} we go out on Route 27 and down the Costanera along the coast, through Jac&oacute; and Quepos and on into the south."
+    see = @("The T&aacute;rcoles bridge and its crocodiles","Jac&oacute; and the palm plantations around Parrita","The port at Quepos","The open southern coast past Dominical - more forest, fewer people")
+    road = "Paved all the way, but it is a full day on the road."
+    tip = "If your flight lands late, it usually works out better to sleep near the airport and start early the next morning."
+  }
+  "NIC-VC" = @{
+    intro = "Between {{ORIGIN}} and {{DEST}} we cross to the Nicoya Peninsula over the Amistad bridge on the Tempisque river for Nosara and S&aacute;mara. For Santa Teresa it can be either the Puntarenas ferry or the road around - whichever works better for your day."
+    see = @("The Tempisque river and its mangroves from the bridge","Nicoya and the dry hills of the peninsula","On ferry days, the Gulf of Nicoya and its islands from the water")
+    road = "Paved for most of the route, with slower going on the last stretch into some beach towns."
+    tip = "On a ferry day the boat schedule sets the departure time, so we fix your pickup around it and get there with time to spare."
+  }
+  "NIC-PAC" = @{
+    intro = "{{ORIGIN}} to {{DEST}} either crosses the Gulf of Nicoya on the ferry or goes around it by land through Nicoya and the Pan-American."
+    see = @("The gulf and its islands from the deck of the ferry","Puntarenas, its fishing boats and the old seafront promenade","The Costanera with the ocean beside you most of the way")
+    road = "Part road, part ferry - the crossing schedule matters more than the pavement."
+    tip = "This is one of the few transfers where the timetable rules, so it is worth booking with your day clearly set."
+  }
+  "ARENAL-PAC" = @{
+    intro = "From {{ORIGIN}} to {{DEST}} we cross the San Carlos plains, climb over and down through San Ram&oacute;n, and pick up Route 27 and the Costanera to the coast."
+    see = @("Arenal seeing you off in the mirror, then the dairy hills of San Ram&oacute;n","The Gulf of Nicoya on the descent","The T&aacute;rcoles bridge, Jac&oacute; and the palms of Parrita")
+    road = "Paved the whole way - curves through the mountains, flat along the coast."
+    tip = "Few drives change the scenery this much: volcano in the morning, Pacific beach by midday."
+  }
+  "VC-VC" = @{
+    intro = "Short runs around the airport and the capital. For La Paz Waterfall Gardens we climb by Vara Blanca, between Po&aacute;s and Barva."
+    see = @("Coffee farms on the slopes of Po&aacute;s","The Vara Blanca climb - dairy country, often in the mist","The La Paz waterfalls right from the roadside")
+    road = "Paved. What decides the time here is San Jos&eacute; traffic, not the distance."
+    tip = "Between 6 and 9 in the morning and 4 to 7 in the afternoon, Central Valley traffic can double the trip. Travelling outside those hours makes all the difference."
+  }
+  "PAC-SUR" = @{
+    intro = "Straight down the Costanera Sur from {{ORIGIN}} toward {{DEST}}, past Savegre and Matapalo."
+    see = @("One big, nearly empty beach after another","The river bridges coming down off the Fila CosteÃ±a","The whale-tail sandbar at Uvita when the tide is out")
+    road = "Smooth pavement and light traffic - an easy couple of hours."
+    tip = "Humpback whales pass Uvita between July and October and again from December to March; it is worth timing your arrival with low tide."
+  }
+  "NIC-SUR" = @{
+    intro = "Out of the peninsula through Nicoya, south on the Pan-American, and then the length of the Costanera between {{ORIGIN}} and {{DEST}}."
+    see = @("Both ends of the Costa Rican Pacific in one day","The Gulf of Nicoya and Puntarenas, then the open coast of the south")
+    road = "Paved for nearly all of it, but it is a full-day drive."
+    tip = "On a run this long your driver spaces the stops - one mid-morning and one at lunch."
+  }
+  "MV-PAC" = @{
+    intro = "Down out of the cloud forest to the Pan-American, across at Caldera, and south on the Costanera between {{ORIGIN}} and {{DEST}}."
+    see = @("The descent from Monteverde with the Gulf of Nicoya in front of you","Puntarenas and the fishing boats","The T&aacute;rcoles bridge, Jac&oacute; and the palms of Parrita")
+    road = "The descent from Monteverde is slow because of the curves; after that it is comfortable road all the way."
+    tip = "There are about three hours between cloud-forest cold and beach heat, so dress in layers."
+  }
+  "PAC-PAC" = @{
+    intro = "A short run on the Costanera between {{ORIGIN}} and {{DEST}} - somewhere between an hour and an hour and a half."
+    see = @("The Los Sue&ntilde;os marina and its sportfishing fleet","The Parrita palm plantations and the old one-lane bridges","The port at Quepos")
+    road = "Flat and paved: the easiest drive on the whole coast."
+    tip = "It is short enough that many travellers use it to fit in a lunch stop by the sea."
+  }
+  "MV-VC" = @{
+    intro = "Northwest on the Pan-American from {{ORIGIN}}, then up through Sardinal and Guacimal to Santa Elena and Monteverde."
+    see = @("The Gulf of Nicoya below you on the climb","Dairy farms and the town of Santa Elena","Driving into the cloud at the top")
+    road = "Highway to the junction; the climb is winding and slow."
+    tip = "It is better to arrive in daylight - the climb in fog is uncomfortable for passengers even though your driver knows it well."
+  }
+  "MV-SUR" = @{
+    intro = "Down to the Pan-American, across to the Costanera and south along the coast between {{ORIGIN}} and {{DEST}}."
+    see = @("Cloud forest in the morning, southern beach in the afternoon","The T&aacute;rcoles bridge, Jac&oacute; and Quepos","The open coast past Dominical")
+    road = "Paved throughout; five to six hours including the slow descent from Monteverde."
+    tip = "Leaving Monteverde early gets you down the mountain before the morning mist settles in."
+  }
+  "MV-NIC" = @{
+    intro = "Down to the Pan-American and into the Nicoya Peninsula through Nicoya, between {{ORIGIN}} and {{DEST}}."
+    see = @("The Gulf of Nicoya from above on the way down","Nicoya and the dry hills of the peninsula","The contrast between cloud forest and dry coast in a single morning")
+    road = "Paved for most of the way, slower on the final stretch."
+    tip = "Half a day on the road: you leave in a jacket and arrive in a swimsuit."
+  }
+  "CAR-VC" = @{
+    intro = "Between {{ORIGIN}} and {{DEST}} we take Route 32: across Braulio Carrillo National Park through the Zurqu&iacute; tunnel, down to Gu&aacute;piles, and along the coast past Lim&oacute;n and Cahuita."
+    see = @("Braulio Carrillo - primary rainforest on both sides of the road","The Zurqu&iacute; tunnel, with waterfalls hanging off the mountain","Banana plantations around Gu&aacute;piles and Siquirres","Your first sight of the Caribbean past Lim&oacute;n","Cahuita and its national park before you arrive")
+    road = "Paved, but the mountain section can close in with rain or fog and there is a lot of truck traffic."
+    tip = "The Caribbean keeps its own weather - clear mornings and showers in the afternoon - so we leave early."
+  }
+  "ARENAL-SUR" = @{
+    intro = "From {{ORIGIN}} to {{DEST}}: across the San Carlos plains, over the mountain by San Ram&oacute;n, and then Route 27 and the Costanera south."
+    see = @("Arenal at the start of the day and the southern sea at the end of it","The T&aacute;rcoles bridge, Jac&oacute;, Parrita and Quepos along the way")
+    road = "Paved from end to end, and one of the longest transfers we run."
+    tip = "Worth leaving La Fortuna first thing so you reach the south coast in daylight."
+  }
+  "ARENAL-NIC" = @{
+    intro = "Around Lake Arenal and out at Ca&ntilde;as, then into the Nicoya Peninsula through Nicoya, between {{ORIGIN}} and {{DEST}}."
+    see = @("Lake Arenal and the wind turbines on the ridge","The savanna around Ca&ntilde;as and Nicoya","The drop down to the peninsula coast")
+    road = "Curves and a few unpaved stretches along the lake, easy road across the savanna, slower at the end."
+    tip = "This one crosses the country from east to west - count it as a travel day rather than a quick hop."
+  }
+  "NIC-NIC" = @{
+    intro = "A short run inside the Nicoya Peninsula between {{ORIGIN}} and {{DEST}}."
+    see = @("Small towns, cattle pasture and howler monkeys in the trees","One peninsula beach after another")
+    road = "This is where you feel the gravel: short in kilometres, slow in time."
+    tip = "Better not to leave this one for the end of the day."
+  }
+  "ARENAL-MV" = @{
+    intro = "All the way around the north shore of Lake Arenal to Tilar&aacute;n, and then up the mountain to Santa Elena and Monteverde."
+    see = @("Arenal volcano behind you for the first half hour","The whole lake, with the wind turbines turning on the ridge","The forest closing in and cooling down as you climb")
+    road = "Paved for most of the way - there are unpaved stretches - and one curve after another. The bends are what cost time, not the distance."
+    tip = "Leaving between 8 and 9 in the morning gives you the best of this drive."
+  }
+  "ARENAL-ARENAL" = @{
+    intro = "For R&iacute;o Celeste we climb through Bijagua, on the flank of Tenorio volcano; for Sarapiqu&iacute; we head out through Muelle and Aguas Zarcas."
+    see = @("Tenorio volcano and the farms around Bijagua - sloth country","Pineapple, sugar cane and cattle across the northern plains","Big rivers and lowland forest on the way to Sarapiqu&iacute;")
+    road = "Paved, with a rougher last stretch at the park entrance."
+    tip = "Get to R&iacute;o Celeste early: after heavy rain the river loses its blue for a few hours."
+  }
+  "SUR-SUR" = @{
+    intro = "South on the Costanera past Palmar, then into the Osa Peninsula at Chacarita between {{ORIGIN}} and {{DEST}}."
+    see = @("The T&eacute;rraba-Sierpe wetlands, the largest mangrove in the country","The Golfo Dulce on the last stretch","Forest closing in around the road - this is the wildest corner of Costa Rica")
+    road = "Paved down to the peninsula turn-off."
+    tip = "Out here there is no gas station or soda every few minutes, so we fill up and take the stop before Chacarita."
+  }
+  "CAR-MV" = @{
+    intro = "From the cloud forest down to the Central Valley, then Route 32 through Braulio Carrillo to the Caribbean."
+    see = @("Cloud forest, valley, mountain rainforest and the Caribbean in a single day","The Zurqu&iacute; tunnel and the banana country around Gu&aacute;piles")
+    road = "Paved, and one of the longest drives in the country - ocean to ocean."
+    tip = "We leave before dawn on this one: it is seven to eight hours and nobody wants to arrive on the south Caribbean after dark."
+  }
+  "ARENAL-CAR" = @{
+    intro = "Out of San Carlos through Aguas Zarcas and Sarapiqu&iacute;, onto Route 32 and along the coast to Lim&oacute;n and Puerto Viejo."
+    see = @("Pineapple fields and banana plantations across the northern lowlands","The big Sarapiqu&iacute; rivers - serious birding country","The Caribbean appearing once you are past Lim&oacute;n")
+    road = "Paved, with heavy truck traffic on the Route 32 stretch."
+    tip = "Going this way you skip San Jos&eacute; traffic completely, which is the real advantage of the northern road."
+  }
+}
+
 $airports = @(0,1)
 # Zonas turisticas reales y reconocidas (mismas 22 que usa genshuttleto.ps1) -- se genera
 # pagina de ruta entre CUALQUIER par de estas zonas con precio real, no solo el viejo set de 6.
@@ -94,7 +295,10 @@ foreach($p in $pages){ if(-not $byOrigin.ContainsKey($p.f)){ $byOrigin[$p.f]=New
 # Cada valor es un ARRAY de resenas (1 a 3 por ruta). Texto VERBATIM del perfil (recortado en limites de oracion).
 # Paradas de cortesia reales que Eddie usa siempre en ciertas rutas. Clave = "menor-mayor".
 $MIRANCHO = "<p class='rp-note'><strong>The stop we usually make on this route:</strong> <em>Mi Rancho</em>, a roadside cafe and restaurant with wide mountain views &mdash; and a toucan that turns up at the tables often enough that the staff call him a regular. It is an ordinary courtesy stop: no extra charge, no schedule, just tell your driver you would like to break the drive there.</p>"
+$MACADAMIA = "<p class='rp-note'><strong>The stop we usually make on this route:</strong> <em>Caf&eacute; y Macadamia</em>, on the shore of Lake Arenal &mdash; fresh, genuinely good food and one of the best views of the whole drive. It is an ordinary courtesy stop: no extra charge, no schedule, just tell your driver you would like to break the drive there.</p>"
 $ROUTE_STOPS = @{
+  "2-45" = $MIRANCHO   # Alajuela <-> La Fortuna
+  "2-3"  = $MACADAMIA  # La Fortuna <-> Monteverde
   "0-2"  = $MIRANCHO   # SJO <-> La Fortuna
   "2-44" = $MIRANCHO   # San Jose ciudad <-> La Fortuna
   "2-4"  = $MIRANCHO   # La Fortuna <-> Manuel Antonio
@@ -261,6 +465,20 @@ foreach($p in $pages){
     $revTitle = if (@($ROUTE_REVIEWS[$rkey]).Count -gt 1) { "<h2>What travelers say about this route</h2>" } else { "" }
     $reviewHtml = "<section class='rp-sec'><div class='wrap'>$revTitle$figs</div></section>"
   }
+  # Que se ve en el camino (texto por corredor real)
+  $seenHtml = ""
+  $ga = $ZGROUP[[int]$p.f]; $gb = $ZGROUP[[int]$p.t]
+  if ($ga -and $gb) {
+    $ckey = if ($ga -le $gb) { "$ga-$gb" } else { "$gb-$ga" }
+    if ($CORRIDORS.ContainsKey($ckey)) {
+      $cor = $CORRIDORS[$ckey]
+      $bullets = ""
+      foreach ($s in $cor.see) { $bullets += "<li>$s</li>" }
+      $seenHtml = "<section class='rp-sec'><div class='wrap'><h2>What you&rsquo;ll see between {{ORIGIN}} and {{DEST}}</h2><p class='rp-lead'>$($cor.intro)</p><ul class='rp-see'>$bullets</ul><div class='rp-facts'><div><h3>Road conditions</h3><p>$($cor.road)</p></div><div><h3>From your driver</h3><p>$($cor.tip)</p></div></div></div></section>"
+      $seenHtml = $seenHtml.Replace("{{ORIGIN}}", $o.n).Replace("{{DEST}}", $d.n)
+    }
+  }
+
   # Hoteles del destino (enlaces internos a /hotel/...)
   $hotelsHtml = ""
   if ($hotelsByZone.ContainsKey($p.t)) {
@@ -313,6 +531,7 @@ foreach($p in $pages){
   $html=$html.Replace("{{INTRO}}",$intro).Replace("{{PRICECARDS}}",$cards)
   $html=$html.Replace("{{FAQ}}",$faq).Replace("{{RELATED}}",$rel)
   $html=$html.Replace("{{HOTELS}}",$hotelsHtml).Replace("{{GUIDES}}",$guidesHtml).Replace("{{PERPERSON}}",$perPerson)
+  $html=$html.Replace("{{SEEN}}",$seenHtml)
   $html=$html.Replace("{{REVIEW}}",$reviewHtml)
   $stopNote = if ($ROUTE_STOPS.ContainsKey($rkey)) { $ROUTE_STOPS[$rkey] } else { "" }
   $html=$html.Replace("{{STOPNOTE}}",$stopNote)
