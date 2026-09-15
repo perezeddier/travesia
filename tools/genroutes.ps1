@@ -120,8 +120,12 @@ foreach($p in $pages){
 <details><summary>What is the cancellation policy?</summary><div class='a'>Free cancellation up to 48 hours before your pickup time. Within 48 hours of the pickup the booking is non-refundable.</div></details>
 "@
   $rel=""; $count=0
-  foreach($p2 in $byOrigin[$p.f]){
+  $sib = @($byOrigin[$p.f])
+  $start = 0
+  for($i=0; $i -lt $sib.Count; $i++){ if($sib[$i].t -eq $p.t){ $start=$i; break } }
+  for($k=1; $k -le $sib.Count; $k++){
     if($count -ge 5){break}
+    $p2 = $sib[($start + $k) % $sib.Count]
     if($p2.t -eq $p.t){continue}
     $d2=$meta[$p2.t]; $slug2="$($o.slug)-to-$($d2.slug)"
     $rel+="<a href='/shuttle/$slug2'><div class='r-route'>$($o.n) &rarr; $($d2.n)</div><div class='r-price'>From `$$($p2.s)</div></a>"
@@ -163,9 +167,14 @@ foreach($p in $pages){
   # Hoteles del destino (enlaces internos a /hotel/...)
   $hotelsHtml = ""
   if ($hotelsByZone.ContainsKey($p.t)) {
+    # Rotar el punto de partida segun la ruta, para que en una zona con muchos
+    # hoteles no siempre se enlacen los mismos 6.
     $hcards = ""; $hc = 0
-    foreach ($h in $hotelsByZone[$p.t]) {
+    $hz = @($hotelsByZone[$p.t])
+    $off = [Math]::Abs(($p.f * 7 + $p.t * 13)) % $hz.Count
+    for ($k = 0; $k -lt $hz.Count; $k++) {
       if ($hc -ge 6) { break }
+      $h = $hz[($off + $k) % $hz.Count]
       $hcards += "<a href='/hotel/$($h.slug)'><div class='h-name'>$($h.name)</div><div class='h-sub'>Private transfer &middot; $($d.n)</div></a>"
       $hc++
     }
@@ -213,6 +222,11 @@ foreach($p in $pages){
   $html=$html.Replace("{{FAQ}}",$faq).Replace("{{RELATED}}",$rel)
   $html=$html.Replace("{{HOTELS}}",$hotelsHtml).Replace("{{GUIDES}}",$guidesHtml).Replace("{{PERPERSON}}",$perPerson)
   $html=$html.Replace("{{SEEN}}",$seenHtml)
+  $hubHtml = ""
+  if (Test-Path (Join-Path $root "shuttle-to\$($d.slug).html")) {
+    $hubHtml = "<p class='rp-note'>Coming from somewhere else? <a href='/shuttle-to/$($d.slug)'>See every private shuttle to $($d.n)</a>, from any airport or town in Costa Rica.</p>"
+  }
+  $html=$html.Replace("{{HUB}}",$hubHtml)
   $html=$html.Replace("{{REVIEW}}",$reviewHtml)
   $stopNote = if ($ROUTE_STOPS.ContainsKey($rkey)) { $ROUTE_STOPS[$rkey] } else { "" }
   $html=$html.Replace("{{STOPNOTE}}",$stopNote)
@@ -222,11 +236,11 @@ foreach($p in $pages){
 }
 
 # --- Guias del blog ---
-$guides=@("guide","tours","reviews","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","guide/how-to-get-to-monteverde","guide/how-to-get-to-osa-peninsula","guide/traveling-with-a-surfboard-in-costa-rica","guide/getting-around-costa-rica-for-birders","guide/birding-stops-on-your-costa-rica-transfer","guide/where-to-see-sloths-in-costa-rica","guide/what-to-pack-for-costa-rica","guide/do-you-need-spanish-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","tours/rio-celeste","tours/coffee-chocolate","tours/bridges-waterfall-combo","terms","privacy","full-trip-chauffeur","private-shuttle-costa-rica","costa-rica-airport-transfers","costa-rica-private-transportation","costa-rica-birding-transportation")
+$guides=@("guide","tours","reviews","about","fleet","faq","guide/how-to-get-from-sjo-to-la-fortuna","guide/how-to-get-from-liberia-to-tamarindo","guide/sjo-vs-lir-which-airport","guide/getting-around-costa-rica","guide/costa-rica-7-day-itinerary","guide/costa-rica-7-day-itinerary-guanacaste","guide/costa-rica-honeymoon-itinerary","guide/best-restaurants-costa-rica","guide/best-time-to-visit-costa-rica","guide/do-you-need-a-car-in-costa-rica","guide/how-many-days-in-la-fortuna","guide/costa-rica-with-kids","guide/costa-rica-travel-faq","guide/sjo-airport-arrival-guide","guide/how-much-do-shuttles-cost-in-costa-rica","guide/how-to-get-to-monteverde","guide/how-to-get-to-osa-peninsula","guide/traveling-with-a-surfboard-in-costa-rica","guide/getting-around-costa-rica-for-birders","guide/birding-stops-on-your-costa-rica-transfer","guide/where-to-see-sloths-in-costa-rica","guide/what-to-pack-for-costa-rica","guide/do-you-need-spanish-in-costa-rica","tours/la-fortuna-full-day","tours/safari-float","tours/hanging-bridges","tours/volcano-hike","tours/volcano-waterfall-combo","tours/cano-negro","tours/rafting","tours/canyoning","tours/rio-celeste","tours/coffee-chocolate","tours/bridges-waterfall-combo","terms","privacy","full-trip-chauffeur","private-shuttle-costa-rica","costa-rica-airport-transfers","costa-rica-private-transportation","costa-rica-birding-transportation")
 foreach($g in $guides){ [void]$urls.Add("$base/$g") }
 
 # Paginas hub y de aterrizaje: prioridad alta y revision semanal (se respeta al regenerar)
-$hiPri = @("$base/shuttle","$base/hotel","$base/tours","$base/reviews","$base/full-trip-chauffeur","$base/private-shuttle-costa-rica","$base/costa-rica-airport-transfers","$base/costa-rica-private-transportation","$base/costa-rica-birding-transportation")
+$hiPri = @("$base/shuttle","$base/hotel","$base/tours","$base/reviews","$base/about","$base/fleet","$base/faq","$base/full-trip-chauffeur","$base/private-shuttle-costa-rica","$base/costa-rica-airport-transfers","$base/costa-rica-private-transportation","$base/costa-rica-birding-transportation")
 
 # --- Conservar URLs de otras herramientas (hoteles, shuttle-to, etc.) ya presentes en el sitemap ---
 $smPath = Join-Path $root "sitemap.xml"

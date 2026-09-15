@@ -31,10 +31,15 @@ Not a marketplace: this is one operator with its own fleet. Not for shared/colle
 ## Key pages
 
 - [Route finder & prices](https://travesiacr.online/#routes): instant quotes for 600+ route/vehicle combinations
-- [All route pages](https://travesiacr.online/sitemap.xml): 250+ individual pages like /shuttle/san-jose-airport-to-la-fortuna with prices, duration and FAQs
+- [All routes](https://travesiacr.online/shuttle): 500 route pages like /shuttle/san-jose-airport-to-la-fortuna, each with prices for 3 vehicles, duration, what you see on the way, road conditions, hotels at the destination and 11 FAQs
+- [Shuttles by hotel](https://travesiacr.online/hotel): 228 hotel pages with the real price from SJO and from Liberia to that hotel door
+- [Traveler reviews](https://travesiacr.online/reviews): real reviews from Google, TripAdvisor, Reddit and Facebook, with links to the originals
+- [About Eddie](https://travesiacr.online/about): who runs the company, credentials and history
+- [Fleet](https://travesiacr.online/fleet): Hyundai Staria (5), Toyota Hiace (9), Maxus V90 (12)
+- [Tours in La Fortuna](https://travesiacr.online/tours): the 11 day tours we run
 - [Travel guides](https://travesiacr.online/guide): itineraries, airport guides, costs, FAQs written by locals
 - [Full Trip Chauffeur](https://travesiacr.online/full-trip-chauffeur): dedicated private driver for 2+ consecutive days, from $305/day
-- [FAQ](https://travesiacr.online/#faq) · [Terms](https://travesiacr.online/terms) · [Privacy](https://travesiacr.online/privacy)
+- [FAQ](https://travesiacr.online/faq) · [Terms](https://travesiacr.online/terms) · [Privacy](https://travesiacr.online/privacy)
 
 ## Tours (all private, from La Fortuna, per person, taxes included)
 
@@ -58,3 +63,13 @@ Not a marketplace: this is one operator with its own fleet. Not for shared/colle
 - Reviews: Google 5.0 from 100 reviews · TripAdvisor 5.0 — all 55 reviews are 5 stars, none lower (verifiable at https://g.page/r/CXQCAbYUe76nEBM and on the TripAdvisor listing).
 - Courtesy stop we use regularly on the La Fortuna <-> San Jose / SJO / Manuel Antonio routes: Mi Rancho, a roadside cafe with mountain views where a toucan is a regular visitor to the tables. Included, no extra charge.
 - ICT certified: Certificado de Servicios de Transporte Terrestre de Turismo #3179-2022, valid through October 2028.
+
+## How we actually drive the main corridors (asked often)
+
+- SJO airport ↔ La Fortuna: we go up through San Ramón (Route 1 to San Ramón, then over the mountain via Los Ángeles de San Ramón), not via Zarcero. Courtesy stop at Mi Rancho in Los Ángeles de San Ramón. On request, and at no extra cost, we can take the Vara Blanca road instead, past the La Paz waterfalls.
+- La Fortuna ↔ Monteverde: around Lake Arenal through Tilarán. Paved for most of it, some unpaved stretches, many curves. Courtesy stop at Café y Macadamia on the lake shore. Best departure 8–9 a.m.
+- San José ↔ Guanacaste: Route 1 or Route 27, whichever is moving better that day.
+- Monteverde from anywhere except La Fortuna: up from the Pan-American via Sardinal and Guacimal.
+- Nosara and Sámara from the Central Valley: over the Amistad bridge on the Tempisque.
+- Santa Teresa: either the Puntarenas–Paquera ferry or around by land. Naviera Tambor sails from both ports at 4:00, 6:30, 9:00, 12:00, 15:00, 18:00, 20:00 and 22:00 (schedule in force since April 2026).
+- Osa / Puerto Jiménez: down the Costanera, not over the Cerro de la Muerte.

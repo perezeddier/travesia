@@ -185,10 +185,17 @@ foreach ($h in $hotels) {
   }
 
   # Relacionados: otros hoteles de la misma zona + la ruta principal de esa zona
+  # Ventana circular: cada hotel enlaza a los 4 SIGUIENTES de su zona, no siempre
+  # a los 4 primeros. Antes, en una zona de 15 hoteles, 11 quedaban con un solo
+  # enlace entrante (el del indice) y Google casi no los veia.
   $rel = ""
   $count = 0
-  foreach ($h2 in $byZone[$h.place]) {
+  $zoneList = @($byZone[$h.place])
+  $start = 0
+  for ($i = 0; $i -lt $zoneList.Count; $i++) { if ($zoneList[$i].name -eq $h.name) { $start = $i; break } }
+  for ($k = 1; $k -le $zoneList.Count; $k++) {
     if ($count -ge 4) { break }
+    $h2 = $zoneList[($start + $k) % $zoneList.Count]
     if ($h2.name -eq $h.name) { continue }
     $slug2 = Slugify $h2.name
     $rel += "<a href='/hotel/$slug2'><div class='r-route'>$($h2.name)</div><div class='r-price'>$($zone.n)</div></a>"

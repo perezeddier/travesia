@@ -65,6 +65,33 @@ function Process-Dir($dir) {
   return @{ done = $n; skipped = $skipped }
 }
 
+# Paginas sueltas de la raiz que tambien muestran preguntas frecuentes
+function Process-File($path) {
+  if (-not (Test-Path $path)) { return 0 }
+  $c = [System.IO.File]::ReadAllText($path, [Text.Encoding]::UTF8)
+  if ($c -match 'FAQPage') { return 0 }
+  $re = [System.Text.RegularExpressions.Regex]::new(
+    '<details><summary>(.*?)</summary><div class=[''"]a[''"]>(.*?)</div></details>',
+    [System.Text.RegularExpressions.RegexOptions]::Singleline)
+  $ms = $re.Matches($c)
+  if ($ms.Count -eq 0) { return 0 }
+  $qa = @()
+  foreach ($m in $ms) {
+    $q = Decode-Entities(Strip-Tags($m.Groups[1].Value)).Trim()
+    $a = Decode-Entities(Strip-Tags($m.Groups[2].Value)).Trim()
+    $qa += [PSCustomObject]@{ "@type" = "Question"; name = $q; acceptedAnswer = [PSCustomObject]@{ "@type" = "Answer"; text = $a } }
+  }
+  $faq = [PSCustomObject]@{ "@context" = "https://schema.org"; "@type" = "FAQPage"; mainEntity = $qa }
+  $json = $faq | ConvertTo-Json -Depth 6 -Compress
+  $tag = "<script type=`"application/ld+json`">$json</script>"
+  if ($c -notmatch '<script defer src="/analytics\.js"></script>') { return 0 }
+  $c2 = $c -replace '(<script defer src="/analytics\.js"></script>)', "$tag`n`$1"
+  [System.IO.File]::WriteAllText($path, $c2, $utf8NoBom)
+  return 1
+}
+$rf = Process-File "$root/faq.html"
+Write-Host "faq.html: $rf agregada"
+
 $r1 = Process-Dir "$root/shuttle"
 $r2 = Process-Dir "$root/shuttle-to"
 $r3 = Process-Dir "$root/hotel"
