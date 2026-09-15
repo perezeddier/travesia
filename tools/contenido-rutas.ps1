@@ -341,3 +341,26 @@ $GUIDE_MAP = @{
 }
 $GUIDE_DEFAULT = @($G.cost, $G.car, $G.faq, $G.pack, $G.kids)
 
+
+# --- Nombre corto para los <title>. Google corta el titulo a ~60 caracteres:
+# lo que pase de ahi no lo ve nadie. Con estos nombres el precio queda visible.
+$SHORTNAME = @{
+  0="SJO Airport"; 1="Liberia Airport"; 2="La Fortuna"; 3="Monteverde"; 4="Manuel Antonio"
+  5="Tamarindo"; 6="Playa Conchal"; 7="Brasilito"; 8="Papagayo"; 9="Puerto Viejo"
+  10="Santa Teresa"; 11="Jaco"; 12="Playas del Coco"; 13="Playa Flamingo"; 14="Playa Hermosa"
+  16="Playa Potrero"; 18="Ocotal"; 19="Dominical"; 20="Uvita"; 22="Esterillos"
+  23="Los Suenos"; 27="Las Catalinas"; 29="Punta Leona"; 30="Rincon de la Vieja"
+  32="La Paz Waterfall"; 36="Sarapiqui"; 38="Montezuma"; 39="Nosara"; 40="Samara"
+  41="Puerto Jimenez"; 42="Rio Celeste"; 44="San Jose"; 45="Alajuela"; 46="Puntarenas"
+  49="Rio Perdido"; 50="JW Marriott Costa Elena"
+}
+function ShortName($id, $fallback) {
+  if ($SHORTNAME.ContainsKey([int]$id)) { return $SHORTNAME[[int]$id] }
+  return $fallback
+}
+# Arma el titulo y le quita la marca si se pasa de largo, para no perder el precio.
+function FitTitle([string]$core) {
+  $withBrand = "$core | Travesia"
+  if ($withBrand.Length -le 60) { return $withBrand }
+  return $core
+}

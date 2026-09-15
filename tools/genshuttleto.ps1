@@ -1,4 +1,5 @@
 $root = "C:\Users\veroc\travesia"
+. (Join-Path $PSScriptRoot "contenido-rutas.ps1")
 $outDir = Join-Path $root "shuttle-to"
 New-Item -ItemType Directory -Force -Path $outDir | Out-Null
 Get-ChildItem -Path $outDir -Filter *.html -ErrorAction SilentlyContinue | Remove-Item -Force
@@ -101,7 +102,7 @@ foreach ($z in $DEST_ZONES) {
 
   $waMsg = "Hi Travesia! I'd like a private transfer to $destName. Date & passengers: "
   $waHref = "https://wa.me/$WA" + "?text=" + [uri]::EscapeDataString($waMsg)
-  $title = "Private Shuttle to $destName - From `$$($best.price) (2026) | Travesia"
+  $title = FitTitle "Shuttle to $destName from `$$($best.price)"
   $desc = "Private door-to-door shuttle to $destName, Costa Rica, from the airport or other destinations. From `$$($best.price) per vehicle, taxes included. Bilingual driver, flight tracking, book online or on WhatsApp."
   $url = "$base/shuttle-to/$destSlug"
   $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private shuttle transfer","name":"Private Shuttle to ' + $destName + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.price + '","priceCurrency":"USD","url":"' + $url + '"}}'
@@ -123,6 +124,7 @@ $smPath = Join-Path $root "sitemap.xml"
 $sm = Get-Content -Raw -Encoding UTF8 $smPath
 $newEntries = ""
 foreach ($u in $urls) {
+  if ($sm -like "*<loc>$u</loc>*") { continue }   # ya esta en el sitemap: no duplicar
   $newEntries += "  <url><loc>$u</loc><lastmod>2026-08-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>`n"
 }
 $sm = $sm.Replace("</urlset>", "$newEntries</urlset>")

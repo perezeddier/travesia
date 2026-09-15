@@ -216,7 +216,7 @@ foreach ($h in $hotels) {
 
   $waMsg = "Hi Travesia! I'd like a private transfer to/from $($h.name). Date & passengers: "
   $waHref = "https://wa.me/$WA" + "?text=" + [uri]::EscapeDataString($waMsg)
-  $title = "Private Shuttle from $($h.name) - Airport Transfer from `$$($best.s) (2026) | Travesia"
+  $title = FitTitle "$($h.name) Shuttle from `$$($best.s)"
   $desc = "Private door-to-door shuttle from $($h.name) in $($zone.n), Costa Rica. From `$$($best.s) per vehicle, taxes included. Bilingual driver, flight tracking, book online or on WhatsApp."
   $url = "$base/hotel/$slug"
   $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private hotel shuttle transfer","name":"Private Shuttle from ' + $h.name + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.s + '","priceCurrency":"USD","url":"' + $url + '"}' + $reviewLd + '}'
