@@ -15,7 +15,11 @@ $hotels = New-Object System.Collections.ArrayList
 # patron viejo se quedaban FUERA, sin pagina y con la URL huerfana en el sitemap.
 $hrx = [regex]::Matches($rd, '\{\s*name:\s*"([^"]+)",\s*place:\s*(\d+)([^}]*)\}')
 foreach ($m in $hrx) {
-  [void]$hotels.Add(@{ name = $m.Groups[1].Value; place = [int]$m.Groups[2].Value; x4 = ($m.Groups[3].Value -match 'req4x4') })
+  $extra = $m.Groups[3].Value
+  $nota = ""
+  $nm = [regex]::Match($extra, 'note:\s*"([^"]*)"')
+  if ($nm.Success) { $nota = $nm.Groups[1].Value }
+  [void]$hotels.Add(@{ name = $m.Groups[1].Value; place = [int]$m.Groups[2].Value; x4 = ($extra -match 'req4x4'); note = $nota })
 }
 
 . (Join-Path $PSScriptRoot "contenido-rutas.ps1")
@@ -105,6 +109,26 @@ foreach ($h in $hotels) {
   $best = $prices | Sort-Object { $_.s } | Select-Object -First 1
   $bookHref = "/?from=$($h.place)&to=$($best.airport)"
   $aName = $meta[$best.airport].n
+  # Texto propio del hotel (campo note en PT_HOTELS). Es lo que hace que la
+  # pagina no sea igual a la de los otros hoteles de la misma zona.
+  $HOTELNOTE = ""
+  if ($h.note) {
+    $HOTELNOTE = "<section class=''rp-sec''><div class=''wrap''><h2>Getting to $($h.name)</h2><p class=''rp-lead''>$($h.note)</p></div></section>"
+  }
+
+  # Variantes de la entradilla: misma informacion, distinta redaccion, elegida
+  # de forma fija por el nombre del hotel (no cambia entre regeneraciones).
+  $vsum = 0
+  foreach ($ch in $h.name.ToCharArray()) { $vsum += [int]$ch }
+  $vari = $vsum % 4
+  $intros = @(
+    "Traves&iacute;a Costa Rica runs private, door-to-door transfers to and from $($h.name) in $($zone.n). Your driver meets you with a name sign, tracks your flight for delays, and takes you straight to the hotel &mdash; no other passengers and no extra stops unless you ask for one. One flat price per vehicle, taxes included.",
+    "Need a ride to or from $($h.name)? We drive it privately, door to door. One driver, one vehicle, just your group: he waits for you with a name sign, follows your flight if it is delayed, and drops you at the hotel entrance. The price is per vehicle and taxes are already in it.",
+    "$($h.name) sits in $($zone.n), and we drive there every week. The transfer is private from door to door &mdash; your own vehicle, a local driver who knows the road, your flight tracked in case it lands late, and one flat price per vehicle with taxes included.",
+    "A private transfer to $($h.name) means the vehicle is yours alone: no shared van, no waiting for strangers, no detours. Your driver is at the airport with a name sign, keeps an eye on your flight, and takes you straight to $($zone.n). Flat price per vehicle, taxes included."
+  )
+  $intro = $intros[$vari]
+
   $x4Note = ""
   if ($h.x4) {
     $x4Note = "<p class='rp-note'><strong>Getting up to $($h.name):</strong> the last stretch is a steep unpaved mountain road that only a 4x4 can drive. We bring you in your own vehicle up to where the road changes, and there you switch to a 4x4 for the final climb. That leg carries a `$40 surcharge on top of the transfer price below, and it is worked into your total when you book online.</p>"
@@ -228,7 +252,7 @@ foreach ($h in $hotels) {
   $html = $html.Replace("{{HOTEL}}", $h.name).Replace("{{ZONE}}", $zone.n)
   $html = $html.Replace("{{PRICEFROM}}", "$($best.s)").Replace("{{ROUTECARDS}}", $routeCards)
   $html = $html.Replace("{{RELATED}}", $rel).Replace("{{WAHREF}}", $waHref)
-  $html = $html.Replace("{{SEEN}}", $seenHtml).Replace("{{STOPNOTE}}", $stopNote).Replace("{{REVIEW}}", $reviewHtml).Replace("{{X4NOTE}}", $x4Note)
+  $html = $html.Replace("{{SEEN}}", $seenHtml).Replace("{{STOPNOTE}}", $stopNote).Replace("{{REVIEW}}", $reviewHtml).Replace("{{X4NOTE}}", $x4Note).Replace("{{HOTELNOTE}}", $HOTELNOTE).Replace("{{INTRO}}", $intro)
   $html = $html.Replace("{{GUIDES}}", $guidesHtml).Replace("{{PERPERSON}}", $perPerson).Replace("{{ZONEROUTES}}", $zoneRoutesHtml)
   $html = $html.Replace("{{BOOKHREF}}", $bookHref).Replace("{{YEAR}}", $year)
   [System.IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
