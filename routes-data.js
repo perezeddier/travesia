@@ -188,10 +188,14 @@ const PT_HOTELS = [
   { name: "Condovac La Costa", place: 14 },
   // Playa Potrero (16)
   { name: "Bahía del Sol Beachfront Boutique Hotel", place: 16 },
+  // Las Catalinas (27)
+  { name: "Santarena Hotel", place: 27 },
+  { name: "Casa Chameleon at Las Catalinas", place: 27 },
   // Ocotal (18)
   { name: "Ocotal Beach Resort", place: 18 },
   // Dominical (19)
   { name: "Hacienda Barú", place: 19 },
+  { name: "Hotel Cuna del Ángel", place: 19 },
   // Montezuma (38)
   { name: "Ylang Ylang Beach Resort", place: 38 },
   { name: "Hotel Amor de Mar", place: 38 },

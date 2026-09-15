@@ -43,6 +43,7 @@ $meta[19] = @{ n = "Dominical"; slug = "dominical" }
 $meta[20] = @{ n = "Uvita"; slug = "uvita" }
 $meta[23] = @{ n = "Herradura / Los Suenos"; slug = "los-suenos" }
 $meta[30] = @{ n = "Rincon de la Vieja"; slug = "rincon-de-la-vieja" }
+$meta[27] = @{ n = "Las Catalinas"; slug = "las-catalinas" }
 $meta[38] = @{ n = "Montezuma"; slug = "montezuma" }
 $meta[39] = @{ n = "Nosara"; slug = "nosara" }
 $meta[40] = @{ n = "Samara"; slug = "samara" }
