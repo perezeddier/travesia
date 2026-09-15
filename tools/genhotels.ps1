@@ -11,10 +11,14 @@ $mrx = [regex]::Match($rd, 'const PT_ROWS = (\[.*?\]);', [System.Text.RegularExp
 $rows = $mrx.Groups[1].Value | ConvertFrom-Json
 
 $hotels = New-Object System.Collections.ArrayList
-$hrx = [regex]::Matches($rd, '\{\s*name:\s*"([^"]+)",\s*place:\s*(\d+)\s*\}')
+# El [^}]* final es importante: hay hoteles con campos extra (req4x4) y con el
+# patron viejo se quedaban FUERA, sin pagina y con la URL huerfana en el sitemap.
+$hrx = [regex]::Matches($rd, '\{\s*name:\s*"([^"]+)",\s*place:\s*(\d+)([^}]*)\}')
 foreach ($m in $hrx) {
-  [void]$hotels.Add(@{ name = $m.Groups[1].Value; place = [int]$m.Groups[2].Value })
+  [void]$hotels.Add(@{ name = $m.Groups[1].Value; place = [int]$m.Groups[2].Value; x4 = ($m.Groups[3].Value -match 'req4x4') })
 }
+
+. (Join-Path $PSScriptRoot "contenido-rutas.ps1")
 
 # --- Zonas: nombre + slug (deben coincidir EXACTO con genroutes.ps1 para que los links crucen bien) ---
 $meta = @{}
@@ -96,6 +100,85 @@ foreach ($h in $hotels) {
   if ($prices.Count -eq 0) { continue }  # sin precio conocido, no generar pagina a medias
   $best = $prices | Sort-Object { $_.s } | Select-Object -First 1
   $bookHref = "/?from=$($h.place)&to=$($best.airport)"
+  $aName = $meta[$best.airport].n
+  $x4Note = ""
+  if ($h.x4) {
+    $x4Note = "<p class='rp-note'><strong>Getting up to $($h.name):</strong> the last stretch is a steep unpaved mountain road that only a 4x4 can drive. We bring you in your own vehicle up to where the road changes, and there you switch to a 4x4 for the final climb. That leg carries a `$40 surcharge on top of the transfer price below, and it is worked into your total when you book online.</p>"
+  }
+  $rkey = "$([Math]::Min([int]$h.place,[int]$best.airport))-$([Math]::Max([int]$h.place,[int]$best.airport))"
+
+  # --- Que se ve en el camino: el corredor real entre el hotel y su aeropuerto ---
+  $seenHtml = ""
+  $ga = $ZGROUP[[int]$h.place]; $gb = $ZGROUP[[int]$best.airport]
+  if ($ga -and $gb) {
+    $ckey = if ($ga -le $gb) { "$ga-$gb" } else { "$gb-$ga" }
+    if ($CORRIDORS.ContainsKey($ckey)) {
+      $cor = $CORRIDORS[$ckey]
+      $bullets = ""
+      foreach ($s in $cor.see) { $bullets += "<li>$s</li>" }
+      $seenHtml = "<section class='rp-sec'><div class='wrap'><h2>What you&rsquo;ll see between $aName and $($h.name)</h2><p class='rp-lead'>$($cor.intro)</p><ul class='rp-see'>$bullets</ul><div class='rp-facts'><div><h3>Road conditions</h3><p>$($cor.road)</p></div><div><h3>From your driver</h3><p>$($cor.tip)</p></div></div></div></section>"
+      $seenHtml = $seenHtml.Replace("{{ORIGIN}}", $aName).Replace("{{DEST}}", $zone.n)
+    }
+  }
+
+  # --- La parada de cortesia de ese camino, si la hay ---
+  $stopNote = if ($ROUTE_STOPS.ContainsKey($rkey)) { $ROUTE_STOPS[$rkey] } else { "" }
+
+  # --- Resenas reales de ese mismo trayecto ---
+  $reviewHtml = ""; $reviewLd = ""
+  if ($ROUTE_REVIEWS.ContainsKey($rkey)) {
+    $figs = ""; $lds = @()
+    foreach($rv in @($ROUTE_REVIEWS[$rkey])) {
+      $rvSource = if ($rv.source) { $rv.source } else { "Google Reviews" }
+      $figs += "<figure class='rp-review'><span class='stars' aria-hidden='true'>&#9733;&#9733;&#9733;&#9733;&#9733;</span><blockquote>&ldquo;$($rv.quote)&rdquo;</blockquote><figcaption>&mdash; $($rv.author) &middot; on $rvSource</figcaption></figure>"
+      $q = $rv.quote -replace '&oacute;','o' -replace '&aacute;','a' -replace '&eacute;','e' -replace '&iacute;','i' -replace '&uacute;','u' -replace '&ntilde;','n' -replace '&iexcl;','' -replace '&iquest;','' -replace '\\','\\\\' -replace '"','\"'
+      $a = ($rv.author -replace '\\','\\\\' -replace '"','\"')
+      $s = ($rvSource -replace '"','\"')
+      $lds += '{"@type":"Review","reviewRating":{"@type":"Rating","ratingValue":"5","bestRating":"5"},"author":{"@type":"Person","name":"'+$a+'"},"publisher":{"@type":"Organization","name":"'+$s+'"},"reviewBody":"'+$q+'"}'
+    }
+    $reviewLd = ',"review":[' + ($lds -join ',') + ']'
+    $reviewHtml = "<section class='rp-sec'><div class='wrap'><h2>What travelers say about this transfer</h2>$figs</div></section>"
+  }
+
+  # --- Guias relacionadas con la zona ---
+  $gList = New-Object System.Collections.ArrayList
+  $gSeen = @{}
+  foreach ($src in @($GUIDE_MAP[[int]$h.place], $GUIDE_MAP[[int]$best.airport], $GUIDE_DEFAULT)) {
+    if ($null -eq $src) { continue }
+    foreach ($g in @($src)) {
+      if ($gList.Count -ge 3) { break }
+      if ($null -eq $g -or $gSeen.ContainsKey($g.u)) { continue }
+      $gSeen[$g.u] = $true; [void]$gList.Add($g)
+    }
+  }
+  $gCards = ""
+  foreach ($g in $gList) { $gCards += "<a href='$($g.u)'><div class='g-title'>$($g.t)</div><div class='g-sub'>Read the guide &rarr;</div></a>" }
+  $guidesHtml = "<section class='rp-sec'><div class='wrap'><h2>Plan the rest of your trip</h2><div class='rp-guides'>$gCards</div></div></section>"
+
+  # --- Precio por persona ---
+  $perPerson = ""
+  if ($best.s -gt 0) { $pp = [Math]::Round($best.s / 4); $perPerson = "For a group of 4 that works out to about `$$pp per person." }
+
+  # --- Rutas reales que salen de esta zona (enlaces a /shuttle/...) ---
+  $zoneRoutes = ""
+  $zr = 0
+  foreach ($row in $rows) {
+    if ($zr -ge 6) { break }
+    $f=[int]$row[0]; $t=[int]$row[1]
+    if ($f -ne [int]$h.place -and $t -ne [int]$h.place) { continue }
+    $other = if ($f -eq [int]$h.place) { $t } else { $f }
+    if (-not $meta.ContainsKey($other)) { continue }
+    $rslug = "$($zone.slug)-to-$($meta[$other].slug)"
+    if (-not (Test-Path (Join-Path $root "shuttle\$rslug.html"))) { continue }
+    $rp = if ($row[2]) { [int]$row[2] } else { 0 }
+    if ($rp -le 0) { continue }
+    $zoneRoutes += "<a href='/shuttle/$rslug'><div class='r-route'>$($zone.n) &rarr; $($meta[$other].n)</div><div class='r-price'>From `$$rp</div></a>"
+    $zr++
+  }
+  $zoneRoutesHtml = ""
+  if ($zoneRoutes -ne "") {
+    $zoneRoutesHtml = "<section class='rp-sec'><div class='wrap'><h2>Where we drive from $($zone.n)</h2><p class='rp-lead'>The same driver and the same flat price per vehicle, from the door of $($h.name) to anywhere else on your itinerary:</p><div class='rp-related'>$zoneRoutes</div></div></section>"
+  }
 
   # Relacionados: otros hoteles de la misma zona + la ruta principal de esa zona
   $rel = ""
@@ -107,9 +190,17 @@ foreach ($h in $hotels) {
     $rel += "<a href='/hotel/$slug2'><div class='r-route'>$($h2.name)</div><div class='r-price'>$($zone.n)</div></a>"
     $count++
   }
+  # Los hoteles del propio SJO no pueden enlazar "SJO -> SJO" (esa pagina no existe):
+  # se les da la ruta mas buscada desde el aeropuerto.
   if ($routeCovered -contains $h.place) {
-    $routeSlug = "$($zone.slug)-to-san-jose-airport"
-    $rel += "<a href='/shuttle/$routeSlug'><div class='r-route'>$($zone.n) &rarr; San Jose Airport</div><div class='r-price'>All routes</div></a>"
+    if ([int]$h.place -eq 0) {
+      $rel += "<a href='/shuttle/san-jose-airport-to-la-fortuna'><div class='r-route'>San Jose Airport &rarr; La Fortuna</div><div class='r-price'>All routes</div></a>"
+    } else {
+      $routeSlug = "$($zone.slug)-to-san-jose-airport"
+      if (Test-Path (Join-Path $root "shuttle\$routeSlug.html")) {
+        $rel += "<a href='/shuttle/$routeSlug'><div class='r-route'>$($zone.n) &rarr; San Jose Airport</div><div class='r-price'>All routes</div></a>"
+      }
+    }
   }
 
   $waMsg = "Hi Travesia! I'd like a private transfer to/from $($h.name). Date & passengers: "
@@ -117,7 +208,7 @@ foreach ($h in $hotels) {
   $title = "Private Shuttle from $($h.name) - Airport Transfer from `$$($best.s) (2026) | Travesia"
   $desc = "Private door-to-door shuttle from $($h.name) in $($zone.n), Costa Rica. From `$$($best.s) per vehicle, taxes included. Bilingual driver, flight tracking, book online or on WhatsApp."
   $url = "$base/hotel/$slug"
-  $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private hotel shuttle transfer","name":"Private Shuttle from ' + $h.name + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.s + '","priceCurrency":"USD","url":"' + $url + '"}}'
+  $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private hotel shuttle transfer","name":"Private Shuttle from ' + $h.name + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.s + '","priceCurrency":"USD","url":"' + $url + '"}' + $reviewLd + '}'
   $bc = '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"' + $base + '/"},{"@type":"ListItem","position":2,"name":"Hotels","item":"' + $base + '/hotel"},{"@type":"ListItem","position":3,"name":"' + $h.name + '","item":"' + $url + '"}]}'
 
   $html = $tpl
@@ -126,6 +217,8 @@ foreach ($h in $hotels) {
   $html = $html.Replace("{{HOTEL}}", $h.name).Replace("{{ZONE}}", $zone.n)
   $html = $html.Replace("{{PRICEFROM}}", "$($best.s)").Replace("{{ROUTECARDS}}", $routeCards)
   $html = $html.Replace("{{RELATED}}", $rel).Replace("{{WAHREF}}", $waHref)
+  $html = $html.Replace("{{SEEN}}", $seenHtml).Replace("{{STOPNOTE}}", $stopNote).Replace("{{REVIEW}}", $reviewHtml).Replace("{{X4NOTE}}", $x4Note)
+  $html = $html.Replace("{{GUIDES}}", $guidesHtml).Replace("{{PERPERSON}}", $perPerson).Replace("{{ZONEROUTES}}", $zoneRoutesHtml)
   $html = $html.Replace("{{BOOKHREF}}", $bookHref).Replace("{{YEAR}}", $year)
   [System.IO.File]::WriteAllText((Join-Path $outDir "$slug.html"), $html, (New-Object System.Text.UTF8Encoding $false))
   [void]$hotelUrls.Add($url)
@@ -137,6 +230,7 @@ $smPath = Join-Path $root "sitemap.xml"
 $sm = Get-Content -Raw -Encoding UTF8 $smPath
 $newEntries = ""
 foreach ($u in $hotelUrls) {
+  if ($sm -like "*<loc>$u</loc>*") { continue }   # ya esta en el sitemap: no duplicar
   $newEntries += "  <url><loc>$u</loc><lastmod>2026-08-21</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>`n"
 }
 $sm = $sm.Replace("</urlset>", "$newEntries</urlset>")
