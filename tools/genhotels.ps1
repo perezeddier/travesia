@@ -41,7 +41,10 @@ $meta[16] = @{ n = "Playa Potrero"; slug = "playa-potrero" }
 $meta[18] = @{ n = "Ocotal"; slug = "ocotal" }
 $meta[19] = @{ n = "Dominical"; slug = "dominical" }
 $meta[20] = @{ n = "Uvita"; slug = "uvita" }
+$meta[22] = @{ n = "Esterillos"; slug = "esterillos" }
 $meta[23] = @{ n = "Herradura / Los Suenos"; slug = "los-suenos" }
+$meta[29] = @{ n = "Punta Leona"; slug = "punta-leona" }
+$meta[49] = @{ n = "Rio Perdido (Bagaces)"; slug = "rio-perdido" }
 $meta[30] = @{ n = "Rincon de la Vieja"; slug = "rincon-de-la-vieja" }
 $meta[27] = @{ n = "Las Catalinas"; slug = "las-catalinas" }
 $meta[38] = @{ n = "Montezuma"; slug = "montezuma" }
