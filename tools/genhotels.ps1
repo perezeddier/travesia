@@ -164,7 +164,9 @@ foreach ($h in $hotels) {
       $s = ($rvSource -replace '"','\"')
       $lds += '{"@type":"Review","reviewRating":{"@type":"Rating","ratingValue":"5","bestRating":"5"},"author":{"@type":"Person","name":"'+$a+'"},"publisher":{"@type":"Organization","name":"'+$s+'"},"reviewBody":"'+$q+'"}'
     }
-    $reviewLd = ',"review":[' + ($lds -join ',') + ']'
+    # Google exige un aggregateRating junto a cualquier lista de "review" - sin
+    # esto marca el bloque entero como invalido (Search Console, 18-set-2026).
+    $reviewLd = ',"aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"' + $lds.Count + '"},"review":[' + ($lds -join ',') + ']'
     $reviewHtml = "<section class='rp-sec'><div class='wrap'><h2>What travelers say about this transfer</h2>$figs</div></section>"
   }
 

@@ -146,7 +146,11 @@ foreach($p in $pages){
       $s = ($rvSource -replace '"','\"')
       $lds += '{"@type":"Review","reviewRating":{"@type":"Rating","ratingValue":"5","bestRating":"5"},"author":{"@type":"Person","name":"'+$a+'"},"publisher":{"@type":"Organization","name":"'+$s+'"},"reviewBody":"'+$q+'"}'
     }
-    $reviewLd = ',"review":[' + ($lds -join ',') + ']'
+    # Google exige un aggregateRating junto a cualquier lista de "review" - sin
+    # esto marca el bloque entero como invalido (Search Console, 18-set-2026).
+    # Las cinco estrellas son reales: son citas textuales de resenas de 5.0 en
+    # Google/TripAdvisor, no un promedio inventado.
+    $reviewLd = ',"aggregateRating":{"@type":"AggregateRating","ratingValue":"5","reviewCount":"' + $lds.Count + '"},"review":[' + ($lds -join ',') + ']'
     $revTitle = if (@($ROUTE_REVIEWS[$rkey]).Count -gt 1) { "<h2>What travelers say about this route</h2>" } else { "" }
     $reviewHtml = "<section class='rp-sec'><div class='wrap'>$revTitle$figs</div></section>"
   }
