@@ -214,7 +214,12 @@ foreach($p in $pages){
   $bookHref="/?from=$($p.f)&to=$($p.t)"
   $title = FitTitle "$(ShortName $p.f $o.n) to $(ShortName $p.t $d.n) Shuttle from `$$($p.s)"
   $desc="Private shuttle from $($o.n) to $($d.n) in Costa Rica. Door-to-door, about $($p.dur), from `$$($p.s) per vehicle. Bilingual driver, flat rate, book online or on WhatsApp."
-  $jsonld='{"@context":"https://schema.org","@type":"Service","serviceType":"Private airport shuttle transfer","name":"'+$o.n+' to '+$d.n+' Private Shuttle","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"'+$base+'/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"'+$p.s+'","priceCurrency":"USD","url":"'+$url+'"}'+$reviewLd+'}'
+  # El review/aggregateRating va DENTRO de "provider" (la agencia, tipo
+  # TravelAgency = subtipo de LocalBusiness), no en el "Service" de arriba.
+  # Google no acepta resenas sobre un tipo "Service" generico como entidad
+  # valida a calificar (error real de Search Console, 18-set-2026); sobre
+  # LocalBusiness si es un tipo admitido.
+  $jsonld='{"@context":"https://schema.org","@type":"Service","serviceType":"Private airport shuttle transfer","name":"'+$o.n+' to '+$d.n+' Private Shuttle","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"'+$base+'/"'+$reviewLd+'},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"'+$p.s+'","priceCurrency":"USD","url":"'+$url+'"}}'
   $bc='{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"'+$base+'/"},{"@type":"ListItem","position":2,"name":"All routes","item":"'+$base+'/shuttle"},{"@type":"ListItem","position":3,"name":"'+$o.n+' to '+$d.n+'","item":"'+$url+'"}]}'
 
   $html=$tpl

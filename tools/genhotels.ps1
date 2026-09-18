@@ -245,7 +245,9 @@ foreach ($h in $hotels) {
   $title = FitTitle "$($h.name) Shuttle from `$$($best.s)"
   $desc = "Private door-to-door shuttle from $($h.name) in $($zone.n), Costa Rica. From `$$($best.s) per vehicle, taxes included. Bilingual driver, flight tracking, book online or on WhatsApp."
   $url = "$base/hotel/$slug"
-  $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private hotel shuttle transfer","name":"Private Shuttle from ' + $h.name + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.s + '","priceCurrency":"USD","url":"' + $url + '"}' + $reviewLd + '}'
+  # El review/aggregateRating va DENTRO de "provider" (TravelAgency), no en
+  # el "Service" de arriba - ver nota igual en genroutes.ps1.
+  $jsonld = '{"@context":"https://schema.org","@type":"Service","serviceType":"Private hotel shuttle transfer","name":"Private Shuttle from ' + $h.name + '","provider":{"@type":"TravelAgency","name":"Travesia Costa Rica","telephone":"+50685028476","url":"' + $base + '/"' + $reviewLd + '},"areaServed":{"@type":"Country","name":"Costa Rica"},"offers":{"@type":"Offer","price":"' + $best.s + '","priceCurrency":"USD","url":"' + $url + '"}}'
   $bc = '{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"' + $base + '/"},{"@type":"ListItem","position":2,"name":"Hotels","item":"' + $base + '/hotel"},{"@type":"ListItem","position":3,"name":"' + $h.name + '","item":"' + $url + '"}]}'
 
   $html = $tpl
