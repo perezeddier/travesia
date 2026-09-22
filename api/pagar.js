@@ -74,7 +74,12 @@ export default async function handler(req, res) {
     // ---- REGLAS DE RESERVA (antelacion minima y fechas bloqueadas) ----
     // Se valida en el SERVIDOR aparte del navegador: la validacion del
     // navegador se puede saltar, esta no. Ver booking-rules.js
-    const chk = brCheckLegs(clientLegs.length ? clientLegs : [{ date: d.date, time: d.time }]);
+    // Se valida UN tramo por cada item del CARRITO, no por cada "leg" que
+    // mando el cliente: si alguien manda 3 tramos en el carrito pero un solo
+    // leg, los otros dos quedarian sin fecha y se colarian. Un leg ausente
+    // cuenta como fecha faltante y se rechaza.
+    const legsToCheck = cart.map((_, i) => clientLegs[i] || (i === 0 ? { date: d.date, time: d.time } : {}));
+    const chk = brCheckLegs(legsToCheck);
     if (!chk.ok) {
       res.status(400).json({
         ok: false, error: 'booking-rule', reason: chk.reason, leg: chk.leg,

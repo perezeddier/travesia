@@ -39,10 +39,20 @@ var BR_TZ = "-06:00";
 function brToMs(fecha, hora) {
   if (!fecha) return NaN;
   var f = String(fecha).trim();
-  var h = String(hora || "00:00").trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f)) return NaN;
-  if (!/^\d{2}:\d{2}/.test(h)) h = "00:00";
-  return Date.parse(f + "T" + h.slice(0, 5) + ":00" + BR_TZ);
+  /* Sin hora se asume medianoche; CON hora, tiene que ser real.
+     "24:00" o "99:99" se RECHAZAN, no se corrigen en silencio. */
+  var h = (hora === undefined || hora === null || String(hora).trim() === "")
+    ? "00:00" : String(hora).trim();
+  if (!/^([01]\d|2[0-3]):[0-5]\d/.test(h)) return NaN;
+  var ms = Date.parse(f + "T" + h.slice(0, 5) + ":00" + BR_TZ);
+  if (isNaN(ms)) return NaN;
+  /* JavaScript "arregla" solo las fechas imposibles: "2027-02-31" se
+     convierte en "2027-03-03" sin avisar. Si el dia que sale no es el
+     que escribieron, la fecha no existe y se rechaza. */
+  var cr = new Date(ms - 6 * 3600000).toISOString().slice(0, 10);
+  if (cr !== f) return NaN;
+  return ms;
 }
 
 /* ¿Esta fecha cae dentro de un rango bloqueado? Devuelve el rango o null.
