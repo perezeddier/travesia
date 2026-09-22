@@ -40,10 +40,10 @@ function brToMs(fecha, hora) {
   if (!fecha) return NaN;
   var f = String(fecha).trim();
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f)) return NaN;
-  /* Sin hora se asume medianoche; CON hora, tiene que ser real.
-     "24:00" o "99:99" se RECHAZAN, no se corrigen en silencio. */
-  var h = (hora === undefined || hora === null || String(hora).trim() === "")
-    ? "00:00" : String(hora).trim();
+  /* La hora de recogida es obligatoria: sin ella la reserva no sirve
+     operativamente. Vacia, "24:00", "8:00" o "99:99" se RECHAZAN; nunca
+     se convierten en medianoche en silencio. */
+  var h = String(hora == null ? "" : hora).trim();
   if (!/^([01]\d|2[0-3]):[0-5]\d/.test(h)) return NaN;
   var ms = Date.parse(f + "T" + h.slice(0, 5) + ":00" + BR_TZ);
   if (isNaN(ms)) return NaN;
@@ -79,6 +79,10 @@ function brCheckLeg(fecha, hora, ahoraMs) {
   if (blocked) return { ok: false, reason: "blocked", range: blocked };
 
   var horas = (ms - now) / 3600000;
+  /* Una fecha que YA PASO no es "muy pronto": es otro error y merece
+     otro mensaje. Decirle "necesita 12 horas de antelacion" a quien
+     tecleo mal el ano solo confunde. */
+  if (horas < 0) return { ok: false, reason: "past" };
   if (horas < BR_MIN_HOURS) {
     return { ok: false, reason: "tooSoon", hoursLeft: horas, minHours: BR_MIN_HOURS };
   }

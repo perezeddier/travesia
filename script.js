@@ -183,6 +183,7 @@ const I18N = {
     "wp.legend": "✓ Included · ~ Sometimes / limited · ✕ Not available",
     "rev.taCount": "55 reviews on TripAdvisor",
     "rev.gCount": "100 reviews on Google",
+    "rev.on": "on Google Reviews",
     "about.p2": "When you book, you're not talking to a call center — you're talking directly with me on WhatsApp. I make sure every trip across Costa Rica is safe, comfortable and stress-free. Pura vida!",
     "about.pt1": "Local driver, based in La Fortuna",
     "about.pt2": "You book directly with me on WhatsApp",
@@ -517,6 +518,7 @@ const I18N = {
     "wp.legend": "✓ Incluido · ~ A veces / limitado · ✕ No disponible",
     "rev.taCount": "55 opiniones en TripAdvisor",
     "rev.gCount": "100 opiniones en Google",
+    "rev.on": "en Google Reviews",
     "faq.eyebrow": "Bueno saberlo",
     "faq.title": "Preguntas frecuentes",
     "faq.lead": "Todo lo que necesitas saber antes de reservar tu traslado privado en Costa Rica.",
@@ -795,6 +797,17 @@ const REVIEWS = [
 /* Explica por que no se puede reservar y ofrece WhatsApp.
    La idea NO es perder la venta: es desviarla a donde Eddie decide
    caso por caso si puede hacerlo. Ver booking-rules.js */
+/* Pone el minimo del calendario en TODAS las fechas del checkout.
+   Ojo: los tramos 2+ se pintan dentro de #coSummary, que es HERMANO de
+   #coForm, no hijo — por eso no basta con buscar dentro del formulario.
+   Se vuelve a llamar despues de cada repintado del resumen. */
+function aplicarMinFecha() {
+  if (typeof brMinDate !== "function") return;
+  const minD = brMinDate();
+  document
+    .querySelectorAll('#coForm input[type="date"], #coSummary input[type="date"]')
+    .forEach((el) => { el.min = minD; });
+}
 function showBookingRule(chk) {
   const es = currentLang === "es";
   const n = (chk.leg || 0) + 1;
@@ -809,6 +822,12 @@ function showBookingRule(chk) {
     wa = es
       ? `Hola Travesía! Quiero reservar del ${r.from} al ${r.to}, que aparece sin disponibilidad en línea. Mi ruta y datos: `
       : `Hi Travesía! I'd like to book between ${r.from} and ${r.to}, which shows as unavailable online. My route and details: `;
+  } else if (chk.reason === "past") {
+    msg = es
+      ? `Esa fecha ya pasó${tramo}. Revise el día y el año, por favor.`
+      : `That date is in the past${tramo}. Please check the day and the year.`;
+    wa = es ? "Hola Travesía! Quiero reservar un traslado. Mi ruta y fechas: "
+            : "Hi Travesía! I'd like to book a transfer. My route and dates: ";
   } else if (chk.reason === "tooSoon") {
     const h = chk.minHours || 12;
     msg = es
@@ -1268,6 +1287,8 @@ function renderCheckoutSummary() {
           <label class="co-field"><span>${t("co.dropoff")}</span><input type="text" data-legfield="dropoff" data-leg="${idx}" value="${it.dropoff || ""}"></label>
         </div>`}
       </div>`).join("")}`;
+  /* los tramos 2+ se acaban de repintar: hay que volver a ponerles el minimo */
+  if (typeof aplicarMinFecha === "function") aplicarMinFecha();
 }
 /* Checkout en 2 pasos: 1) el viaje  2) datos y pago. Solo presentación — la lógica de pago no cambia. */
 function coStep(n) {
@@ -1303,13 +1324,7 @@ function openCheckout() {
   const r = document.querySelector(`#coForm [name="experience"][value="${anyVip ? "1" : "0"}"]`);
   if (r) r.checked = true;
   renderCheckoutSummary();
-  // El calendario no deja escoger dias que ya no cumplen la antelacion
-  // minima: mejor que el cliente no pueda equivocarse a tener que
-  // corregirlo despues. Ver booking-rules.js
-  if (typeof brMinDate === "function") {
-    const minD = brMinDate();
-    document.querySelectorAll('#coForm input[type="date"]').forEach((el) => el.min = minD);
-  }
+  aplicarMinFecha();
   setFlightRequirement();
   coStep(1);
   document.getElementById("checkout")?.classList.add("open");
@@ -1698,6 +1713,16 @@ document.addEventListener("DOMContentLoaded", () => {
       if (j && j.ok && j.url) {
         gaEvent("add_payment_info", { currency: "USD", value: j.amount || cartTotal(), order_number: j.orderNumber });
         window.location.href = j.url; return;
+      }
+      // El servidor rechazo por una REGLA DE RESERVA (antelacion, fecha
+      // bloqueada, fecha invalida). Eso NO es una falla del pago: no hay
+      // que caer al respaldo de WhatsApp+correo, porque le mandaria a Eddie
+      // una "reserva" que su propia regla acaba de rechazar y el cliente se
+      // iria creyendo que reservo. Se explica y se para aca.
+      if (j && j.error === "booking-rule") {
+        if (btn) { btn.disabled = false; btn.innerHTML = label; }
+        showBookingRule(j);
+        return;
       }
       throw new Error((j && j.error) || "pago");
     } catch (err) {
