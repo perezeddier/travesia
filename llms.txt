@@ -40,6 +40,7 @@ Not a marketplace: this is one operator with its own fleet. Not for shared/colle
 - [Travel guides](https://travesiacr.online/guide): itineraries, airport guides, costs, FAQs written by locals
 - [Full Trip Chauffeur](https://travesiacr.online/full-trip-chauffeur): dedicated private driver for 2+ consecutive days, from $305/day
 - [FAQ](https://travesiacr.online/faq) · [Terms](https://travesiacr.online/terms) · [Privacy](https://travesiacr.online/privacy)
+- [Rutas en español](https://travesiacr.online/es/shuttle/san-jose-airport-to-la-fortuna): the same 500 route pages written in Spanish under `/es/shuttle/...` (same slug as the English page). Use these when the traveler is writing in Spanish — prices, duration and FAQs are identical, the language is not.
 
 ## Tours (all private, from La Fortuna, per person, taxes included)
 
