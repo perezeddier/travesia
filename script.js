@@ -791,6 +791,41 @@ const REVIEWS = [
     text: "La experiencia con Carlos ha sido de 10, súper agradable, servicial y atento con todos nosotros. Sin duda, si volvemos a Costa Rica, volveremos a coincidir con él ☺️" },
 ];
 
+
+/* Explica por que no se puede reservar y ofrece WhatsApp.
+   La idea NO es perder la venta: es desviarla a donde Eddie decide
+   caso por caso si puede hacerlo. Ver booking-rules.js */
+function showBookingRule(chk) {
+  const es = currentLang === "es";
+  const n = (chk.leg || 0) + 1;
+  const tramo = CART.length > 1 ? (es ? ` (tramo ${n})` : ` (leg ${n})`) : "";
+  let msg, wa;
+
+  if (chk.reason === "blocked") {
+    const r = chk.range || {};
+    msg = es
+      ? `Esas fechas ya están completas${tramo}. Del ${r.from} al ${r.to} no tenemos disponibilidad en línea. Escribanos por WhatsApp y vemos si conseguimos algo.`
+      : `Those dates are fully booked${tramo}. We have no online availability from ${r.from} to ${r.to}. Message us on WhatsApp and we will see what we can do.`;
+    wa = es
+      ? `Hola Travesía! Quiero reservar del ${r.from} al ${r.to}, que aparece sin disponibilidad en línea. Mi ruta y datos: `
+      : `Hi Travesía! I'd like to book between ${r.from} and ${r.to}, which shows as unavailable online. My route and details: `;
+  } else if (chk.reason === "tooSoon") {
+    const h = chk.minHours || 12;
+    msg = es
+      ? `Las reservas en línea necesitan al menos ${h} horas de antelación${tramo}. Para algo más pronto, escribanos por WhatsApp: si hay un vehículo libre se lo confirmamos de una.`
+      : `Online bookings need at least ${h} hours' notice${tramo}. For anything sooner, message us on WhatsApp — if a vehicle is free we will confirm right away.`;
+    wa = es
+      ? `Hola Travesía! Necesito un traslado para hoy o muy pronto (menos de ${h} horas). Mi ruta, hora y pasajeros: `
+      : `Hi Travesía! I need a transfer today or very soon (less than ${h} hours away). My route, time and passengers: `;
+  } else {
+    msg = es ? `Falta la fecha o la hora${tramo}.` : `The date or time is missing${tramo}.`;
+    wa = es ? "Hola Travesía! Quiero reservar un traslado. Mi ruta y fechas: "
+            : "Hi Travesía! I'd like to book a transfer. My route and dates: ";
+  }
+
+  const ok = window.confirm(msg + "\n\n" + (es ? "¿Abrimos WhatsApp?" : "Open WhatsApp?"));
+  if (ok) window.open("https://wa.me/50685028476?text=" + encodeURIComponent(wa), "_blank", "noopener");
+}
 function renderReviews() {
   const grid = document.getElementById("reviewsGrid");
   if (!grid) return;
@@ -1268,6 +1303,13 @@ function openCheckout() {
   const r = document.querySelector(`#coForm [name="experience"][value="${anyVip ? "1" : "0"}"]`);
   if (r) r.checked = true;
   renderCheckoutSummary();
+  // El calendario no deja escoger dias que ya no cumplen la antelacion
+  // minima: mejor que el cliente no pueda equivocarse a tener que
+  // corregirlo despues. Ver booking-rules.js
+  if (typeof brMinDate === "function") {
+    const minD = brMinDate();
+    document.querySelectorAll('#coForm input[type="date"]').forEach((el) => el.min = minD);
+  }
   setFlightRequirement();
   coStep(1);
   document.getElementById("checkout")?.classList.add("open");
@@ -1625,6 +1667,19 @@ document.addEventListener("DOMContentLoaded", () => {
         const el = document.querySelector(`[data-leg="${idx}"][data-legfield="${missing}"]`);
         if (el) el.focus();
         toast(t("co.legMissing"));
+        return;
+      }
+    }
+    // ---- REGLAS DE RESERVA: antelacion minima y fechas bloqueadas ----
+    // Mismo archivo que usa el servidor (booking-rules.js), para que el
+    // mensaje aqui y el rechazo de alla nunca digan cosas distintas.
+    if (typeof brCheckLegs === "function") {
+      const legsToCheck = CART.map((it, i) =>
+        i === 0 ? { date: coForm.date.value, time: coForm.time.value }
+                : { date: it.date, time: it.time });
+      const chk = brCheckLegs(legsToCheck);
+      if (!chk.ok) {
+        showBookingRule(chk);
         return;
       }
     }

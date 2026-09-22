@@ -10,8 +10,10 @@
    ========================================================================== */
 import routesData from '../routes-data.js';
 import { rateLimited } from './_ratelimit.js';
+import bookingRules from '../booking-rules.js';
 
 const { PT_ROWS } = routesData;
+const { brCheckLegs, BR_MIN_HOURS } = bookingRules;
 const X4_FEE = 40;   // recargo por hoteles que solo se alcanzan en 4x4 (transbordo)
 
 // índice de precios por ruta (i-j) -> {staria, hiace, maxus}
@@ -68,6 +70,18 @@ export default async function handler(req, res) {
 
     // ---- RECALCULAR el precio en el servidor (tambien por tramo, para el tiquete) ----
     const clientLegs = Array.isArray(d.legs) ? d.legs : [];
+
+    // ---- REGLAS DE RESERVA (antelacion minima y fechas bloqueadas) ----
+    // Se valida en el SERVIDOR aparte del navegador: la validacion del
+    // navegador se puede saltar, esta no. Ver booking-rules.js
+    const chk = brCheckLegs(clientLegs.length ? clientLegs : [{ date: d.date, time: d.time }]);
+    if (!chk.ok) {
+      res.status(400).json({
+        ok: false, error: 'booking-rule', reason: chk.reason, leg: chk.leg,
+        minHours: BR_MIN_HOURS, range: chk.range || null,
+      });
+      return;
+    }
     let amount = 0;
     let vipCount = 0;
     const legs = [];
