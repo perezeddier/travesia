@@ -27,6 +27,9 @@ export default async function handler(req, res) {
       return;
     }
     d.paisVisita = String(req.headers['x-vercel-ip-country'] || '').slice(0, 2);   // lo dice Vercel, no el cliente
+    // Una solicitud pública NUNCA trae número de orden: la hoja actualiza la fila que
+    // tenga ese número, así que aceptarlo dejaría a cualquiera pisar reservas reales.
+    delete d.orderNumber;
     await sendReservation(d, false);
     res.status(200).json({ ok: true });
   } catch (e) {

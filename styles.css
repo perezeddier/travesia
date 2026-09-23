@@ -23,6 +23,8 @@
 
 /* ===================== RESET ===================== */
 * { box-sizing: border-box; }
+/* "hidden" siempre gana (ej. .co-field tiene display:flex y lo tapaba) */
+[hidden] { display: none !important; }
 /* Texto solo para lectores de pantalla (invisible en pantalla) */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: 84px; }

@@ -152,12 +152,14 @@ export default async function handler(req, res) {
 
     // datos de la reserva que viajan (base64) y vuelven para enviar el correo al aprobar
     const booking = {
-      name: d.name, email: d.email, phone: d.phone || '',
-      summary: d.summary || '', date: d.date || '', time: d.time || '',
-      pax: d.pax || '', pickup: d.pickup || '', dropoff: d.dropoff || '', flight: d.flight || '',
-      itinerary: d.itinerary || '', legs,
+      // Todo con largo máximo: este objeto viaja a Tilopay y vuelve (returnData); si
+      // creciera sin límite podría cortarse y el cobro no se capturaría.
+      name: String(d.name).slice(0, 120), email: String(d.email).slice(0, 160), phone: String(d.phone || '').slice(0, 40),
+      summary: String(d.summary || '').slice(0, 600), date: String(d.date || '').slice(0, 20), time: String(d.time || '').slice(0, 20),
+      pax: String(d.pax || '').slice(0, 60), pickup: String(d.pickup || '').slice(0, 120), dropoff: String(d.dropoff || '').slice(0, 120), flight: String(d.flight || '').slice(0, 60),
+      itinerary: '', legs,   // el itinerario se rearma de legs (ya no se manda el texto)
       seats: String(d.seats || '').slice(0, 120),
-      tier, total: '$' + amount.toFixed(2), notes: d.notes || '',
+      tier, total: '$' + amount.toFixed(2), notes: String(d.notes || '').slice(0, 1000),
       lang: d.lang === 'es' ? 'es' : 'en', orderNumber, country,
       // Por dónde llegó + desde qué país navega (lo dice Vercel, no el cliente) + celular/compu.
       // Compacto a propósito: todo esto viaja a Tilopay y vuelve en returnData.
@@ -167,7 +169,8 @@ export default async function handler(req, res) {
     };
     // Anotar el "Intento de pago" en la hoja MIENTRAS se crea el cobro (en paralelo,
     // para no demorar al cliente). Si luego paga, la misma fila pasa a "Pagado".
-    const intento = logAttempt(booking).catch(() => {});
+    // Número de respaldo (TVCR-...) = la hoja no respondió: no insistir con ella y demorar al cliente.
+    const intento = orderNumber.startsWith('TCR-') ? logAttempt(booking).catch(() => {}) : Promise.resolve();
     const returnData = Buffer.from(JSON.stringify(booking), 'utf8').toString('base64');
 
     // ---- 2) processPayment -> URL de pago ----

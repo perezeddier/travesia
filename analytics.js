@@ -75,7 +75,7 @@
       initAnalytics();
     });
     decline.addEventListener('click', function () {
-      try { localStorage.setItem(CONSENT_KEY, 'declined'); } catch (e) {}
+      try { localStorage.setItem(CONSENT_KEY, 'declined'); localStorage.removeItem('travesia-origen'); } catch (e) {}
       remove();
     });
 
@@ -97,22 +97,29 @@
       [/copilot/, 'Copilot'], [/claude\.ai|anthropic/, 'Claude'], [/tripadvisor/, 'TripAdvisor'],
       [/facebook|fb\.com|fb\.me|^fb$/, 'Facebook'], [/instagram|^ig$/, 'Instagram'], [/tiktok/, 'TikTok'],
       [/whatsapp|wa\.me/, 'WhatsApp'], [/youtube|youtu\.be/, 'YouTube'], [/pinterest|pin\.it/, 'Pinterest'],
-      [/reddit/, 'Reddit'], [/gmail|mail\.|outlook/, 'Correo'], [/gbp|google.?business|maps\.google|google\.[a-z.]+\/maps/, 'Google Maps / Ficha'],
+      [/reddit/, 'Reddit'], [/gmail|mail\.|outlook|android\.gm/, 'Correo'], [/gbp|google.?business|maps\.google|google\.[a-z.]+\/maps/, 'Google Maps / Ficha'],
       [/google|^goo\.gl/, 'Google'], [/bing/, 'Bing'], [/duckduckgo/, 'DuckDuckGo'], [/yahoo/, 'Yahoo'],
-      [/apple|maps\.apple/, 'Apple Maps'], [/trip\.com/, 'Trip.com'],
+      [/maps\.apple/, 'Apple Maps'], [/trip\.com/, 'Trip.com'],
     ];
     for (var i = 0; i < reglas.length; i++) if (reglas[i][0].test(s)) return reglas[i][1];
     return s.replace(/^www\./, '');
   }
   (function guardarOrigen() {
     try {
+      // Si rechazó la analítica, respetarlo: no se guarda nada (y se borra lo que hubiera).
+      if (localStorage.getItem(CONSENT_KEY) === 'declined') { localStorage.removeItem(ORIGEN_KEY); return; }
       var qs = new URLSearchParams(location.search);
       var ref = '';
       try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
-      if (ref === location.hostname || /travesiacr\.online$|travesia-phi\.vercel\.app$/.test(ref)) ref = '';   // navegación interna
+      // Navegación interna, y la vuelta desde la página de pago (Tilopay) tampoco es un canal
+      if (ref === location.hostname || /travesiacr\.online$|travesia-phi\.vercel\.app$|tilopay\.com$/.test(ref)) ref = '';
       var utm = qs.get('utm_source') || '';
       var ua = navigator.userAgent || '';
-      var app = /FBAN|FBAV|FB_IAB|FBIOS/.test(ua) ? 'facebook' : /Instagram/.test(ua) ? 'instagram'
+      // Dentro de la app de Facebook/Instagram/TikTok TODAS las páginas se ven "desde la app":
+      // solo cuenta la primera página de la visita, si no cada clic sería una visita nueva.
+      var nuevaSesion = true;
+      try { nuevaSesion = !sessionStorage.getItem('travesia-sesion'); sessionStorage.setItem('travesia-sesion', '1'); } catch (e) {}
+      var app = !nuevaSesion ? '' : /FBAN|FBAV|FB_IAB|FBIOS/.test(ua) ? 'facebook' : /Instagram/.test(ua) ? 'instagram'
         : /musical_ly|BytedanceWebview|TikTok/.test(ua) ? 'tiktok' : '';
       var canal = (qs.get('gclid') ? 'Google (anuncio)' : '') || canalDe(utm) || canalDe(ref) || canalDe(app);
       var toque = {

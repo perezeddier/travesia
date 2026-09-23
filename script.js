@@ -1312,6 +1312,11 @@ function fillLeg1() {
   const it = CART[0];
   if (!f || !it) return;
   const multi = CART.length > 1;
+  /* Si el servicio 1 ahora es OTRA ruta (el cliente borró o cambió el primero),
+     la fecha, hora y vuelo que había escrito eran de la ruta anterior: se limpian. */
+  const ruta1 = it.i + "-" + it.j;
+  if (f.dataset.ruta1 && f.dataset.ruta1 !== ruta1) { f.date.value = ""; f.time.value = ""; f.flight.value = ""; }
+  f.dataset.ruta1 = ruta1;
   document.getElementById("coLeg1")?.classList.toggle("co-legbox", multi);
   const title = document.getElementById("coLeg1Title");
   if (title) { title.hidden = !multi; title.innerHTML = multi ? legTitleHtml(it, 0) : ""; }

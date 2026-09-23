@@ -93,7 +93,8 @@ function shell(bodyHtml, preheader) {
    - En orden de FECHA y hora, no en el orden en que se metieron al carrito:
      el chofer y el cliente leen el viaje como va a pasar. */
 function bookingLegs(d) {
-  const raw = Array.isArray(d.legs) && d.legs.length ? d.legs : [{
+  const validos = Array.isArray(d.legs) ? d.legs.filter(l => l && typeof l === 'object') : [];
+  const raw = validos.length ? validos : [{
     from: (d.summary || '').split(/\s*(?:→|->)\s*/)[0] || d.summary || '',
     to: (d.summary || '').split(/\s*(?:→|->)\s*/)[1] || '',
     vname: '', vip: /vip/i.test(d.tier || ''), price: (d.total || '').replace(/[^0-9.]/g, ''),
@@ -433,11 +434,7 @@ async function logToSheet(d, paid, estado) {
     [l.vname, l.vip ? 'VIP' : ''].filter(Boolean).join(' '),
     l.price ? '$' + l.price : '',
   ].filter(Boolean).join(' · ')).join('\n') : (d.itinerary || '');
-  try {
-    await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
+  const cuerpo = JSON.stringify({
         estado: paid ? 'Pagado' : (estado || 'Solicitud'),
         nombre: sheetText(d.name), email: sheetText(d.email), telefono: sheetText(d.phone),
         ruta: sheetText(d.summary), fecha: sheetText(first.date), hora: sheetText(first.time), pax: sheetText(d.pax),
@@ -449,9 +446,16 @@ async function logToSheet(d, paid, estado) {
         pais: sheetText([d.paisVisita ? 'Visita desde ' + clip(d.paisVisita, 8) : '', d.country ? 'tarjeta ' + clip(d.country, 8) : ''].filter(Boolean).join(' · ')),
         idioma: d.lang === 'es' ? 'Español' : 'Inglés', dispositivo: sheetText(clip(d.dispositivo, 20)),
         datos: datosPanel(d),
-      }),
-    });
-  } catch (e) { /* la hoja es un extra: si falla, no afecta correo ni pago */ }
+      });
+  // La hoja responde {ok:false} si, por ejemplo, estaba ocupada: se revisa la
+  // respuesta y se reintenta UNA vez. Nunca rompe correo ni pago.
+  for (let vez = 0; vez < 2; vez++) {
+    try {
+      const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: cuerpo });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j && j.ok !== false) return;
+    } catch (e) { /* reintentar */ }
+  }
 }
 
 // Reenvía SOLO el tiquete a Eddie (sin correo al cliente y sin tocar la hoja).
@@ -463,12 +467,27 @@ export async function sendOwnerTicket(d, paid) {
 }
 
 // Envía los 2 correos (cliente + Eddie) y guarda en la hoja. paid=true = pago confirmado.
+// Los 3 pasos son INDEPENDIENTES: antes iban en fila y si el correo del cliente
+// fallaba (ej. escribió "john@gmail"), Eddie no recibía nada y la hoja quedaba en
+// "Intento de pago" aunque el cobro ya se había hecho. Ahora la hoja va primero
+// y un correo que falle no tumba a los otros. Solo se avisa error (throw) si el
+// correo a EDDIE falló, que es el que no se puede perder.
 export async function sendReservation(d, paid) {
   if (!process.env.BREVO_API_KEY) throw new Error('no-brevo-key');
   const lang = d.lang === 'es' ? 'es' : 'en';
-  const c = clientEmail(d, lang, !!paid);
-  await sendEmail(d.email, c.subject, c.html, OWNER);
-  const o = ownerEmail(d, !!paid);
-  await sendEmail(OWNER, o.subject, o.html, d.email);
   await logToSheet(d, !!paid);
+  const c = clientEmail(d, lang, !!paid);
+  const o = ownerEmail(d, !!paid);
+  const [aCliente, aEddie] = await Promise.allSettled([
+    sendEmail(d.email, c.subject, c.html, OWNER),
+    sendEmail(OWNER, o.subject, o.html, d.email),
+  ]);
+  if (aEddie.status === 'rejected') throw aEddie.reason;
+  if (aCliente.status === 'rejected') {
+    // Eddie ya tiene el tiquete; se le avisa aparte que el cliente NO recibió su correo
+    try {
+      await sendEmail(OWNER, `Ojo: el cliente ${clip(d.name, 60)} no recibió su correo de confirmación`,
+        shell(`<p style="font-size:15px;line-height:1.6">No se pudo enviar el correo de confirmación a <b>${esc(d.email)}</b> (reserva ${esc(d.orderNumber || '')}). Puede que el correo esté mal escrito. Escríbale por WhatsApp: ${esc(d.phone || '')}.</p>`, 'Correo al cliente falló'));
+    } catch (e) { /* ya recibió el tiquete normal */ }
+  }
 }
