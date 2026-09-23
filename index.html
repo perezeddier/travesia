@@ -1136,9 +1136,21 @@
             </label>
           </div>
         </div>
+        <!-- Cuando/donde de cada servicio. El 1ro usa estos campos con name=;
+             del 2do en adelante los pinta renderCheckoutSummary() en #coLegsMore,
+             justo debajo y con el mismo formato, para que se llenen EN ORDEN. -->
+        <div class="co-leg" id="coLeg1">
+          <p class="co-legbox-title" id="coLeg1Title" hidden></p>
+          <div class="co-grid">
+            <label class="co-field"><span data-i18n="co.date">Travel date</span><input type="date" name="date" required></label>
+            <label class="co-field"><span data-i18n="co.time">Pickup time</span><input type="time" name="time" required></label>
+          </div>
+          <label class="co-field"><span data-i18n="co.pickup">Pickup — hotel or address</span><input type="text" name="pickup" required></label>
+          <label class="co-field"><span data-i18n="co.dropoff">Drop-off — hotel or address (optional)</span><input type="text" name="dropoff"></label>
+          <label class="co-field"><span data-i18n="co.flight">Flight number (optional)</span><input type="text" name="flight" placeholder="e.g. AA1234"></label>
+        </div>
+        <div class="co-legs-more" id="coLegsMore"></div>
         <div class="co-grid">
-          <label class="co-field"><span data-i18n="co.date">Travel date</span><input type="date" name="date" required></label>
-          <label class="co-field"><span data-i18n="co.time">Pickup time</span><input type="time" name="time" required></label>
           <label class="co-field"><span data-i18n="co.adults">Adults</span><input type="number" name="adults" min="1" value="2" required></label>
           <label class="co-field"><span data-i18n="co.children">Children</span><input type="number" name="children" min="0" value="0"></label>
         </div>
@@ -1150,9 +1162,6 @@
             <label class="co-field"><span data-i18n="co.seatBooster">Booster (4–12 yr)</span><select name="seatBooster"><option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>
           </div>
         </div>
-        <label class="co-field"><span data-i18n="co.pickup">Pickup — hotel or address</span><input type="text" name="pickup" required></label>
-        <label class="co-field"><span data-i18n="co.dropoff">Drop-off — hotel or address (optional)</span><input type="text" name="dropoff"></label>
-        <label class="co-field"><span data-i18n="co.flight">Flight number (optional)</span><input type="text" name="flight" placeholder="e.g. AA1234"></label>
         <button type="button" class="btn btn-primary btn-lg" id="coNext" data-i18n="co.next">Continue →</button>
         </div>
         <div class="co-step" data-costep="2">

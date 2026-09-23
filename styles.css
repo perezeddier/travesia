@@ -445,6 +445,14 @@ body.no-scroll { overflow: hidden; }
 .co-sum-legfields .co-grid { gap: 10px; }
 .co-sum-legfields .co-field input { padding: 9px 11px; font-size: .88rem; }
 .co-sum-legtitle { font-size: .8rem; font-weight: 700; color: var(--gold-2); margin: 0; }
+.co-sum-num { color: var(--gold-2); font-weight: 700; }
+/* Un bloque por servicio (fecha, hora, recogida, destino, vuelo), en orden */
+.co-leg, .co-legs-more { display: flex; flex-direction: column; gap: 14px; }
+.co-legs-more:empty { display: none; }
+.co-leg.co-legbox { gap: 10px; padding: 12px 14px 14px; background: var(--bg); border: 1px solid var(--line); border-radius: 10px; }
+.co-legbox .co-grid { gap: 10px; }
+.co-legbox-title { font-size: .84rem; font-weight: 700; color: var(--gold-2); margin: 0; line-height: 1.35; }
+.co-legbox-title small { display: block; color: var(--muted); font-weight: 500; font-size: .8rem; margin-top: 2px; }
 
 .co-form { display: flex; flex-direction: column; gap: 14px; }
 .co-step { display: none; }

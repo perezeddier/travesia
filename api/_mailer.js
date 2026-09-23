@@ -54,18 +54,6 @@ function routeCard(label, route) {
   </div>`;
 }
 
-// Cronograma multi-tramo (2+ servicios, cada uno con su fecha/hora/recogida propia)
-function itineraryBlock(label, text) {
-  if (!text) return '';
-  const rows = String(text).split('\n').filter(Boolean).map(line =>
-    `<div style="padding:9px 0;border-bottom:1px solid #eef1f5;color:#1a1d23;font-size:13.5px;line-height:1.5">${esc(line)}</div>`
-  ).join('');
-  return `<div style="margin:0 0 18px">
-    <div style="font-size:11px;color:#98a1af;text-transform:uppercase;letter-spacing:.6px;font-weight:600;margin-bottom:4px">${esc(label)}</div>
-    ${rows}
-  </div>`;
-}
-
 function waBtn(phone, text, msg) {
   const num = String(phone || '').replace(/[^0-9]/g, '');
   if (!num) return '';
@@ -99,6 +87,60 @@ function shell(bodyHtml, preheader) {
   </div></body></html>`;
 }
 
+/* ---- Tramos de la reserva, listos para mostrar ----
+   - Cada tramo con SU vuelo (ida y regreso son vuelos distintos). Las reservas
+     hechas antes de este cambio no traen vuelo por tramo: ahí se usa el general.
+   - En orden de FECHA y hora, no en el orden en que se metieron al carrito:
+     el chofer y el cliente leen el viaje como va a pasar. */
+function bookingLegs(d) {
+  const raw = Array.isArray(d.legs) && d.legs.length ? d.legs : [{
+    from: (d.summary || '').split(/\s*(?:→|->)\s*/)[0] || d.summary || '',
+    to: (d.summary || '').split(/\s*(?:→|->)\s*/)[1] || '',
+    vname: '', vip: /vip/i.test(d.tier || ''), price: (d.total || '').replace(/[^0-9.]/g, ''),
+    date: d.date, time: d.time, pickup: d.pickup, dropoff: d.dropoff, flight: d.flight,
+  }];
+  const perLeg = raw.some(l => l && l.flight !== undefined);
+  const when = l => /^\d{4}-\d{2}-\d{2}$/.test(String(l.date || '')) ? `${l.date} ${l.time || ''}` : '9999';
+  return raw
+    .map((l, i) => ({ l: { ...l, flight: perLeg ? (l.flight || '') : (d.flight || '') }, i }))
+    .sort((a, b) => (when(a.l) < when(b.l) ? -1 : when(a.l) > when(b.l) ? 1 : a.i - b.i))
+    .map(x => x.l);
+}
+function isAirportLeg(leg) { return /aeropuerto|airport/i.test(`${leg.from} ${leg.to}`); }
+
+const DIAS_ES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const DAYS_EN = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const MONTHS_EN = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+// "sábado 19 de diciembre de 2026" / "Saturday, December 19, 2026" — con el día
+// de la semana, que es lo primero que confirma un cliente ("¿el sábado, verdad?").
+function fmtFechaLarga(iso, lang) {
+  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return iso || '';
+  const dow = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).getUTCDay();
+  return lang === 'en'
+    ? `${DAYS_EN[dow]}, ${MONTHS_EN[+m[2] - 1]} ${+m[3]}, ${m[1]}`
+    : `${DIAS_ES[dow]} ${+m[3]} de ${MESES_ES[+m[2] - 1]} de ${m[1]}`;
+}
+
+// Un bloque por servicio en el correo del cliente: todo lo de ESE traslado junto.
+function clientLegBlock(leg, n, total, en, paid) {
+  const rows = [
+    irow(en ? 'Date' : 'Fecha', fmtFechaLarga(leg.date, en ? 'en' : 'es')),
+    irow(en ? 'Pickup time' : 'Hora de recogida', fmtHora(leg.time)),
+    // si repite el título (ej. "SJO" → "SJO") sobra; se muestra solo si agrega algo
+    irow(en ? 'Pickup' : 'Recogida', leg.pickup !== leg.from ? leg.pickup : ''),
+    irow(en ? 'Drop-off' : 'Destino', leg.dropoff !== leg.to ? leg.dropoff : ''),
+    irow(en ? 'Flight' : 'Vuelo', leg.flight),
+    irow(en ? 'Vehicle' : 'Vehículo', [leg.vname, leg.vip ? 'Travesía VIP' : ''].filter(Boolean).join(' · ')),
+    leg.price ? irow(paid ? (en ? 'Paid' : 'Pagado') : (en ? 'Price' : 'Precio'), '$' + leg.price) : '',
+  ].join('');
+  return `<div style="border:1px solid #e6e9ee;border-radius:12px;padding:12px 16px 4px;margin:0 0 14px">
+    <div style="font-size:11px;color:#b06a1a;text-transform:uppercase;letter-spacing:1px;font-weight:700">${en ? 'Service' : 'Servicio'} ${n} ${en ? 'of' : 'de'} ${total}</div>
+    <div style="font-size:16px;font-weight:800;color:#1a1d23;line-height:1.3;margin:4px 0 2px">${esc(leg.from)} &rarr; ${esc(leg.to)}</div>
+    <table style="width:100%;border-collapse:collapse">${rows}</table>
+  </div>`;
+}
+
 // paid=true → correo de "pago recibido"; paid=false → "solicitud recibida"
 function clientEmail(d, lang, paid) {
   const en = lang !== 'es';
@@ -119,22 +161,28 @@ function clientEmail(d, lang, paid) {
     L: { date: 'Fecha', time: 'Hora', pax: 'Pasajeros', pickup: 'Recogida', dropoff: 'Destino', flight: 'Vuelo', service: 'Servicio', price: paid ? 'Pagado' : 'Precio' },
     note: paid ? 'Monitoreamos tu vuelo y estaremos a tiempo. ¿Algún cambio? Escríbenos por WhatsApp.' : 'Esta es una solicitud, no una confirmación final. Te contactaremos en breve para confirmar tu viaje.'
   };
+  // 2+ servicios: un bloque por servicio, en orden de fecha, con TODO lo de ese
+  // traslado junto (antes era una lista de texto con fechas 2026-12-19 crudas).
+  const legs = bookingLegs(d);
+  const multi = legs.length > 1;
+  const tripHtml = multi
+    ? legs.map((leg, i) => clientLegBlock(leg, i + 1, legs.length, en, paid)).join('')
+    : routeCard(t.route, d.summary);
   const body = `
     <div style="display:inline-block;background:#e8f9ef;color:#0f9d58;font-size:12px;font-weight:700;padding:5px 12px;border-radius:999px;margin-bottom:14px">${t.badge}</div>
     <h1 style="font-size:21px;margin:0 0 8px;color:#1a1d23">${t.hi}</h1>
     <p style="color:#4b5563;font-size:14px;line-height:1.6;margin:0 0 18px">${t.intro}</p>
-    ${routeCard(t.route, d.summary)}
-    ${itineraryBlock(en ? 'Itinerary' : 'Itinerario', d.itinerary)}
+    ${tripHtml}
     <table style="width:100%;border-collapse:collapse;margin:0 0 18px">
-      ${d.itinerary ? '' : irow(t.L.date, d.date)}
-      ${d.itinerary ? '' : irow(t.L.time, d.time)}
+      ${multi ? '' : irow(t.L.date, fmtFechaLarga(d.date, lang))}
+      ${multi ? '' : irow(t.L.time, fmtHora(d.time))}
       ${irow(t.L.pax, d.pax)}
       ${irow(en ? 'Child seats' : 'Sillas de niño', d.seats)}
-      ${d.itinerary ? '' : irow(t.L.pickup, d.pickup)}
-      ${d.itinerary ? '' : irow(t.L.dropoff, d.dropoff)}
-      ${irow(t.L.flight, d.flight)}
-      ${irow(t.L.service, d.tier)}
-      ${irow(t.L.price, d.total)}
+      ${multi ? '' : irow(t.L.pickup, d.pickup)}
+      ${multi ? '' : irow(t.L.dropoff, d.dropoff)}
+      ${multi ? '' : irow(t.L.flight, d.flight)}
+      ${multi ? '' : irow(t.L.service, d.tier)}
+      ${irow(multi ? (paid ? (en ? 'Total paid' : 'Total pagado') : 'Total') : t.L.price, d.total)}
     </table>
     ${waBtn(WA, t.wa, en
       ? `Hi Travesía, I'm ${d.name || ''}. About my booking: ${d.summary || ''}${d.date ? ' on ' + d.date : ''}.`
@@ -155,11 +203,6 @@ function trow(label, value) {
 }
 
 const MESES_ES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-function fmtFecha(iso) {
-  const m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
-  if (!m) return iso || '';
-  return `${+m[3]} de ${MESES_ES[+m[2] - 1]} de ${m[1]}`;
-}
 function fmtHora(hhmm) {
   const m = String(hhmm || '').match(/^(\d{1,2}):(\d{2})/);
   if (!m) return hhmm || '';
@@ -187,23 +230,23 @@ function legCard(leg, idx, totalLegs, order, d) {
     <table role="presentation" width="100%" style="border-collapse:collapse;margin:14px 0 4px"><tr>
       <td style="width:42%;text-align:left;padding-left:22px;vertical-align:top">
         <div style="color:#ffffff;font-size:16px;font-weight:800;line-height:1.25">${esc(leg.from || '')}</div>
-        ${leg.pickup ? `<div style="color:#9a8f80;font-size:11px;margin-top:3px">${esc(leg.pickup)}</div>` : ''}
       </td>
       <td style="width:16%;text-align:center;vertical-align:middle">
         <div style="color:#a3651f;font-size:16px;letter-spacing:2px">&#9679;&mdash;&mdash;&#9679;</div>
       </td>
       <td style="width:42%;text-align:right;padding-right:22px;vertical-align:top">
         <div style="color:#ffffff;font-size:16px;font-weight:800;line-height:1.25">${esc(leg.to || '')}</div>
-        ${leg.dropoff ? `<div style="color:#9a8f80;font-size:11px;margin-top:3px">${esc(leg.dropoff)}</div>` : ''}
       </td>
     </tr></table>
     <div style="padding:8px 22px 6px">
       <table role="presentation" width="100%" style="border-collapse:collapse">
         ${trow('Servicio', leg.vip ? 'Travesía VIP' : 'Travesía Standard')}
         ${trow('Cliente', d.name)}
-        ${trow('Fecha', fmtFecha(leg.date))}
+        ${trow('Fecha', fmtFechaLarga(leg.date, 'es'))}
         ${trow('Hora de recogida', fmtHora(leg.time))}
-        ${/aeropuerto|airport/i.test(`${leg.from} ${leg.to}`) ? trow('Vuelo', d.flight || 'NA') : ''}
+        ${trow('Recoger en', leg.pickup !== leg.from ? leg.pickup : '')}
+        ${trow('Dejar en', leg.dropoff !== leg.to ? leg.dropoff : '')}
+        ${(isAirportLeg(leg) || leg.flight) ? trow('Vuelo', leg.flight || 'NA') : ''}
         ${trow('Vehículo', leg.vname)}
         ${trow('Pasajeros', d.pax)}
         ${trow('Sillas de niño', d.seats)}
@@ -232,14 +275,9 @@ function ownerEmail(d, paid) {
     orderNumber: d.orderNumber,
   };
 
-  // d.legs = datos estructurados por tramo (precio verificado en el servidor cuando hay pago).
-  // Si por alguna razon no vienen (reserva vieja antes de este cambio), arma 1 sola tarjeta con lo que haya.
-  const legsData = Array.isArray(d.legs) && d.legs.length ? d.legs : [{
-    from: (d.summary || '').split(/\s*(?:→|->)\s*/)[0] || d.summary || '',
-    to: (d.summary || '').split(/\s*(?:→|->)\s*/)[1] || '',
-    vname: '', vip: /vip/i.test(d.tier || ''), price: (d.total || '').replace(/[^0-9.]/g, ''),
-    date: d.date, time: d.time, pickup: d.pickup, dropoff: d.dropoff,
-  }];
+  // d.legs = datos estructurados por tramo (precio verificado en el servidor cuando hay pago),
+  // en orden de fecha y cada uno con su vuelo. Reserva vieja sin legs: 1 sola tarjeta. Ver bookingLegs().
+  const legsData = bookingLegs(d);
 
   const cardsHtml = legsData.map((leg, idx) => legCard(leg, idx, legsData.length, order, d)).join('');
 
@@ -334,6 +372,20 @@ function sheetText(v) {
 async function logToSheet(d, paid) {
   const url = process.env.SHEETS_WEBHOOK_URL;
   if (!url) return;
+  // Varios servicios: las columnas fecha/hora/recogida/destino/vuelo llevan el
+  // PRIMERO en el tiempo, y "itinerario" todos, en orden y legibles.
+  const legs = bookingLegs(d);
+  const multi = legs.length > 1;
+  const first = multi ? legs[0] : { date: d.date, time: d.time, pickup: d.pickup, dropoff: d.dropoff, flight: d.flight };
+  const itinerario = multi ? legs.map((l, i) => [
+    `${i + 1}) ${fmtFechaLarga(l.date, 'es')} ${fmtHora(l.time)}`,
+    `${l.from} -> ${l.to}`,
+    l.pickup ? 'Recoger: ' + l.pickup : '',
+    l.dropoff ? 'Dejar: ' + l.dropoff : '',
+    l.flight ? 'Vuelo: ' + l.flight : '',
+    [l.vname, l.vip ? 'VIP' : ''].filter(Boolean).join(' '),
+    l.price ? '$' + l.price : '',
+  ].filter(Boolean).join(' · ')).join('\n') : (d.itinerary || '');
   try {
     await fetch(url, {
       method: 'POST',
@@ -341,8 +393,8 @@ async function logToSheet(d, paid) {
       body: JSON.stringify({
         estado: paid ? 'Pagado' : 'Solicitud',
         nombre: sheetText(d.name), email: sheetText(d.email), telefono: sheetText(d.phone),
-        ruta: sheetText(d.summary), fecha: sheetText(d.date), hora: sheetText(d.time), pax: sheetText(d.pax),
-        recogida: sheetText(d.pickup), destino: sheetText(d.dropoff), itinerario: sheetText(d.itinerary), vuelo: sheetText(d.flight), servicio: sheetText(d.tier),
+        ruta: sheetText(d.summary), fecha: sheetText(first.date), hora: sheetText(first.time), pax: sheetText(d.pax),
+        recogida: sheetText(first.pickup), destino: sheetText(first.dropoff), itinerario: sheetText(itinerario), vuelo: sheetText(first.flight), servicio: sheetText(d.tier),
         total: sheetText(d.total), orden: sheetText(d.orderNumber),
         notas: sheetText((d.seats ? 'Sillas: ' + d.seats + ' · ' : '') + (d.notes || '')),
       }),

@@ -108,6 +108,7 @@ export default async function handler(req, res) {
         price: p + (isVip ? 80 : 0) + (isX4 ? X4_FEE : 0),   // precio del tramo verificado en el servidor, no el que mando el cliente
         date: String(cl.date || '').slice(0, 20), time: String(cl.time || '').slice(0, 20),
         pickup: String(cl.pickup || '').slice(0, 120), dropoff: String(cl.dropoff || '').slice(0, 120),
+        flight: String(cl.flight || '').slice(0, 60),   // vuelo propio del tramo (ida y regreso son distintos)
       });
     }
     if (!(amount > 0)) { res.status(400).json({ ok: false, error: 'bad-amount' }); return; }

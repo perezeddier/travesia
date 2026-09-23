@@ -329,7 +329,11 @@ const I18N = {
     "co.pickup": "Pickup — hotel or address",
     "co.dropoff": "Drop-off — hotel or address (optional)",
     "co.legDetails": "When and where for trip {n}?",
-    "co.legMissing": "Please fill in the date, time and pickup for each additional trip.",
+    "co.legMissing": "Please complete the date, time and pickup of every service (and the flight number on airport transfers).",
+    "co.legTitle": "Service {n} of {total}",
+    "co.flightArr": "Arriving flight number",
+    "co.flightDep": "Departing flight number",
+    "co.spotPh": "Hotel or address in {place}",
     "co.dropoff": "Drop-off — hotel or address",
     "co.flight": "Flight number (optional)",
     "co.flightReq": "Flight number — required for airport transfers",
@@ -659,7 +663,11 @@ const I18N = {
     "co.pickup": "Recogida — hotel o dirección",
     "co.dropoff": "Destino — hotel o dirección (opcional)",
     "co.legDetails": "¿Cuándo y dónde para el servicio {n}?",
-    "co.legMissing": "Por favor completa la fecha, hora y recogida de cada servicio adicional.",
+    "co.legMissing": "Por favor completa la fecha, hora y recogida de cada servicio (y el número de vuelo en los traslados de aeropuerto).",
+    "co.legTitle": "Servicio {n} de {total}",
+    "co.flightArr": "Número de vuelo de llegada",
+    "co.flightDep": "Número de vuelo de salida",
+    "co.spotPh": "Hotel o dirección en {place}",
     "co.dropoff": "Destino — hotel o dirección",
     "co.flight": "Número de vuelo (opcional)",
     "co.flightReq": "Número de vuelo — obligatorio para traslados de aeropuerto",
@@ -1267,28 +1275,117 @@ function checkoutHasExperience() {
 function checkoutTotal() {
   return cartTotal();
 }
+/* ---- Datos de cada servicio en el checkout ----
+   Antes los campos del servicio 2 salían ARRIBA (en el resumen) y los del
+   servicio 1 ABAJO sin decir que eran del 1: un cliente con 2 servicios los
+   llenó al revés y el tiquete llegó con fechas y lugares cruzados
+   (reserva Alschuler, set 2026). Ahora cada servicio tiene su bloque
+   numerado, con su ruta, uno debajo del otro y en orden. */
+function coEsc(s) {
+  return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+function isAirportIdx(i) { return +i === 0 || +i === 1; }   // 0 = SJO, 1 = LIR en PT_PLACES
+function legTouchesAirport(it) { return !!it && (isAirportIdx(it.i) || isAirportIdx(it.j)); }
+/* Si el cliente eligió un aeropuerto o un HOTEL concreto ya sabemos el lugar
+   exacto y lo dejamos escrito; si eligió solo el pueblo, lo tiene que escribir él. */
+function legSpot(label, placeIdx) {
+  return (isAirportIdx(placeIdx) || label !== ptName(placeIdx)) ? label : "";
+}
+function legSpotPh(placeIdx) {
+  return isAirportIdx(placeIdx) ? ptName(placeIdx) : t("co.spotPh").replace("{place}", ptName(placeIdx));
+}
+function legTitleHtml(it, idx) {
+  return `${t("co.legTitle").replace("{n}", idx + 1).replace("{total}", CART.length)}<small>${coEsc(it.from)} → ${coEsc(it.to)}</small>`;
+}
+function legFlightKey(it) {
+  return isAirportIdx(it.i) ? "co.flightArr" : isAirportIdx(it.j) ? "co.flightDep" : "co.flight";
+}
+/* Rellena sin pisar lo que el cliente escribió: solo si está vacío o si todavía
+   tiene lo que pusimos nosotros la vez anterior (el carrito pudo cambiar). */
+function coAutofill(el, v) {
+  if (!el) return;
+  if (!el.value || el.value === el.dataset.auto) el.value = v;
+  el.dataset.auto = v;
+}
+function fillLeg1() {
+  const f = document.getElementById("coForm");
+  const it = CART[0];
+  if (!f || !it) return;
+  const multi = CART.length > 1;
+  document.getElementById("coLeg1")?.classList.toggle("co-legbox", multi);
+  const title = document.getElementById("coLeg1Title");
+  if (title) { title.hidden = !multi; title.innerHTML = multi ? legTitleHtml(it, 0) : ""; }
+  coAutofill(f.pickup, legSpot(it.from, it.i));
+  coAutofill(f.dropoff, legSpot(it.to, it.j));
+  f.pickup.placeholder = legSpotPh(it.i);
+  f.dropoff.placeholder = legSpotPh(it.j);
+}
+function legBlockHtml(it, idx) {
+  const air = legTouchesAirport(it);
+  return `
+    <div class="co-leg co-legbox">
+      <p class="co-legbox-title">${legTitleHtml(it, idx)}</p>
+      <div class="co-grid">
+        <label class="co-field"><span>${t("co.date")}</span><input type="date" data-legfield="date" data-leg="${idx}" value="${coEsc(it.date)}" required></label>
+        <label class="co-field"><span>${t("co.time")}</span><input type="time" data-legfield="time" data-leg="${idx}" value="${coEsc(it.time)}" required></label>
+      </div>
+      <label class="co-field"><span>${t("co.pickup")}</span><input type="text" data-legfield="pickup" data-leg="${idx}" value="${coEsc(it.pickup)}" placeholder="${coEsc(legSpotPh(it.i))}" required></label>
+      <label class="co-field"><span>${t("co.dropoff")}</span><input type="text" data-legfield="dropoff" data-leg="${idx}" value="${coEsc(it.dropoff)}" placeholder="${coEsc(legSpotPh(it.j))}"></label>
+      ${air ? `<label class="co-field"><span>${t(legFlightKey(it))}</span><input type="text" data-legfield="flight" data-leg="${idx}" value="${coEsc(it.flight)}" placeholder="e.g. AA1234" required></label>` : ""}
+    </div>`;
+}
 function renderCheckoutSummary() {
   const box = document.getElementById("coSummary");
   if (!box) return;
+  const multi = CART.length > 1;
   box.innerHTML = `
     <div class="co-sum-head"><span>${t("co.trip")}</span><strong>$${cartTotal()}</strong></div>
     ${CART.map((it, idx) => `
       <div class="co-sum-leg">
-        <div class="co-sum-row"><span>${it.from} → ${it.to} · ${it.vname}${it.x4 ? ` · ${t("cart.x4")} +$${X4_FEE}` : ""}</span><span>$${it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0)}</span></div>
+        <div class="co-sum-row"><span>${multi ? `<b class="co-sum-num">${idx + 1}.</b> ` : ""}${coEsc(it.from)} → ${coEsc(it.to)} · ${coEsc(it.vname)}${it.x4 ? ` · ${t("cart.x4")} +$${X4_FEE}` : ""}</span><span>$${it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0)}</span></div>
         <label class="co-sum-vip"><input type="checkbox" data-vip="${idx}" ${it.vip ? "checked" : ""}> <span>${t("co.vipAdd")} <b>+$80</b></span></label>
-        ${idx === 0 ? "" : `
-        <div class="co-sum-legfields">
-          <p class="co-sum-legtitle">${t("co.legDetails").replace("{n}", idx + 1)}</p>
-          <div class="co-grid">
-            <label class="co-field"><span>${t("co.date")}</span><input type="date" data-legfield="date" data-leg="${idx}" value="${it.date || ""}" required></label>
-            <label class="co-field"><span>${t("co.time")}</span><input type="time" data-legfield="time" data-leg="${idx}" value="${it.time || ""}" required></label>
-          </div>
-          <label class="co-field"><span>${t("co.pickup")}</span><input type="text" data-legfield="pickup" data-leg="${idx}" value="${it.pickup || ""}" required></label>
-          <label class="co-field"><span>${t("co.dropoff")}</span><input type="text" data-legfield="dropoff" data-leg="${idx}" value="${it.dropoff || ""}"></label>
-        </div>`}
       </div>`).join("")}`;
+  /* Servicio 1 = campos fijos del formulario; del 2 en adelante, un bloque
+     igual justo debajo. Lugar exacto ya escrito cuando lo sabemos. */
+  let filled = false;
+  CART.forEach((it, idx) => {
+    if (idx === 0) return;
+    if (!it.pickup) { it.pickup = legSpot(it.from, it.i); filled = filled || !!it.pickup; }
+    if (!it.dropoff) { it.dropoff = legSpot(it.to, it.j); filled = filled || !!it.dropoff; }
+  });
+  if (filled) saveCart();
+  const more = document.getElementById("coLegsMore");
+  if (more) more.innerHTML = CART.slice(1).map((it, k) => legBlockHtml(it, k + 1)).join("");
+  fillLeg1();
+  setFlightRequirement();
   /* los tramos 2+ se acaban de repintar: hay que volver a ponerles el minimo */
   if (typeof aplicarMinFecha === "function") aplicarMinFecha();
+}
+
+/* Si el servicio 2 quedó con fecha ANTERIOR al 1 (lo que pasa cuando se
+   llenan cruzados), preguntamos antes de seguir. Puede ser intencional,
+   por eso es una pregunta y no un bloqueo. Devuelve false si quiere corregir. */
+function coLegWhen(idx) {
+  const f = document.getElementById("coForm");
+  return idx === 0 ? { date: f.date.value, time: f.time.value } : { date: CART[idx].date, time: CART[idx].time };
+}
+function checkLegOrder() {
+  if (typeof brToMs !== "function") return true;
+  for (let k = 1; k < CART.length; k++) {
+    const a = coLegWhen(k - 1), b = coLegWhen(k);
+    const ma = brToMs(a.date, a.time), mb = brToMs(b.date, b.time);
+    if (isNaN(ma) || isNaN(mb) || mb >= ma) continue;
+    const es = currentLang === "es";
+    const prev = `${CART[k - 1].from} → ${CART[k - 1].to}`, cur = `${CART[k].from} → ${CART[k].to}`;
+    const msg = es
+      ? `Revise las fechas, por favor:\n\nServicio ${k + 1} (${cur}): ${b.date} ${b.time}\nes ANTES que el\nServicio ${k} (${prev}): ${a.date} ${a.time}\n\nCada servicio tiene sus propios campos de fecha, hora y lugares.\n\nAceptar = está bien así · Cancelar = lo corrijo`
+      : `Please check your dates:\n\nService ${k + 1} (${cur}): ${b.date} ${b.time}\nis BEFORE\nService ${k} (${prev}): ${a.date} ${a.time}\n\nEach service has its own date, time and places.\n\nOK = that's correct · Cancel = let me fix it`;
+    if (window.confirm(msg)) return true;
+    const el = k === 1 ? document.querySelector('#coForm [name="date"]') : document.querySelector(`[data-leg="${k - 1}"][data-legfield="date"]`);
+    el?.focus();
+    return false;
+  }
+  return true;
 }
 /* Checkout en 2 pasos: 1) el viaje  2) datos y pago. Solo presentación — la lógica de pago no cambia. */
 function coStep(n) {
@@ -1300,21 +1397,24 @@ function coStep(n) {
   document.querySelector(".checkout-body")?.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-// ¿Algún tramo del carrito toca un aeropuerto? (índices 0 = SJO, 1 = LIR en PT_PLACES)
-function cartTouchesAirport() {
-  return CART.some((it) => +it.i === 0 || +it.i === 1 || +it.j === 0 || +it.j === 1);
-}
 
 // El número de vuelo es OBLIGATORIO solo cuando la reserva incluye un aeropuerto.
+// Cada servicio que toca un aeropuerto pide SU vuelo (llegada o salida). Este
+// campo es el del servicio 1; los demás van en su propio bloque.
 function setFlightRequirement() {
   const input = document.querySelector('#coForm [name="flight"]');
   if (!input) return;
-  const req = cartTouchesAirport();
+  const it = CART[0];
+  const req = legTouchesAirport(it);
   input.required = req;
-  const label = input.closest(".co-field")?.querySelector("[data-i18n]");
+  const field = input.closest(".co-field");
+  // Con varios servicios, un vuelo "opcional" en un traslado hotel-hotel solo confunde.
+  if (field) field.hidden = !req && CART.length > 1;
+  const label = field?.querySelector("[data-i18n]");
+  const key = it ? legFlightKey(it) : "co.flight";
   if (label) {
-    label.setAttribute("data-i18n", req ? "co.flightReq" : "co.flight");
-    label.textContent = t(req ? "co.flightReq" : "co.flight");
+    label.setAttribute("data-i18n", key);
+    label.textContent = t(key);
   }
 }
 
@@ -1347,7 +1447,8 @@ function buildItinerary(d) {
     const time = idx === 0 ? d.time : it.time;
     const pickup = idx === 0 ? d.pickup : it.pickup;
     const dropoff = idx === 0 ? (d.dropoff || "") : (it.dropoff || "");
-    return `${idx + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · VIP (+$80)" : ""} — ${date} ${time} · Pickup: ${pickup}${dropoff ? " · Drop-off: " + dropoff : ""}`;
+    const flight = !legTouchesAirport(it) ? "" : (idx === 0 ? d.flight : it.flight) || "";
+    return `${idx + 1}) ${it.from} -> ${it.to} · ${it.vname}${it.vip ? " · VIP (+$80)" : ""} — ${date} ${time} · Pickup: ${pickup}${dropoff ? " · Drop-off: " + dropoff : ""}${flight ? " · Flight: " + flight : ""}`;
   }).join("\n");
 }
 
@@ -1391,6 +1492,9 @@ function reservaPayload(d) {
     time: idx === 0 ? d.time : it.time,
     pickup: idx === 0 ? d.pickup : it.pickup,
     dropoff: idx === 0 ? (d.dropoff || "") : (it.dropoff || ""),
+    // vuelo PROPIO de cada servicio (ida y regreso son vuelos distintos)
+    flight: idx === 0 ? ((legTouchesAirport(it) || CART.length === 1) ? (d.flight || "") : "")
+                      : (legTouchesAirport(it) ? (it.flight || "") : ""),
   }));
   return {
     name: d.name, email: d.email, phone: d.phone,
@@ -1656,6 +1760,7 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const el of step1.querySelectorAll("input, select, textarea")) {
       if (!el.checkValidity()) { el.reportValidity(); return; }
     }
+    if (!checkLegOrder()) return;
     coStep(2);
     gaEvent("begin_checkout_step2", {});
   });
@@ -1677,7 +1782,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!coForm.reportValidity()) return;
     for (let idx = 1; idx < CART.length; idx++) {
       const it = CART[idx];
-      const missing = !it.date ? "date" : !it.time ? "time" : !it.pickup ? "pickup" : null;
+      const missing = !it.date ? "date" : !it.time ? "time" : !it.pickup ? "pickup"
+        : (legTouchesAirport(it) && !it.flight) ? "flight" : null;
       if (missing) {
         const el = document.querySelector(`[data-leg="${idx}"][data-legfield="${missing}"]`);
         if (el) el.focus();
