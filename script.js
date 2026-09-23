@@ -1470,6 +1470,10 @@ function childSeatsText(d) {
   return parts.join(", ");
 }
 
+function leerOrigen() {
+  try { return JSON.parse(localStorage.getItem("travesia-origen") || "null"); } catch (e) { return null; }
+}
+
 /* Reserva por correo: arma los datos (SIN tarjeta) y los envía a la función serverless */
 function reservaPayload(d) {
   const es = currentLang === "es";
@@ -1504,6 +1508,9 @@ function reservaPayload(d) {
     seats: childSeatsText(d),
     total: "$" + checkoutTotal(), notes: d.notes, lang: currentLang,
     country: d.country || "",   // para que el correo a Eddie arme el WhatsApp con código de país
+    // Por dónde llegó (Google, Facebook, ChatGPT...) — lo guarda analytics.js en este navegador
+    origen: leerOrigen(),
+    dispositivo: /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent || "") ? "Celular" : "Compu",
   };
 }
 function postReserva(payload) {

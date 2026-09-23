@@ -300,6 +300,7 @@ function ownerEmail(d, paid) {
       <div style="color:#d9d0c3;font-size:13px;line-height:1.8">
         Email: <a href="mailto:${esc(d.email)}" style="color:#ff9e4d;text-decoration:none">${esc(d.email)}</a><br>
         ${d.notes ? 'Notas: ' + esc(d.notes) + '<br>' : ''}
+        ${origenCampos(d).origen ? 'Llegó por: <b style="color:#f5efe6">' + esc(origenCampos(d).origen) + '</b> <span style="color:#9a8f80">(' + esc(origenCampos(d).detalle) + ')</span><br>' : ''}
         ${paid ? 'El cliente pagó en línea — verificá el cobro en tu panel de Tilopay.' : 'Solicitud desde el sitio, aún sin pago.'}
       </div>
       <div style="margin-top:12px">${waBtn(waNumber(d.phone, d.country), 'Escribir al cliente por WhatsApp', d.lang !== 'es'
@@ -368,8 +369,54 @@ function sheetText(v) {
   return /^[=+\-@]/.test(s) ? "'" + s : s;
 }
 
+/* ---- Por dónde llegó el cliente (lo arma analytics.js en su navegador) ----
+   El dato viene del navegador, así que se trata como texto sin confianza:
+   se recorta y se escapa, nunca se ejecuta. */
+function clip(v, n) { return String(v == null ? '' : v).replace(/[\r\n\t]+/g, ' ').slice(0, n || 80); }
+function toqueTxt(tq) {
+  if (!tq || typeof tq !== 'object') return '';
+  return `${clip(tq.t, 10)} por ${clip(tq.c, 40)}${tq.r ? ' (' + clip(tq.r, 60) + ')' : ''}${tq.u ? ' [' + clip(tq.u, 80) + ']' : ''}, entró a ${clip(tq.l, 100)}`;
+}
+function origenCampos(d) {
+  const o = d && d.origen && typeof d.origen === 'object' ? d.origen : null;
+  if (!o || !o.first) return { origen: '', detalle: '' };
+  const primera = toqueTxt(o.first);
+  const ultima = o.last && (o.last.c !== o.first.c || o.last.t !== o.first.t) ? ' · Última: ' + toqueTxt(o.last) : '';
+  const n = +o.n > 0 ? ` · ${Math.min(+o.n, 9999)} visita${+o.n === 1 ? '' : 's'}` : '';
+  // "Directo" no dice nada (link pegado, WhatsApp, favorito): si después llegó
+  // por un canal real, ese es el que cuenta.
+  const canal = o.first.c === 'Directo' && o.last && o.last.c && o.last.c !== 'Directo' ? o.last.c : o.first.c;
+  return { origen: clip(canal, 40), detalle: 'Primera: ' + primera + ultima + n };
+}
+
+// Solo lo necesario para que el panel privado arme la reserva sin adivinar.
+function datosPanel(d) {
+  const o = d && d.origen && typeof d.origen === 'object' ? d.origen : null;
+  const toque = tq => tq && typeof tq === 'object'
+    ? { c: clip(tq.c, 40), r: clip(tq.r, 60), u: clip(tq.u, 80), l: clip(tq.l, 100), t: clip(tq.t, 10) } : null;
+  return JSON.stringify({
+    v: 1,
+    legs: bookingLegs(d).map(l => ({
+      from: clip(l.from, 80), to: clip(l.to, 80), date: clip(l.date, 10), time: clip(l.time, 5),
+      pickup: clip(l.pickup, 120), dropoff: clip(l.dropoff, 120), flight: clip(l.flight, 60),
+      vname: clip(l.vname, 40), vip: !!l.vip, price: +l.price || 0,
+    })),
+    pax: clip(d.pax, 60), seats: clip(d.seats, 120), pagoPais: clip(d.country, 8), notas: clip(d.notes, 1000),
+    origen: o ? { first: toque(o.first), last: toque(o.last), n: Math.min(+o.n || 1, 9999) } : null,
+  });
+}
+
+// "Intento de pago": el cliente llenó todo y lo mandamos a Tilopay. Si paga,
+// /api/retorno anota "Pagado" en la MISMA fila (misma orden); si no paga,
+// queda como intento y Eddie lo puede contactar. Solo con la hoja v11
+// (PANEL_KEY configurada): la vieja duplicaría la fila en vez de actualizarla.
+export async function logAttempt(d) {
+  if (!process.env.PANEL_KEY) return;
+  await logToSheet(d, false, 'Intento de pago');
+}
+
 // Guarda la reserva en la hoja de Google (si está configurada). No rompe si falla.
-async function logToSheet(d, paid) {
+async function logToSheet(d, paid, estado) {
   const url = process.env.SHEETS_WEBHOOK_URL;
   if (!url) return;
   // Varios servicios: las columnas fecha/hora/recogida/destino/vuelo llevan el
@@ -391,12 +438,17 @@ async function logToSheet(d, paid) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        estado: paid ? 'Pagado' : 'Solicitud',
+        estado: paid ? 'Pagado' : (estado || 'Solicitud'),
         nombre: sheetText(d.name), email: sheetText(d.email), telefono: sheetText(d.phone),
         ruta: sheetText(d.summary), fecha: sheetText(first.date), hora: sheetText(first.time), pax: sheetText(d.pax),
         recogida: sheetText(first.pickup), destino: sheetText(first.dropoff), itinerario: sheetText(itinerario), vuelo: sheetText(first.flight), servicio: sheetText(d.tier),
         total: sheetText(d.total), orden: sheetText(d.orderNumber),
         notas: sheetText((d.seats ? 'Sillas: ' + d.seats + ' · ' : '') + (d.notes || '')),
+        // columnas nuevas (R..W) — la hoja v11 las anota; la vieja las ignora
+        origen: sheetText(origenCampos(d).origen), origenDetalle: sheetText(origenCampos(d).detalle),
+        pais: sheetText([d.paisVisita ? 'Visita desde ' + clip(d.paisVisita, 8) : '', d.country ? 'tarjeta ' + clip(d.country, 8) : ''].filter(Boolean).join(' · ')),
+        idioma: d.lang === 'es' ? 'Español' : 'Inglés', dispositivo: sheetText(clip(d.dispositivo, 20)),
+        datos: datosPanel(d),
       }),
     });
   } catch (e) { /* la hoja es un extra: si falla, no afecta correo ni pago */ }

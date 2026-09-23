@@ -2,6 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /cotizar.html
 Disallow: /cotizar
+Disallow: /admin
 
 # Acceso explicito para robots de asistentes de IA (ya permitidos por la regla
 # general de arriba; se listan aparte para que quede claro y no se bloqueen

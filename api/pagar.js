@@ -11,6 +11,15 @@
 import routesData from '../routes-data.js';
 import { rateLimited } from './_ratelimit.js';
 import bookingRules from '../booking-rules.js';
+import { logAttempt } from './_mailer.js';
+
+// "Por dónde llegó" viene del navegador: se recorta a lo esencial (texto corto).
+function origenCompacto(o) {
+  if (!o || typeof o !== 'object' || !o.first) return null;
+  const s = (v, n) => String(v == null ? '' : v).slice(0, n);
+  const t = tq => (tq && typeof tq === 'object') ? { c: s(tq.c, 30), r: s(tq.r, 50), u: s(tq.u, 60), l: s(tq.l, 90), t: s(tq.t, 10) } : null;
+  return { first: t(o.first), last: t(o.last), n: Math.min(+o.n || 1, 9999) };
+}
 
 const { PT_ROWS } = routesData;
 const { brCheckLegs, BR_MIN_HOURS } = bookingRules;
@@ -150,7 +159,15 @@ export default async function handler(req, res) {
       seats: String(d.seats || '').slice(0, 120),
       tier, total: '$' + amount.toFixed(2), notes: d.notes || '',
       lang: d.lang === 'es' ? 'es' : 'en', orderNumber, country,
+      // Por dónde llegó + desde qué país navega (lo dice Vercel, no el cliente) + celular/compu.
+      // Compacto a propósito: todo esto viaja a Tilopay y vuelve en returnData.
+      origen: origenCompacto(d.origen),
+      paisVisita: String(req.headers['x-vercel-ip-country'] || '').slice(0, 2),
+      dispositivo: d.dispositivo === 'Celular' ? 'Celular' : (d.dispositivo ? 'Compu' : ''),
     };
+    // Anotar el "Intento de pago" en la hoja MIENTRAS se crea el cobro (en paralelo,
+    // para no demorar al cliente). Si luego paga, la misma fila pasa a "Pagado".
+    const intento = logAttempt(booking).catch(() => {});
     const returnData = Buffer.from(JSON.stringify(booking), 'utf8').toString('base64');
 
     // ---- 2) processPayment -> URL de pago ----
@@ -196,6 +213,9 @@ export default async function handler(req, res) {
       body: JSON.stringify(payload),
     });
     const pay = await payR.json().catch(() => ({}));
+    // Esperar la hoja como máximo 2.5 s más: en Vercel lo que no terminó antes de
+    // responder se puede cortar, pero el pago del cliente no espera por la hoja.
+    await Promise.race([intento, new Promise(r => setTimeout(r, 2500))]);
     if (!pay.url) { res.status(502).json({ ok: false, error: 'no-url', detail: pay }); return; }
 
     res.status(200).json({ ok: true, url: pay.url, orderNumber, amount: amount.toFixed(2) });

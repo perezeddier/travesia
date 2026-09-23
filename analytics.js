@@ -82,6 +82,54 @@
     document.body.appendChild(wrap);
   }
 
+  /* ---- POR DONDE LLEGO EL CLIENTE (Google, Facebook, ChatGPT...) ----
+     Se guarda SOLO en el navegador del visitante y solo viaja a nosotros si
+     él mismo reserva (va junto con la reserva, para saber qué canal vende).
+     No usa terceros ni cookies, por eso corre aunque rechace la analítica.
+     first = la primera vez que nos encontró · last = la última visita que
+     vino de algún lado (las visitas "directas" no pisan un canal conocido). */
+  var ORIGEN_KEY = 'travesia-origen';
+  function canalDe(txt) {
+    var s = String(txt || '').toLowerCase();
+    if (!s) return '';
+    var reglas = [
+      [/chatgpt|openai/, 'ChatGPT'], [/perplexity/, 'Perplexity'], [/gemini\.google|bard\.google/, 'Gemini'],
+      [/copilot/, 'Copilot'], [/claude\.ai|anthropic/, 'Claude'], [/tripadvisor/, 'TripAdvisor'],
+      [/facebook|fb\.com|fb\.me|^fb$/, 'Facebook'], [/instagram|^ig$/, 'Instagram'], [/tiktok/, 'TikTok'],
+      [/whatsapp|wa\.me/, 'WhatsApp'], [/youtube|youtu\.be/, 'YouTube'], [/pinterest|pin\.it/, 'Pinterest'],
+      [/reddit/, 'Reddit'], [/gmail|mail\.|outlook/, 'Correo'], [/gbp|google.?business|maps\.google|google\.[a-z.]+\/maps/, 'Google Maps / Ficha'],
+      [/google|^goo\.gl/, 'Google'], [/bing/, 'Bing'], [/duckduckgo/, 'DuckDuckGo'], [/yahoo/, 'Yahoo'],
+      [/apple|maps\.apple/, 'Apple Maps'], [/trip\.com/, 'Trip.com'],
+    ];
+    for (var i = 0; i < reglas.length; i++) if (reglas[i][0].test(s)) return reglas[i][1];
+    return s.replace(/^www\./, '');
+  }
+  (function guardarOrigen() {
+    try {
+      var qs = new URLSearchParams(location.search);
+      var ref = '';
+      try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+      if (ref === location.hostname || /travesiacr\.online$|travesia-phi\.vercel\.app$/.test(ref)) ref = '';   // navegación interna
+      var utm = qs.get('utm_source') || '';
+      var ua = navigator.userAgent || '';
+      var app = /FBAN|FBAV|FB_IAB|FBIOS/.test(ua) ? 'facebook' : /Instagram/.test(ua) ? 'instagram'
+        : /musical_ly|BytedanceWebview|TikTok/.test(ua) ? 'tiktok' : '';
+      var canal = (qs.get('gclid') ? 'Google (anuncio)' : '') || canalDe(utm) || canalDe(ref) || canalDe(app);
+      var toque = {
+        c: canal || 'Directo', r: ref, u: [utm, qs.get('utm_medium'), qs.get('utm_campaign')].filter(Boolean).join(' / '),
+        l: location.pathname, t: new Date().toISOString().slice(0, 10),
+      };
+      var guardado = null;
+      try { guardado = JSON.parse(localStorage.getItem(ORIGEN_KEY) || 'null'); } catch (e) {}
+      if (!guardado || !guardado.first) guardado = { first: toque, last: toque, n: 1 };
+      else if (canal) { guardado.last = toque; guardado.n = (guardado.n || 1) + 1; }
+      else if (!ref && document.referrer === '' && performance && performance.navigation && performance.navigation.type === 0) {
+        guardado.n = (guardado.n || 1) + 1;   // volvió directo (escribió la dirección o un favorito)
+      } else return;
+      localStorage.setItem(ORIGEN_KEY, JSON.stringify(guardado));
+    } catch (e) {}
+  })();
+
   var consent = '';
   try { consent = localStorage.getItem(CONSENT_KEY) || ''; } catch (e) {}
   if (consent === 'accepted') {

@@ -1,0 +1,603 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel Travesía</title>
+<meta name="theme-color" content="#0e0c0a">
+<link rel="manifest" href="/admin.webmanifest">
+<link rel="apple-touch-icon" href="/assets/panel-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Panel">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<!--
+  PANEL PRIVADO de Eddie. Esta página es solo la "cáscara": los datos los da
+  /api/admin, y solo con la sesión iniciada con la clave (ADMIN_PASSWORD).
+  Un solo tema oscuro a propósito: es el mismo mundo visual del tiquete.
+-->
+<style>
+:root {
+  --bg: #0e0c0a; --s1: #161210; --s2: #1c1710; --line: #2b241d; --line2: #3a3027;
+  --text: #f5efe6; --muted: #9a8f80; --soft: #d9d0c3;
+  --acc: #ff9e4d; --acc2: #e07b1f;
+  --ok: #4ade80; --ok-bg: rgba(74,222,128,.12);
+  --warn: #fbbf24; --warn-bg: rgba(251,191,36,.12);
+  --info: #93c5fd; --info-bg: rgba(147,197,253,.12);
+  --r: 14px;
+  --f: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --fd: "Playfair Display", Georgia, "Times New Roman", serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--f); font-size: 15px; line-height: 1.45; -webkit-text-size-adjust: 100%; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--acc); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---- barra superior + pestañas ---- */
+.top { position: sticky; top: 0; z-index: 5; background: rgba(14,12,10,.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); padding: calc(10px + env(safe-area-inset-top)) 16px 0; }
+.top-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; max-width: 880px; margin: 0 auto; }
+.brand { font-family: var(--fd); font-size: 19px; font-weight: 600; letter-spacing: .2px; }
+.brand span { color: var(--acc); }
+.upd { font-size: 12px; color: var(--muted); }
+.icon-btn { background: none; border: 1px solid var(--line2); border-radius: 10px; padding: 7px 10px; font-size: 13px; color: var(--soft); }
+.tabs { display: flex; gap: 0; max-width: 880px; margin: 8px auto 0; overflow-x: auto; scrollbar-width: none; }
+.tabs button { flex: 1 0 auto; background: none; border: 0; border-bottom: 2px solid transparent; padding: 9px 7px 10px; font-size: 13.5px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--text); border-bottom-color: var(--acc); }
+.badge { display: inline-block; min-width: 19px; padding: 1px 6px; margin-left: 5px; border-radius: 999px; background: var(--warn-bg); color: var(--warn); font-size: 11.5px; font-weight: 700; }
+
+main { max-width: 880px; margin: 0 auto; padding: 16px 16px calc(40px + env(safe-area-inset-bottom)); }
+.hint { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+.day { font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; font-weight: 600; }
+.day:first-child { margin-top: 4px; }
+.day b { color: var(--acc); font-weight: 700; }
+
+/* ---- tarjetas de lista ---- */
+.list { display: grid; gap: 10px; }
+.card { display: block; width: 100%; text-align: left; background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); padding: 13px 14px; }
+button.card:hover { border-color: var(--line2); }
+.card-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.time { font-size: 17px; font-weight: 700; }
+.route { font-weight: 600; margin-top: 3px; overflow-wrap: anywhere; }
+.meta { color: var(--muted); font-size: 13px; margin-top: 3px; overflow-wrap: anywhere; }
+.meta b { color: var(--soft); font-weight: 600; }
+.pill { font-size: 11.5px; font-weight: 700; padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.p-ok { background: var(--ok-bg); color: var(--ok); }
+.p-warn { background: var(--warn-bg); color: var(--warn); }
+.p-info { background: var(--info-bg); color: var(--info); }
+.p-mute { background: rgba(154,143,128,.14); color: var(--muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chip { font-size: 12px; color: var(--soft); border: 1px solid var(--line2); border-radius: 999px; padding: 2px 9px; }
+.chip.src { border-color: rgba(255,158,77,.45); color: var(--acc); }
+
+.search { width: 100%; background: var(--s1); border: 1px solid var(--line2); border-radius: 12px; padding: 11px 13px; margin-bottom: 12px; }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.seg button { background: var(--s1); border: 1px solid var(--line2); border-radius: 999px; padding: 6px 12px; font-size: 13px; color: var(--soft); }
+.seg button[aria-pressed="true"] { background: rgba(255,158,77,.14); border-color: var(--acc2); color: var(--acc); }
+.empty { text-align: center; color: var(--muted); padding: 34px 10px; border: 1px dashed var(--line2); border-radius: var(--r); }
+.empty strong { display: block; color: var(--soft); margin-bottom: 4px; }
+
+/* ---- botones de acción ---- */
+.acts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border-radius: 10px; padding: 9px 13px; font-size: 13.5px; font-weight: 700; text-decoration: none; border: 1px solid var(--line2); background: var(--s2); color: var(--text); }
+.btn-wa { background: #25d366; border-color: #25d366; color: #06230f; }
+.btn-acc { background: var(--acc2); border-color: var(--acc2); color: #241c05; }
+
+/* ---- números ---- */
+.kpis { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (min-width: 640px) { .kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.kpi { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; }
+.kpi span { display: block; color: var(--muted); font-size: 12px; }
+.kpi strong { display: block; font-size: 22px; font-weight: 700; margin-top: 2px; }
+.kpi small { color: var(--muted); font-size: 12px; }
+.block { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); padding: 14px; margin-top: 12px; }
+.block h3 { margin: 0 0 10px; font-size: 13px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; margin-bottom: 10px; font-size: 14px; }
+.bar-row .track { grid-column: 1 / -1; height: 7px; border-radius: 4px; background: var(--s2); overflow: hidden; }
+.bar-row .fill { height: 100%; background: var(--acc2); border-radius: 4px; }
+.bar-row .v { color: var(--soft); }
+.note { font-size: 12.5px; color: var(--muted); margin-top: 10px; }
+
+/* ---- detalle (hoja que sube) ---- */
+.sheet-bg { position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 20; display: none; }
+.sheet-bg.open { display: block; }
+.sheet { position: fixed; z-index: 21; left: 0; right: 0; bottom: 0; max-height: 92vh; overflow-y: auto; background: var(--bg); border-top: 1px solid var(--line2); border-radius: 18px 18px 0 0; padding: 16px 16px calc(24px + env(safe-area-inset-bottom)); transform: translateY(105%); transition: transform .22s ease; }
+.sheet.open { transform: none; }
+@media (min-width: 760px) { .sheet { left: 50%; right: auto; width: 640px; margin-left: -320px; top: 5vh; bottom: auto; border-radius: 18px; border: 1px solid var(--line2); } .sheet:not(.open) { transform: translateY(20px); opacity: 0; pointer-events: none; } .sheet.open { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .sheet { transition: none; } }
+.sheet-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.sheet h2 { font-family: var(--fd); font-size: 22px; margin: 0; overflow-wrap: anywhere; }
+.order { color: var(--acc); font-weight: 700; letter-spacing: 1.5px; font-size: 13px; }
+.leg { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r); padding: 12px 14px; margin-top: 10px; }
+.leg-n { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--acc); font-weight: 700; }
+dl { margin: 8px 0 0; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 5px 10px; font-size: 14px; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; }
+.sec { font-size: 12px; letter-spacing: 1.4px; text-transform: uppercase; color: var(--muted); margin: 20px 0 4px; font-weight: 600; }
+
+/* ---- entrar ---- */
+.login { max-width: 360px; margin: 12vh auto 0; padding: 0 16px; text-align: center; }
+.login h1 { font-family: var(--fd); font-size: 28px; margin: 0 0 6px; }
+.login h1 span { color: var(--acc); }
+.login p { color: var(--muted); margin: 0 0 22px; }
+.login input { width: 100%; background: var(--s1); border: 1px solid var(--line2); border-radius: 12px; padding: 13px 14px; font-size: 16px; }
+.login button { width: 100%; margin-top: 10px; padding: 13px; border-radius: 12px; border: 0; background: var(--acc2); color: #241c05; font-weight: 700; font-size: 15px; }
+.err { color: #fca5a5; font-size: 13.5px; min-height: 20px; margin-top: 10px; }
+.toast { position: fixed; left: 50%; bottom: calc(22px + env(safe-area-inset-bottom)); transform: translateX(-50%); background: var(--s2); border: 1px solid var(--line2); padding: 9px 16px; border-radius: 999px; font-size: 14px; z-index: 30; display: none; }
+.toast.show { display: block; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<section class="login" id="login" hidden>
+  <h1>Travesía <span>Panel</span></h1>
+  <p>Solo para Eddie.</p>
+  <form id="loginForm">
+    <input type="password" id="pw" autocomplete="current-password" placeholder="Clave del panel" aria-label="Clave del panel" required>
+    <button type="submit">Entrar</button>
+    <div class="err" id="loginErr" role="alert"></div>
+  </form>
+</section>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="top-row">
+      <div class="brand">Travesía <span>Panel</span></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="upd" id="upd"></span>
+        <button class="icon-btn" id="refresh" type="button" aria-label="Actualizar">Actualizar</button>
+      </div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="viajes" aria-selected="true">Viajes</button>
+      <button role="tab" data-tab="reservas" aria-selected="false">Reservas</button>
+      <button role="tab" data-tab="intentos" aria-selected="false">Casi compran<span class="badge" id="nInt" hidden></span></button>
+      <button role="tab" data-tab="numeros" aria-selected="false">Números</button>
+    </nav>
+  </header>
+  <main id="view"></main>
+</div>
+
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Detalle de la reserva"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  'use strict';
+  var HOJA = 'https://docs.google.com/spreadsheets/d/1XdcQFcmPzmkMod28F-Qs4nofYJ0gXEfVagQnAvLRBnM/edit#gid=0&range=A';
+  var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+  var MESES_L = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  var DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+  var DIAL = { US: '1', CA: '1', CR: '506', MX: '52', GB: '44', DE: '49', FR: '33', ES: '34', IT: '39', NL: '31', BE: '32', CH: '41', AT: '43', PT: '351', IE: '353', SE: '46', NO: '47', DK: '45', AU: '61', NZ: '64', BR: '55', AR: '54', CL: '56', CO: '57', PA: '507', IL: '972', JP: '81' };
+
+  var S = { reservas: [], tab: 'viajes', periodo: 'mes', pasados: false, filtro: 'todas', q: '', cargado: 0 };
+  var $ = function (id) { return document.getElementById(id); };
+
+  // TODO lo que viene de la hoja lo escribió un cliente: siempre escapado.
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function hoyCR(dias) { return new Date(Date.now() - 6 * 3600000 + (dias || 0) * 86400000).toISOString().slice(0, 10); }
+  function num(v) { var n = parseFloat(String(v || '').replace(/[^0-9.]/g, '')); return isNaN(n) ? 0 : n; }
+  function dinero(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
+
+  // La hoja muestra fechas y horas como las tenga formateadas: se aceptan varias formas.
+  function normFecha(s) {
+    s = String(s || '').trim();
+    var m = s.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+    if (m) return m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+    m = s.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);           // 19/12/2026 (hoja en español)
+    if (m) return m[3] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+    return '';
+  }
+  function normHora(s) {
+    s = String(s || '').trim().toLowerCase();
+    var m = s.match(/(\d{1,2}):(\d{2})/);
+    if (!m) return '';
+    var h = +m[1];
+    if (/p\.?\s*m/.test(s) && h < 12) h += 12;
+    if (/a\.?\s*m/.test(s) && h === 12) h = 0;
+    return ('0' + h).slice(-2) + ':' + m[2];
+  }
+  function hora12(hhmm) {
+    var m = String(hhmm || '').match(/^(\d{2}):(\d{2})/);
+    if (!m) return hhmm || '—';
+    var h = +m[1], ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return h + ':' + m[2] + ' ' + ap;
+  }
+  function dow(iso) { var p = iso.split('-'); return new Date(Date.UTC(+p[0], +p[1] - 1, +p[2])).getUTCDay(); }
+  function fechaCorta(iso) {
+    if (!iso) return 'sin fecha';
+    var p = iso.split('-');
+    return DIAS[dow(iso)].slice(0, 3) + ' ' + (+p[2]) + ' ' + MESES[+p[1] - 1];
+  }
+  function fechaEn(iso) {
+    var p = iso.split('-'), m = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return m[+p[1] - 1] + ' ' + (+p[2]);
+  }
+  function fechaLarga(iso) {
+    if (!iso) return 'sin fecha';
+    var p = iso.split('-');
+    return DIAS[dow(iso)] + ' ' + (+p[2]) + ' de ' + MESES_L[+p[1] - 1] + ' de ' + p[0];
+  }
+  function diaTitulo(iso) {
+    if (iso === hoyCR()) return '<b>Hoy</b> · ' + fechaCorta(iso);
+    if (iso === hoyCR(1)) return '<b>Mañana</b> · ' + fechaCorta(iso);
+    return fechaLarga(iso);
+  }
+
+  function waNumber(phone, pais) {
+    var raw = String(phone || '').trim(), dig = raw.replace(/\D/g, '');
+    if (!dig) return '';
+    if (raw.charAt(0) === '+' || raw.indexOf('00') === 0) return dig.replace(/^00/, '');
+    var dial = DIAL[String(pais || '').toUpperCase()] || '';
+    if (dial && dig.indexOf(dial) === 0 && dig.length > 10) return dig;
+    if (dial) return dial + dig;
+    if (dig.length === 8) return '506' + dig;
+    if (dig.length === 10) return '1' + dig;
+    return dig;
+  }
+
+  /* ---- Convertir una fila de la hoja en una reserva ----
+     Reservas nuevas traen "Datos (no tocar)" con cada servicio exacto.
+     Las viejas se reconstruyen del texto (ruta, fecha, itinerario en Notas). */
+  function separarRuta(r) {
+    var t = String(r || '').split('  +  ')[0].replace(/\s*\([^()]*\)\s*$/, '');
+    var p = t.split(/\s*(?:→|->)\s*/);
+    return { from: p[0] || t, to: p[1] || '' };
+  }
+  function legsDeTexto(f) {
+    var legs = [], rx = /(\d+)\) (.+?) -> (.+?) · .*? — (\d{4}-\d{2}-\d{2}) (\d{1,2}:\d{2}) · Pickup: ([^·\n]*?)(?: · Drop-off: ([^·\n]*?))?(?: · Flight: ([^·\n]*?))?(?=\n| · Sillas|$| · [A-Z][a-z]+:)/g, m;
+    var txt = String(f.notas || ''), fin = 0;
+    while ((m = rx.exec(txt))) {
+      fin = rx.lastIndex;
+      legs.push({ from: m[2], to: m[3], date: m[4], time: normHora(m[5]), pickup: m[6], dropoff: m[7] || '', flight: m[8] || '' });
+    }
+    // lo que queda después del último servicio son las notas de verdad
+    if (legs.length) { legs.resto = txt.slice(0, Math.max(0, txt.indexOf('Itinerario:'))) + txt.slice(fin); return legs; }
+    var rt = separarRuta(f.ruta), dest = (String(f.notas || '').match(/Destino: ([^·]+)/) || [])[1] || '';
+    return [{ from: rt.from, to: rt.to, date: normFecha(f.fecha), time: normHora(f.hora), pickup: f.recogida, dropoff: dest.trim(), flight: f.vuelo }];
+  }
+  function reserva(f) {
+    var datos = null;
+    try { datos = f.datos ? JSON.parse(f.datos) : null; } catch (e) { datos = null; }
+    var legs = datos && datos.legs && datos.legs.length ? datos.legs : legsDeTexto(f);
+    var resto = legs.resto;
+    legs = legs.map(function (l) { return Object.assign({}, l, { date: normFecha(l.date), time: normHora(l.time) || l.time || '' }); });
+    var o = datos && datos.origen;
+    var notas = String(resto != null ? resto : (f.notas || '')).replace(/Itinerario: [\s\S]*$/, '').replace(/^Destino: [^·]*· /, '').replace(/^\s*·\s*|\s*·\s*$/g, '');
+    return {
+      fila: f.fila, estado: f.estado || '', nombre: f.nombre || '(sin nombre)', email: f.email || '', tel: f.telefono || '',
+      orden: f.orden || '', total: num(f.total), totalTxt: f.total || '', pax: (datos && datos.pax) || f.pax || '',
+      seats: (datos && datos.seats) || ((String(f.notas || '').match(/Sillas: ([^·]+)/) || [])[1] || '').trim(),
+      servicio: f.servicio || '', legs: legs,
+      notas: datos && datos.notas != null ? datos.notas : notas.replace(/Sillas: [^·]+·?\s*/, '').trim(),
+      recibido: normFecha(f.recibido), recibidoTxt: f.recibido || '', review: f.review || '',
+      origen: f.origen || (o && o.first && (o.first.c === 'Directo' && o.last && o.last.c !== 'Directo' ? o.last.c : o.first.c)) || '',
+      origenDetalle: f.origenDetalle || '',
+      pais: f.pais || '', pagoPais: (datos && datos.pagoPais) || ((String(f.pais || '').match(/tarjeta ([A-Z]{2})/) || [])[1] || ''),
+      idioma: f.idioma || '', dispositivo: f.dispositivo || '',
+    };
+  }
+  function pill(estado) {
+    if (estado === 'Pagado') return '<span class="pill p-ok">Pagado</span>';
+    if (estado === 'Intento de pago') return '<span class="pill p-warn">No terminó el pago</span>';
+    if (estado === 'Solicitud') return '<span class="pill p-info">Solicitud sin pago</span>';
+    return '<span class="pill p-mute">' + esc(estado || 'Sin estado') + '</span>';
+  }
+  function primeraFecha(r) {
+    var fs = r.legs.map(function (l) { return l.date; }).filter(Boolean).sort();
+    return fs[0] || '';
+  }
+  function rutaCorta(r) {
+    return r.legs.map(function (l) { return l.from + ' → ' + l.to; }).join('  ·  ');
+  }
+
+  /* ---- VISTA: Viajes (lo que Eddie maneja: próximos servicios, por día) ---- */
+  function vistaViajes() {
+    var hoy = hoyCR(), desde = S.pasados ? hoyCR(-30) : hoy;
+    var items = [];
+    S.reservas.forEach(function (r) {
+      if (r.estado !== 'Pagado' && r.estado !== 'Solicitud') return;
+      r.legs.forEach(function (l, i) {
+        if (!l.date) return;
+        if (S.pasados ? (l.date >= desde && l.date < hoy) : l.date >= hoy) items.push({ r: r, l: l, i: i });
+      });
+    });
+    items.sort(function (a, b) {
+      var ka = a.l.date + ' ' + (a.l.time || '99'), kb = b.l.date + ' ' + (b.l.time || '99');
+      return S.pasados ? (ka < kb ? 1 : -1) : (ka < kb ? -1 : 1);
+    });
+    var h = '<div class="seg"><button type="button" data-pasados="0" aria-pressed="' + !S.pasados + '">Próximos</button>' +
+      '<button type="button" data-pasados="1" aria-pressed="' + S.pasados + '">Últimos 30 días</button></div>';
+    if (!items.length) {
+      return h + '<div class="empty"><strong>' + (S.pasados ? 'Sin viajes en los últimos 30 días' : 'No hay viajes próximos') + '</strong>' +
+        'Cuando entre una reserva desde el sitio aparece aquí, ordenada por día y hora.</div>';
+    }
+    var dia = '';
+    items.forEach(function (x) {
+      if (x.l.date !== dia) { if (dia) h += '</div>'; dia = x.l.date; h += '<div class="day">' + diaTitulo(dia) + '</div><div class="list">'; }
+      var r = x.r, l = x.l;
+      h += '<button type="button" class="card" data-fila="' + r.fila + '">' +
+        '<div class="card-top"><span class="time num">' + esc(hora12(l.time)) + '</span>' + pill(r.estado) + '</div>' +
+        '<div class="route">' + esc(l.from) + ' → ' + esc(l.to) + '</div>' +
+        '<div class="meta"><b>' + esc(r.nombre) + '</b>' + (r.pax ? ' · ' + esc(r.pax) : '') + (l.vname ? ' · ' + esc(l.vname) : '') +
+        (l.vip ? ' · VIP' : '') + (l.flight ? ' · vuelo ' + esc(l.flight) : '') + '</div>' +
+        (r.legs.length > 1 ? '<div class="meta">Servicio ' + (x.i + 1) + ' de ' + r.legs.length + '</div>' : '') +
+        '</button>';
+    });
+    return h + '</div>';
+  }
+
+  /* ---- VISTA: Reservas (todas, con buscador) ---- */
+  function tarjetaReserva(r) {
+    var f = primeraFecha(r);
+    return '<button type="button" class="card" data-fila="' + r.fila + '">' +
+      '<div class="card-top"><span style="font-weight:700;overflow-wrap:anywhere">' + esc(r.nombre) + '</span>' + pill(r.estado) + '</div>' +
+      '<div class="meta">' + esc(rutaCorta(r)) + '</div>' +
+      '<div class="meta"><b class="num">' + (r.total ? dinero(r.total) : esc(r.totalTxt)) + '</b> · ' + esc(fechaCorta(f)) +
+      (r.legs.length > 1 ? ' · ' + r.legs.length + ' servicios' : '') + (r.orden ? ' · ' + esc(r.orden) : '') + '</div>' +
+      (r.origen || r.pais ? '<div class="chips">' + (r.origen ? '<span class="chip src">' + esc(r.origen) + '</span>' : '') +
+        (r.pagoPais ? '<span class="chip">' + esc(r.pagoPais) + '</span>' : '') + (r.dispositivo ? '<span class="chip">' + esc(r.dispositivo) + '</span>' : '') + '</div>' : '') +
+      '</button>';
+  }
+  function vistaReservas() {
+    var q = S.q.toLowerCase().trim();
+    var lista = S.reservas.filter(function (r) {
+      if (r.estado === 'Intento de pago') return false;
+      if (S.filtro === 'pagadas' && r.estado !== 'Pagado') return false;
+      if (S.filtro === 'solicitudes' && r.estado !== 'Solicitud') return false;
+      if (!q) return true;
+      return [r.nombre, r.email, r.tel, r.orden, rutaCorta(r)].join(' ').toLowerCase().indexOf(q) >= 0;
+    }).sort(function (a, b) { return b.fila - a.fila; });
+    var h = '<input class="search" id="q" type="search" placeholder="Buscar nombre, correo, TCR-…" value="' + esc(S.q) + '" aria-label="Buscar reserva">' +
+      '<div class="seg">' + [['todas', 'Todas'], ['pagadas', 'Pagadas'], ['solicitudes', 'Solicitudes']].map(function (o) {
+        return '<button type="button" data-filtro="' + o[0] + '" aria-pressed="' + (S.filtro === o[0]) + '">' + o[1] + '</button>';
+      }).join('') + '</div>';
+    if (!lista.length) return h + '<div class="empty"><strong>Nada con ese filtro</strong>Pruebe con otro nombre o quite el filtro.</div>';
+    return h + '<div class="list">' + lista.map(tarjetaReserva).join('') + '</div>';
+  }
+
+  /* ---- VISTA: Casi compran (llegaron al pago y no terminaron) ---- */
+  function pagoDespues(r) {
+    return S.reservas.some(function (o) { return o.estado === 'Pagado' && o.fila > r.fila && r.email && o.email.toLowerCase() === r.email.toLowerCase(); });
+  }
+  function mensajeRescate(r) {
+    var l = r.legs[0] || {}, f = primeraFecha(r), nombre = String(r.nombre).split(' ')[0];
+    if (/espa/i.test(r.idioma)) {
+      return 'Hola ' + nombre + ', soy Eddie de Travesía Costa Rica. Vi que estaba reservando ' + l.from + ' → ' + l.to +
+        (f ? ' para el ' + fechaLarga(f) : '') + ' y el pago no se completó. ¿Le ayudo a terminarlo? Si prefiere, también le puedo mandar un link de pago aquí mismo.';
+    }
+    return 'Hi ' + nombre + ', this is Eddie from Travesía Costa Rica. I saw you were booking ' + l.from + ' → ' + l.to +
+      (f ? ' for ' + fechaEn(f) : '') + " and the payment didn't go through. Can I help you finish it? I can also send you a payment link right here.";
+  }
+  function vistaIntentos() {
+    var lista = S.reservas.filter(function (r) { return r.estado === 'Intento de pago'; }).sort(function (a, b) { return b.fila - a.fila; });
+    var h = '<p class="hint">Llenaron todos sus datos, llegaron a la página de pago y no terminaron. Un mensaje a tiempo muchas veces salva la venta.</p>';
+    if (!lista.length) return h + '<div class="empty"><strong>Nadie por ahora</strong>Cuando alguien llegue al pago y no lo termine, aparece aquí con su WhatsApp.</div>';
+    return h + '<div class="list">' + lista.map(function (r) {
+      var yaPago = pagoDespues(r), wa = waNumber(r.tel, r.pagoPais);
+      return '<div class="card"' + (yaPago ? ' style="opacity:.6"' : '') + '>' +
+        '<div class="card-top"><span style="font-weight:700;overflow-wrap:anywhere">' + esc(r.nombre) + '</span>' +
+        (yaPago ? '<span class="pill p-ok">Después sí pagó</span>' : '<span class="pill p-warn">' + esc(r.recibidoTxt.slice(0, 16)) + '</span>') + '</div>' +
+        '<div class="meta">' + esc(rutaCorta(r)) + '</div>' +
+        '<div class="meta"><b class="num">' + (r.total ? dinero(r.total) : '') + '</b> · viaje ' + esc(fechaCorta(primeraFecha(r))) + (r.origen ? ' · llegó por ' + esc(r.origen) : '') + '</div>' +
+        '<div class="acts">' + (wa && !yaPago ? '<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + wa + '?text=' + encodeURIComponent(mensajeRescate(r)) + '">Escribirle por WhatsApp</a>' : '') +
+        '<button type="button" class="btn" data-fila="' + r.fila + '">Ver datos</button></div></div>';
+    }).join('') + '</div>';
+  }
+
+  /* ---- VISTA: Números ---- */
+  function enPeriodo(iso) {
+    if (!iso) return S.periodo === 'todo';
+    var hoy = hoyCR();
+    if (S.periodo === 'mes') return iso.slice(0, 7) === hoy.slice(0, 7);
+    if (S.periodo === 'pasado') {
+      var d = new Date(Date.UTC(+hoy.slice(0, 4), +hoy.slice(5, 7) - 2, 1)).toISOString().slice(0, 7);
+      return iso.slice(0, 7) === d;
+    }
+    if (S.periodo === 'anio') return iso.slice(0, 4) === hoy.slice(0, 4);
+    return true;
+  }
+  function barras(mapa, conDinero) {
+    var arr = Object.keys(mapa).map(function (k) { return [k, mapa[k]]; }).sort(function (a, b) { return b[1].n - a[1].n || b[1].v - a[1].v; });
+    if (!arr.length) return '<div class="note">Sin datos todavía.</div>';
+    var max = arr[0][1].n || 1;
+    return arr.slice(0, 8).map(function (x) {
+      return '<div class="bar-row"><span>' + esc(x[0]) + '</span><span class="v num">' + x[1].n + (conDinero && x[1].v ? ' · ' + dinero(x[1].v) : '') + '</span>' +
+        '<div class="track"><div class="fill" style="width:' + Math.max(4, Math.round(x[1].n / max * 100)) + '%"></div></div></div>';
+    }).join('');
+  }
+  function sumar(mapa, k, v) { k = k || 'Sin dato'; mapa[k] = mapa[k] || { n: 0, v: 0 }; mapa[k].n++; mapa[k].v += v || 0; }
+  function vistaNumeros() {
+    // Se cuenta por la fecha en que ENTRÓ la reserva (cuándo se vendió), no la del viaje.
+    var pag = S.reservas.filter(function (r) { return r.estado === 'Pagado' && enPeriodo(r.recibido); });
+    var inte = S.reservas.filter(function (r) { return r.estado === 'Intento de pago' && enPeriodo(r.recibido); });
+    var vendido = pag.reduce(function (s, r) { return s + r.total; }, 0);
+    var origen = {}, rutas = {}, pais = {}, disp = {};
+    pag.forEach(function (r) {
+      sumar(origen, r.origen || 'Antes de medirlo', r.total);
+      sumar(pais, r.pagoPais || '', r.total);
+      sumar(disp, r.dispositivo || 'Antes de medirlo', 0);
+      r.legs.forEach(function (l) { sumar(rutas, l.from.replace(/\s*\(.*\)$/, '') + ' → ' + l.to.replace(/\s*\(.*\)$/, ''), num(l.price)); });
+    });
+    var h7 = hoyCR(7), hoy = hoyCR(), prox = 0;
+    S.reservas.forEach(function (r) { if (r.estado === 'Pagado') r.legs.forEach(function (l) { if (l.date >= hoy && l.date <= h7) prox++; }); });
+    var h = '<div class="seg">' + [['mes', 'Este mes'], ['pasado', 'Mes pasado'], ['anio', 'Este año'], ['todo', 'Todo']].map(function (o) {
+      return '<button type="button" data-periodo="' + o[0] + '" aria-pressed="' + (S.periodo === o[0]) + '">' + o[1] + '</button>';
+    }).join('') + '</div>';
+    h += '<div class="kpis">' +
+      '<div class="kpi"><span>Reservas pagadas</span><strong class="num">' + pag.length + '</strong></div>' +
+      '<div class="kpi"><span>Vendido</span><strong class="num">' + dinero(vendido) + '</strong><small>pagado en línea</small></div>' +
+      '<div class="kpi"><span>Promedio por reserva</span><strong class="num">' + (pag.length ? dinero(vendido / pag.length) : '—') + '</strong></div>' +
+      '<div class="kpi"><span>Viajes próximos 7 días</span><strong class="num">' + prox + '</strong></div></div>';
+    if (inte.length || pag.length) {
+      h += '<div class="block"><h3>De cada 10 que llegan al pago</h3><div style="font-size:15px"><b class="num" style="font-size:20px">' +
+        Math.round(pag.length / Math.max(1, pag.length + inte.length) * 10) + '</b> terminan de pagar · ' + inte.length + ' no terminaron</div>' +
+        '<div class="note">Cuenta desde que se activó el registro de intentos; las reservas de antes no tienen intento anotado.</div></div>';
+    }
+    h += '<div class="block"><h3>Por dónde llegaron los que pagaron</h3>' + barras(origen, true) +
+      '<div class="note">"Directo" = escribió la dirección o abrió un link que le pasaron (WhatsApp, correo). "Antes de medirlo" = reservas de antes de activar este dato.</div></div>';
+    h += '<div class="block"><h3>Rutas más vendidas</h3>' + barras(rutas, false) + '</div>';
+    h += '<div class="block"><h3>País de la tarjeta</h3>' + barras(pais, true) + '</div>';
+    h += '<div class="block"><h3>Reservaron desde</h3>' + barras(disp, false) + '</div>';
+    h += '<p class="note">Solo cuenta lo que entra por el sitio. Lo cobrado por WhatsApp o en efectivo no aparece aquí.</p>';
+    return h;
+  }
+
+  /* ---- Detalle de una reserva ---- */
+  function textoChofer(r, l, i) {
+    return [
+      'TRAVESÍA · ' + (r.orden || '') + (r.legs.length > 1 ? ' · servicio ' + (i + 1) + ' de ' + r.legs.length : ''),
+      fechaLarga(l.date) + ' · ' + hora12(l.time),
+      l.from + ' → ' + l.to,
+      l.pickup && l.pickup !== l.from ? 'Recoger en: ' + l.pickup : '',
+      l.dropoff && l.dropoff !== l.to ? 'Dejar en: ' + l.dropoff : '',
+      l.flight ? 'Vuelo: ' + l.flight : '',
+      'Cliente: ' + r.nombre + (r.tel ? ' · ' + r.tel : ''),
+      r.pax ? 'Pasajeros: ' + r.pax : '',
+      r.seats ? 'Sillas: ' + r.seats : '',
+      l.vname ? 'Vehículo: ' + l.vname + (l.vip ? ' · VIP' : '') : '',
+      r.notas ? 'Notas: ' + r.notas : '',
+    ].filter(Boolean).join('\n');
+  }
+  function fila(dt, dd) { return dd ? '<dt>' + esc(dt) + '</dt><dd>' + esc(dd) + '</dd>' : ''; }
+  function abrir(filaN) {
+    var r = S.reservas.filter(function (x) { return x.fila === filaN; })[0];
+    if (!r) return;
+    var wa = waNumber(r.tel, r.pagoPais);
+    var h = '<div class="sheet-head"><div><div class="order">' + esc(r.orden || 'SIN NÚMERO') + '</div><h2>' + esc(r.nombre) + '</h2>' +
+      '<div style="margin-top:6px">' + pill(r.estado) + ' <b class="num" style="margin-left:6px">' + (r.total ? dinero(r.total) : esc(r.totalTxt)) + '</b></div></div>' +
+      '<button type="button" class="icon-btn" data-cerrar="1" aria-label="Cerrar">Cerrar</button></div>';
+    h += '<div class="acts">' + (wa ? '<a class="btn btn-wa" target="_blank" rel="noopener" href="https://wa.me/' + wa + '">WhatsApp</a>' : '') +
+      (r.tel ? '<a class="btn" href="tel:+' + esc(wa || r.tel.replace(/\D/g, '')) + '">Llamar</a>' : '') +
+      (r.email ? '<a class="btn" href="mailto:' + esc(r.email) + '">Correo</a>' : '') + '</div>';
+    h += '<div class="sec">Servicios</div>';
+    r.legs.slice().sort(function (a, b) { return (a.date + a.time) < (b.date + b.time) ? -1 : 1; }).forEach(function (l, i) {
+      h += '<div class="leg"><div class="leg-n">Servicio ' + (i + 1) + ' de ' + r.legs.length + '</div>' +
+        '<div class="route" style="font-size:16px">' + esc(l.from) + ' → ' + esc(l.to) + '</div><dl>' +
+        fila('Fecha', fechaLarga(l.date)) + fila('Hora', hora12(l.time)) +
+        fila('Recoger en', l.pickup && l.pickup !== l.from ? l.pickup : '') + fila('Dejar en', l.dropoff && l.dropoff !== l.to ? l.dropoff : '') +
+        fila('Vuelo', l.flight) + fila('Vehículo', l.vname ? l.vname + (l.vip ? ' · VIP' : '') : '') + fila('Precio', l.price ? '$' + l.price : '') +
+        '</dl><div class="acts"><button type="button" class="btn btn-acc" data-copiar="' + i + '">Copiar para el chofer</button></div></div>';
+    });
+    h += '<div class="sec">Cliente</div><dl>' + fila('Correo', r.email) + fila('Teléfono', r.tel) + fila('Pasajeros', r.pax) +
+      fila('Sillas de niño', r.seats) + fila('Servicio', r.servicio) + fila('Notas', r.notas) + '</dl>';
+    h += '<div class="sec">De dónde viene</div><dl>' + fila('Llegó por', r.origen || 'No se midió (reserva de antes)') +
+      fila('Detalle', r.origenDetalle) + fila('País', r.pais) + fila('Idioma', r.idioma) + fila('Dispositivo', r.dispositivo) + '</dl>';
+    h += '<div class="sec">Registro</div><dl>' + fila('Entró', r.recibidoTxt) + fila('Reseña pedida', r.review) + fila('Fila en la hoja', String(r.fila)) + '</dl>' +
+      '<div class="acts"><a class="btn" target="_blank" rel="noopener" href="' + HOJA + r.fila + '">Abrir en la hoja</a></div>';
+    var sh = $('sheet');
+    sh.innerHTML = h;
+    sh.dataset.fila = r.fila;
+    sh.classList.add('open'); $('sheetBg').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    sh.scrollTop = 0;
+    var b = sh.querySelector('[data-cerrar]'); if (b) b.focus();
+  }
+  function cerrar() {
+    $('sheet').classList.remove('open'); $('sheetBg').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function toast(t) {
+    var el = $('toast'); el.textContent = t; el.classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('show'); }, 2200);
+  }
+
+  /* ---- Pintar ---- */
+  function pintar() {
+    var v = $('view');
+    v.innerHTML = S.tab === 'viajes' ? vistaViajes() : S.tab === 'reservas' ? vistaReservas()
+      : S.tab === 'intentos' ? vistaIntentos() : vistaNumeros();
+    document.querySelectorAll('.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.tab === S.tab)); });
+    var n = S.reservas.filter(function (r) { return r.estado === 'Intento de pago' && !pagoDespues(r); }).length;
+    $('nInt').hidden = !n; $('nInt').textContent = n;
+    if (S.cargado) $('upd').textContent = 'al ' + new Date(S.cargado).toLocaleTimeString('es-CR', { hour: 'numeric', minute: '2-digit' });
+  }
+
+  /* ---- Datos ---- */
+  function mostrar(cual) { $('login').hidden = cual !== 'login'; $('app').hidden = cual !== 'app'; }
+  function cargar(silencioso) {
+    if (!silencioso) $('upd').textContent = 'cargando…';
+    return fetch('/api/admin', { credentials: 'same-origin', cache: 'no-store' }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { return { st: r.status, j: j }; });
+    }).then(function (x) {
+      if (x.st === 401) { mostrar('login'); $('pw').focus(); return; }
+      if (x.st === 503) {
+        mostrar('login');
+        $('loginErr').textContent = 'El panel todavía no está configurado (falta: ' + ((x.j.falta || []).join(', ')) + ').';
+        return;
+      }
+      if (!x.j.ok) { mostrar('app'); $('view').innerHTML = '<div class="empty"><strong>No se pudo leer la hoja</strong>Toque Actualizar en un momento. (' + esc(x.j.detalle || x.j.error || x.st) + ')</div>'; return; }
+      S.reservas = (x.j.filas || []).map(reserva);
+      S.cargado = Date.now();
+      mostrar('app');
+      pintar();
+    }).catch(function () {
+      if (!silencioso) toast('Sin conexión. Intente de nuevo.');
+    });
+  }
+
+  $('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var btn = e.target.querySelector('button'); btn.disabled = true; $('loginErr').textContent = '';
+    fetch('/api/admin', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', password: $('pw').value }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { st: r.status, j: j }; }); })
+      .then(function (x) {
+        btn.disabled = false;
+        if (x.j.ok) { $('pw').value = ''; cargar(); return; }
+        $('loginErr').textContent = x.st === 429 ? 'Demasiados intentos. Espere 15 minutos.' : x.st === 503 ? 'El panel todavía no está configurado.' : 'Clave incorrecta.';
+      }).catch(function () { btn.disabled = false; $('loginErr').textContent = 'Sin conexión.'; });
+  });
+
+  document.querySelector('.tabs').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-tab]'); if (!b) return;
+    S.tab = b.dataset.tab; pintar(); window.scrollTo(0, 0);
+  });
+  $('view').addEventListener('click', function (e) {
+    var t;
+    if ((t = e.target.closest('[data-pasados]'))) { S.pasados = t.dataset.pasados === '1'; pintar(); return; }
+    if ((t = e.target.closest('[data-filtro]'))) { S.filtro = t.dataset.filtro; pintar(); return; }
+    if ((t = e.target.closest('[data-periodo]'))) { S.periodo = t.dataset.periodo; pintar(); return; }
+    if ((t = e.target.closest('[data-fila]'))) abrir(+t.dataset.fila);
+  });
+  $('view').addEventListener('input', function (e) {
+    if (e.target.id !== 'q') return;
+    S.q = e.target.value;
+    var pos = e.target.selectionStart; pintar();
+    var q = $('q'); q.focus(); try { q.setSelectionRange(pos, pos); } catch (err) {}
+  });
+  $('sheet').addEventListener('click', function (e) {
+    if (e.target.closest('[data-cerrar]')) { cerrar(); return; }
+    var c = e.target.closest('[data-copiar]');
+    if (!c) return;
+    var r = S.reservas.filter(function (x) { return x.fila === +$('sheet').dataset.fila; })[0];
+    var legs = r.legs.slice().sort(function (a, b) { return (a.date + a.time) < (b.date + b.time) ? -1 : 1; });
+    var txt = textoChofer(r, legs[+c.dataset.copiar], +c.dataset.copiar);
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(function () { toast('Copiado. Péguelo en el WhatsApp del chofer.'); })
+      .catch(function () { window.prompt('Copie este texto:', txt); });
+  });
+  $('sheetBg').addEventListener('click', cerrar);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') cerrar(); });
+  $('refresh').addEventListener('click', function () { cargar(); });
+  // Al volver a la app (por ejemplo desde WhatsApp), refrescar si pasaron más de 2 minutos
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && S.cargado && Date.now() - S.cargado > 120000) cargar(true);
+  });
+
+  cargar();
+})();
+</script>
+</body>
+</html>

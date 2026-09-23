@@ -26,6 +26,7 @@ export default async function handler(req, res) {
       res.status(200).json({ ok: true, resent: true });
       return;
     }
+    d.paisVisita = String(req.headers['x-vercel-ip-country'] || '').slice(0, 2);   // lo dice Vercel, no el cliente
     await sendReservation(d, false);
     res.status(200).json({ ok: true });
   } catch (e) {
