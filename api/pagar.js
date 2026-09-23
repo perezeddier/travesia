@@ -21,9 +21,32 @@ function origenCompacto(o) {
   return { first: t(o.first), last: t(o.last), n: Math.min(+o.n || 1, 9999) };
 }
 
-const { PT_ROWS } = routesData;
+const { PT_ROWS, PT_PLACES, PT_DISPLAY, PT_HOTELS } = routesData;
 const { brCheckLegs, BR_MIN_HOURS } = bookingRules;
 const X4_FEE = 40;   // recargo por hoteles que solo se alcanzan en 4x4 (transbordo)
+const VEHICULOS = { staria: 'Hyundai Staria', hiace: 'Toyota Hiace', maxus: 'Maxus V90' };
+
+/* ---- El SERVIDOR decide el nombre de la ruta y el 4x4 (no el navegador) ----
+   Antes el nombre de la ruta y el recargo 4x4 los mandaba el navegador: alguien
+   que manipulara la página podía pagar una ruta barata con el tiquete de una
+   cara, o saltarse los $40 del 4x4. Ahora la zona sale de lo que se COBRÓ (i, j)
+   y el 4x4 se detecta aquí con la lista de hoteles. */
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, ' ').trim();
+function zona(i) { const raw = (PT_PLACES || [])[i]; return (PT_DISPLAY && PT_DISPLAY[raw]) || raw || ''; }
+// El navegador manda "Zona" o "Hotel (Zona)". Si la zona no es la cobrada, se usa la zona cobrada.
+function etiquetaSegura(label, i) {
+  const z = zona(i), l = String(label || '').trim().slice(0, 120);
+  if (!l || l === z) return z;
+  if (l.endsWith(' (' + z + ')') && l.length > z.length + 3) return l;
+  return z;
+}
+// ¿La etiqueta es EXACTAMENTE un hotel 4x4 de esa zona ("Hotel (Zona)")? Mismo criterio
+// que usa el sitio para mostrar el recargo en el total.
+function hotel4x4(place, label) {
+  const l = norm(label), z = zona(place);
+  const h = (PT_HOTELS || []).find(x => x.req4x4 === true && x.place === place && l === norm(x.name + ' (' + z + ')'));
+  return h ? h.name : '';
+}
 
 // índice de precios por ruta (i-j) -> {staria, hiace, maxus}
 const LOOKUP = {};
@@ -104,16 +127,22 @@ export default async function handler(req, res) {
       const p = legPrice(+it.i, +it.j, it.vkey);
       if (p == null) { res.status(400).json({ ok: false, error: 'bad-leg' }); return; }
       const isVip = it.vip === true || it.vip === '1' || it.vip === 1;
-      // 4x4: hoteles de camino de montana que exigen transbordo a 4x4 (+$40)
-      const isX4 = it.x4 === true || it.x4 === '1' || it.x4 === 1;
+      const cl = clientLegs[idx] || {};
+      // Nombres de la ruta: la ZONA siempre es la que se cobró (i, j)
+      const from = etiquetaSegura(cl.from, +it.i), to = etiquetaSegura(cl.to, +it.j);
+      // 4x4: hoteles de camino de montaña que exigen transbordo (+$40). Lo detecta el
+      // servidor; si el navegador además lo marcó, se respeta (nunca cobra de menos).
+      // Solo mira el hotel ESCOGIDO en el buscador (igual que el sitio al mostrar el total),
+      // no el texto libre de recogida/destino: así nunca aparece un cargo que el cliente no vio.
+      const h4 = hotel4x4(+it.j, to) || hotel4x4(+it.i, from);
+      const isX4 = !!h4 || it.x4 === true || it.x4 === '1' || it.x4 === 1;
       amount += p;
       if (isVip) { amount += 80; vipCount++; }  // VIP por tramo
       if (isX4) { amount += X4_FEE; }           // recargo 4x4 por tramo
-      const cl = clientLegs[idx] || {};
       legs.push({
-        from: String(cl.from || '').slice(0, 80), to: String(cl.to || '').slice(0, 80),
-        vname: String(cl.vname || '').slice(0, 40), vip: isVip,
-        x4: isX4, x4hotel: String(it.x4hotel || cl.x4hotel || '').slice(0, 80),
+        from, to,
+        vname: VEHICULOS[it.vkey] || '', vip: isVip,
+        x4: isX4, x4hotel: (h4 || String(it.x4hotel || cl.x4hotel || '')).slice(0, 80),
         price: p + (isVip ? 80 : 0) + (isX4 ? X4_FEE : 0),   // precio del tramo verificado en el servidor, no el que mando el cliente
         date: String(cl.date || '').slice(0, 20), time: String(cl.time || '').slice(0, 20),
         pickup: String(cl.pickup || '').slice(0, 120), dropoff: String(cl.dropoff || '').slice(0, 120),
@@ -155,7 +184,8 @@ export default async function handler(req, res) {
       // Todo con largo máximo: este objeto viaja a Tilopay y vuelve (returnData); si
       // creciera sin límite podría cortarse y el cobro no se capturaría.
       name: String(d.name).slice(0, 120), email: String(d.email).slice(0, 160), phone: String(d.phone || '').slice(0, 40),
-      summary: String(d.summary || '').slice(0, 600), date: String(d.date || '').slice(0, 20), time: String(d.time || '').slice(0, 20),
+      summary: legs.map(l => `${l.from} → ${l.to} (${l.vname}${l.vip ? ' · VIP' : ''})`).join('  +  ').slice(0, 600),   // armado aquí con la ruta cobrada
+      date: String(d.date || '').slice(0, 20), time: String(d.time || '').slice(0, 20),
       pax: String(d.pax || '').slice(0, 60), pickup: String(d.pickup || '').slice(0, 120), dropoff: String(d.dropoff || '').slice(0, 120), flight: String(d.flight || '').slice(0, 60),
       itinerary: '', legs,   // el itinerario se rearma de legs (ya no se manda el texto)
       seats: String(d.seats || '').slice(0, 120),

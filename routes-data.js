@@ -360,7 +360,8 @@ const PT_HOTELS = [
 
 /* Exportar datos para el servidor (Node/Vercel). En el navegador, "module" no existe y se ignora. */
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { PT_PLACES: PT_PLACES, PT_ROWS: PT_ROWS };
+  // PT_DISPLAY y PT_HOTELS: para que el servidor verifique el nombre de la ruta y el recargo 4x4
+  module.exports = { PT_PLACES: PT_PLACES, PT_ROWS: PT_ROWS, PT_DISPLAY: PT_DISPLAY, PT_HOTELS: PT_HOTELS };
 }
 
 

@@ -90,6 +90,31 @@ export default async function handler(req, res) {
       porEmail[it.email] = cur;
     }
 
+    // Reservas de VARIOS servicios: la columna "Fecha" es la del primero. Alguien que
+    // llega el 19 y se va el 28 recibiría "¿cómo estuvo tu viaje?" el 20, a mitad del
+    // viaje. La fecha del ÚLTIMO servicio está en "Datos" (columna W), que se lee con
+    // la misma clave del panel. Si esto falla, todo sigue como antes.
+    if (process.env.PANEL_KEY) {
+      try {
+        const r2 = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'list', key: process.env.PANEL_KEY }),
+        });
+        const j2 = await r2.json().catch(() => ({}));
+        for (const f of (j2 && j2.ok && Array.isArray(j2.filas) ? j2.filas : [])) {
+          const email = String(f.email || '').toLowerCase().trim();
+          if (f.estado !== 'Pagado' || !email || !porEmail[email] || !f.datos) continue;
+          let legs = [];
+          try { legs = (JSON.parse(f.datos).legs || []); } catch (e) { legs = []; }
+          for (const l of legs) {
+            const fl = normFecha(l && l.date);
+            if (fl && fl > porEmail[email].maxFecha) porEmail[email].maxFecha = fl;
+          }
+        }
+      } catch (e) { /* sin esto, se usa la fecha de la columna como siempre */ }
+    }
+
     let sent = 0, candidatos = 0, sinMarcar = 0, fallidos = 0;
     for (const email in porEmail) {
       const info = porEmail[email];
