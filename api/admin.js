@@ -11,6 +11,10 @@
    ========================================================================== */
 import crypto from 'node:crypto';
 import { rateLimited } from './_ratelimit.js';
+import { avisarEddie } from './_mailer.js';
+
+// Enlace a la hoja: se entrega solo con sesión iniciada (antes estaba escrito en la página pública).
+const HOJA = 'https://docs.google.com/spreadsheets/d/1XdcQFcmPzmkMod28F-Qs4nofYJ0gXEfVagQnAvLRBnM/edit#gid=0&range=A';
 
 const COOKIE = 'tcr_admin';
 const DIAS = 30;
@@ -49,7 +53,7 @@ export default async function handler(req, res) {
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
 
   const falta = ['ADMIN_PASSWORD', 'PANEL_KEY', 'SHEETS_WEBHOOK_URL'].filter(k => !process.env[k]);
-  if (falta.length) { res.status(503).json({ ok: false, error: 'no-config', falta }); return; }
+  if (falta.length) { console.error('admin sin configurar', falta.join(',')); res.status(503).json({ ok: false, error: 'no-config' }); return; }
 
   try {
     if (req.method === 'POST') {
@@ -68,6 +72,12 @@ export default async function handler(req, res) {
         }
         const exp = Date.now() + DIAS * 86400000;
         ponerCookie(res, `${exp}.${firma(exp)}`, DIAS * 86400);
+        // Aviso a Eddie en CADA ingreso: si no fue él, se entera de inmediato y cambia la clave.
+        const e = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])).slice(0, 200);
+        await avisarEddie('Entraron a tu panel de Travesía',
+          `<p>Alguien acaba de entrar a tu panel privado con la clave correcta.</p>
+           <p>País: <b>${e(req.headers['x-vercel-ip-country'] || '?')}</b> · Ciudad: ${e(decodeURIComponent(req.headers['x-vercel-ip-city'] || '?'))}<br>Aparato: ${e(req.headers['user-agent'])}</p>
+           <p>Si fuiste vos, no hagas nada. <b>Si no fuiste vos</b>, cambiá ADMIN_PASSWORD en Vercel ya mismo: eso cierra todas las sesiones abiertas.</p>`).catch(() => {});
         res.status(200).json({ ok: true }); return;
       }
       res.status(400).json({ ok: false, error: 'action' }); return;
@@ -83,7 +93,7 @@ export default async function handler(req, res) {
     });
     const j = await r.json().catch(() => ({}));
     if (!j || !j.ok) { res.status(502).json({ ok: false, error: 'hoja', detalle: (j && j.error) || 'sin respuesta' }); return; }
-    res.status(200).json({ ok: true, filas: j.filas || [], ahora: new Date().toISOString() });
+    res.status(200).json({ ok: true, filas: j.filas || [], hoja: HOJA, ahora: new Date().toISOString() });
   } catch (e) {
     res.status(500).json({ ok: false, error: 'server' });
   }

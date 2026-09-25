@@ -1,0 +1,4 @@
+# Archivos que están en el repositorio pero NO se publican en el sitio.
+# tools/ = generadores de páginas, plantillas y notas internas (precios, instrucciones
+# del asistente). Se usan en la compu para armar el sitio; no tienen por qué ser públicos.
+tools/

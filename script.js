@@ -1255,8 +1255,8 @@ function renderCart() {
     list.innerHTML = CART.map((it, idx) => `
       <div class="cart-item">
         <div class="cart-item-main">
-          <div class="cart-route"><span>${it.from}</span> ${ARROW} <span>${it.to}</span></div>
-          <div class="cart-veh">${it.vname}${it.vip ? ' · <b style="color:var(--gold-2)">Travesía VIP</b>' : ''}${it.x4 ? ` · <b style="color:var(--gold-2)">${t("cart.x4")} +$${X4_FEE}</b>` : ''}</div>
+          <div class="cart-route"><span>${coEsc(it.from)}</span> ${ARROW} <span>${coEsc(it.to)}</span></div>
+          <div class="cart-veh">${coEsc(it.vname)}${it.vip ? ' · <b style="color:var(--gold-2)">Travesía VIP</b>' : ''}${it.x4 ? ` · <b style="color:var(--gold-2)">${t("cart.x4")} +$${X4_FEE}</b>` : ''}</div>
         </div>
         <div class="cart-item-price">$${it.price + (it.vip ? 80 : 0) + (it.x4 ? X4_FEE : 0)}</div>
         <button class="cart-remove" type="button" data-remove="${idx}" aria-label="${t("cart.remove")}" title="${t("cart.remove")}">&times;</button>
@@ -1279,7 +1279,7 @@ function checkoutTotal() {
    Antes los campos del servicio 2 salían ARRIBA (en el resumen) y los del
    servicio 1 ABAJO sin decir que eran del 1: un cliente con 2 servicios los
    llenó al revés y el tiquete llegó con fechas y lugares cruzados
-   (reserva Alschuler, set 2026). Ahora cada servicio tiene su bloque
+   (una reserva real, set 2026). Ahora cada servicio tiene su bloque
    numerado, con su ruta, uno debajo del otro y en orden. */
 function coEsc(s) {
   return String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));

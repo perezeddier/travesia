@@ -58,11 +58,19 @@
       en.textContent = "Payment received — your booking is confirmed. We've emailed you the details.";
       btns.innerHTML = '<a class="btn btn-primary" href="/">Volver al inicio / Back home</a>' +
         '<a class="btn btn-wa" href="' + wa + '">Escríbenos por WhatsApp</a>';
+    } else if (p.get('ok') === '2') {
+      // El banco autorizó pero no pudimos confirmar el cobro: a Eddie ya le llegó el aviso.
+      // Lo importante es que el cliente NO pague de nuevo (quedaría con dos retenciones).
+      card.className = 'card no'; badge.textContent = '…';
+      title.textContent = 'Estamos verificando tu pago';
+      sub.textContent = 'Tu banco aprobó el pago, pero todavía no pudimos confirmarlo. Por favor no lo repitas: ya nos llegó el aviso y te escribimos en breve. Si querés, escribinos por WhatsApp con tu número de orden.';
+      en.textContent = "Your bank approved the payment but we couldn't confirm it yet. Please don't pay again: we've been notified and will contact you shortly.";
+      btns.innerHTML = '<a class="btn btn-wa" href="' + wa + '">Escríbenos por WhatsApp</a>';
     } else {
       card.className = 'card no'; badge.textContent = '!';
       title.textContent = 'El pago no se completó';
-      sub.textContent = 'No se realizó ningún cobro. Podés intentar de nuevo o escribirnos por WhatsApp y te ayudamos.';
-      en.textContent = "Payment was not completed. No charge was made. Try again or message us on WhatsApp.";
+      sub.textContent = 'No se confirmó ningún cobro. Podés intentar de nuevo o escribirnos por WhatsApp y te ayudamos.';
+      en.textContent = "Payment was not completed and no charge was confirmed. Try again or message us on WhatsApp.";
       btns.innerHTML = '<a class="btn btn-primary" href="/#home">Intentar de nuevo / Try again</a>' +
         '<a class="btn btn-wa" href="' + wa + '">Escríbenos por WhatsApp</a>';
     }

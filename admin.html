@@ -171,7 +171,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
 <script>
 (function () {
   'use strict';
-  var HOJA = 'https://docs.google.com/spreadsheets/d/1XdcQFcmPzmkMod28F-Qs4nofYJ0gXEfVagQnAvLRBnM/edit#gid=0&range=A';
+  var HOJA = '';   // llega del servidor solo con sesión iniciada (no queda escrito en la página pública)
   var MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
   var MESES_L = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
   var DIAS = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
@@ -293,6 +293,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
     if (estado === 'Pagado') return '<span class="pill p-ok">Pagado</span>';
     if (estado === 'Intento de pago') return '<span class="pill p-warn">No terminó el pago</span>';
     if (estado === 'Solicitud') return '<span class="pill p-info">Solicitud sin pago</span>';
+    if (estado === 'Revisar pago') return '<span class="pill p-warn">Revisar en Tilopay</span>';
     return '<span class="pill p-mute">' + esc(estado || 'Sin estado') + '</span>';
   }
   function primeraFecha(r) {
@@ -523,7 +524,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
     h += '<div class="sec">De dónde viene</div><dl>' + fila('Llegó por', r.origen || 'No se midió (reserva de antes)') +
       fila('Detalle', r.origenDetalle) + fila('País', r.pais) + fila('Idioma', r.idioma) + fila('Dispositivo', r.dispositivo) + '</dl>';
     h += '<div class="sec">Registro</div><dl>' + fila('Entró', r.recibidoTxt) + fila('Reseña pedida', r.review) + fila('Fila en la hoja', String(r.fila)) + '</dl>' +
-      '<div class="acts"><a class="btn" target="_blank" rel="noopener" href="' + HOJA + r.fila + '">Abrir en la hoja</a></div>';
+      (/^https:\/\/docs\.google\.com\//.test(HOJA) ? '<div class="acts"><a class="btn" target="_blank" rel="noopener" href="' + esc(HOJA + r.fila) + '">Abrir en la hoja</a></div>' : '');
     var sh = $('sheet');
     sh.innerHTML = h;
     sh.dataset.fila = r.fila;
@@ -567,6 +568,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
       }
       if (!x.j.ok) { mostrar('app'); $('view').innerHTML = '<div class="empty"><strong>No se pudo leer la hoja</strong>Toque Actualizar en un momento. (' + esc(x.j.detalle || x.j.error || x.st) + ')</div>'; return; }
       S.reservas = (x.j.filas || []).map(reserva);
+      HOJA = String(x.j.hoja || '');
       S.cargado = Date.now();
       mostrar('app');
       pintar();

@@ -12,6 +12,7 @@ import routesData from '../routes-data.js';
 import { rateLimited } from './_ratelimit.js';
 import bookingRules from '../booking-rules.js';
 import { logAttempt } from './_mailer.js';
+import { empacarReserva } from './_firma.js';
 
 // "Por dónde llegó" viene del navegador: se recorta a lo esencial (texto corto).
 function origenCompacto(o) {
@@ -74,7 +75,7 @@ async function nextOrderNumber() {
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'nextOrder' }),
+      body: JSON.stringify({ action: 'nextOrder', key: process.env.PANEL_KEY }),   // la hoja v12 exige la clave
       signal: ctrl.signal,
     });
     clearTimeout(timer);
@@ -98,6 +99,9 @@ export default async function handler(req, res) {
     const d = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
     const cart = Array.isArray(d.cart) ? d.cart : [];
     if (!cart.length) { res.status(400).json({ ok: false, error: 'empty-cart' }); return; }
+    // Más de 10 servicios en una sola reserva no es real y haría crecer sin límite
+    // los datos que viajan a Tilopay (returnData).
+    if (cart.length > 10) { res.status(400).json({ ok: false, error: 'too-many-legs' }); return; }
     if (!d.name || !d.email) { res.status(400).json({ ok: false, error: 'missing' }); return; }
 
     // ---- RECALCULAR el precio en el servidor (tambien por tramo, para el tiquete) ----
@@ -158,7 +162,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({ apiuser: process.env.TILOPAY_USER, password: process.env.TILOPAY_PASSWORD }),
     });
     const login = await loginR.json().catch(() => ({}));
-    if (!login.access_token) { res.status(502).json({ ok: false, error: 'login-failed', detail: login }); return; }
+    if (!login.access_token) { console.error('tilopay login-failed'); res.status(502).json({ ok: false, error: 'login-failed' }); return; }
 
     // ---- Datos para el cobro ----
     // Número de orden corto y consecutivo (TCR-1347, TCR-1348...) usando la hoja de Google
@@ -185,8 +189,10 @@ export default async function handler(req, res) {
       // creciera sin límite podría cortarse y el cobro no se capturaría.
       name: String(d.name).slice(0, 120), email: String(d.email).slice(0, 160), phone: String(d.phone || '').slice(0, 40),
       summary: legs.map(l => `${l.from} → ${l.to} (${l.vname}${l.vip ? ' · VIP' : ''})`).join('  +  ').slice(0, 600),   // armado aquí con la ruta cobrada
-      date: String(d.date || '').slice(0, 20), time: String(d.time || '').slice(0, 20),
-      pax: String(d.pax || '').slice(0, 60), pickup: String(d.pickup || '').slice(0, 120), dropoff: String(d.dropoff || '').slice(0, 120), flight: String(d.flight || '').slice(0, 60),
+      // Fecha, hora y lugares del servicio 1 salen del tramo YA VALIDADO por las reglas
+      // de reserva (no de los campos sueltos, que nadie revisó).
+      date: legs[0].date, time: legs[0].time,
+      pax: String(d.pax || '').slice(0, 60), pickup: legs[0].pickup, dropoff: legs[0].dropoff, flight: legs[0].flight,
       itinerary: '', legs,   // el itinerario se rearma de legs (ya no se manda el texto)
       seats: String(d.seats || '').slice(0, 120),
       tier, total: '$' + amount.toFixed(2), notes: String(d.notes || '').slice(0, 1000),
@@ -201,7 +207,8 @@ export default async function handler(req, res) {
     // para no demorar al cliente). Si luego paga, la misma fila pasa a "Pagado".
     // Número de respaldo (TVCR-...) = la hoja no respondió: no insistir con ella y demorar al cliente.
     const intento = orderNumber.startsWith('TCR-') ? logAttempt(booking).catch(() => {}) : Promise.resolve();
-    const returnData = Buffer.from(JSON.stringify(booking), 'utf8').toString('base64');
+    // FIRMADO: /api/retorno rechaza cualquier returnData que alguien haya cambiado (ver _firma.js)
+    const returnData = empacarReserva(booking);
 
     // ---- 2) processPayment -> URL de pago ----
     const payload = {
@@ -249,10 +256,12 @@ export default async function handler(req, res) {
     // Esperar la hoja como máximo 2.5 s más: en Vercel lo que no terminó antes de
     // responder se puede cortar, pero el pago del cliente no espera por la hoja.
     await Promise.race([intento, new Promise(r => setTimeout(r, 2500))]);
-    if (!pay.url) { res.status(502).json({ ok: false, error: 'no-url', detail: pay }); return; }
+    // Sin "detail": la respuesta de Tilopay no se le muestra al público (va a los logs de Vercel)
+    if (!pay.url) { console.error('tilopay no-url', JSON.stringify(pay).slice(0, 500)); res.status(502).json({ ok: false, error: 'no-url' }); return; }
 
     res.status(200).json({ ok: true, url: pay.url, orderNumber, amount: amount.toFixed(2) });
   } catch (e) {
-    res.status(500).json({ ok: false, error: String(e && e.message || e) });
+    console.error('pagar', e && e.message);
+    res.status(500).json({ ok: false, error: 'server' });
   }
 }

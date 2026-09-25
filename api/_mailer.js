@@ -257,7 +257,7 @@ function legCard(leg, idx, totalLegs, order, d) {
     <div style="margin:8px 18px 18px;border:1px solid #a3651f;background:rgba(224,123,31,.10);border-radius:12px;padding:12px 18px">
       <table role="presentation" width="100%" style="border-collapse:collapse"><tr>
         <td style="color:#9a8f80;font-size:10.5px;letter-spacing:2px;text-transform:uppercase">Precio</td>
-        <td style="text-align:right;color:#ff9e4d;font-size:24px;font-weight:800">$${leg.price}</td>
+        <td style="text-align:right;color:#ff9e4d;font-size:24px;font-weight:800">$${esc(leg.price)}</td>
       </tr></table>
     </div>
     <div style="border-top:1px solid #2b241d;padding:12px 18px;text-align:center;color:#9a8f80;font-size:10.5px;line-height:1.85">
@@ -312,7 +312,8 @@ function ownerEmail(d, paid) {
   </td></tr></table></body></html>`;
 
   const subjTag = paid ? 'Reserva PAGADA' : 'Nueva reserva';
-  return { subject: `${subjTag} ${d.orderNumber || ''}: ${d.name || 'cliente'} - ${d.summary || ''}`, html };
+  // clip() quita saltos de línea: un nombre con "\r\n" no puede meter líneas nuevas en el asunto
+  return { subject: `${subjTag} ${clip(d.orderNumber, 40)}: ${clip(d.name, 80) || 'cliente'} - ${clip(d.summary, 200)}`, html };
 }
 
 // Correo "¿cómo estuvo tu viaje?" pidiendo reseña — bilingüe (no sabemos el idioma
@@ -435,6 +436,7 @@ async function logToSheet(d, paid, estado) {
     l.price ? '$' + l.price : '',
   ].filter(Boolean).join(' · ')).join('\n') : (d.itinerary || '');
   const cuerpo = JSON.stringify({
+        key: process.env.PANEL_KEY,   // la hoja v12 exige la clave en TODA llamada
         estado: paid ? 'Pagado' : (estado || 'Solicitud'),
         nombre: sheetText(d.name), email: sheetText(d.email), telefono: sheetText(d.phone),
         ruta: sheetText(d.summary), fecha: sheetText(first.date), hora: sheetText(first.time), pax: sheetText(d.pax),
@@ -472,14 +474,30 @@ export async function sendOwnerTicket(d, paid) {
 // "Intento de pago" aunque el cobro ya se había hecho. Ahora la hoja va primero
 // y un correo que falle no tumba a los otros. Solo se avisa error (throw) si el
 // correo a EDDIE falló, que es el que no se puede perder.
-export async function sendReservation(d, paid) {
+// Aviso interno SOLO para Eddie (pagos por revisar, ingresos al panel, alertas).
+export async function avisarEddie(asunto, html) {
+  if (!process.env.BREVO_API_KEY) return;
+  await sendEmail(OWNER, clip(asunto, 150), shell(html, clip(asunto, 150)));
+}
+
+// Tilopay autorizó pero no se pudo capturar: la fila queda marcada para que Eddie la vea
+// (el panel la muestra aparte; el correo de reseñas solo mira filas "Pagado").
+export async function logRevision(d) {
+  await logToSheet(d, false, 'Revisar pago');
+}
+
+// soloEddie = true: NO se le escribe al correo que vino en el formulario. Lo usa
+// /api/reservar (público, sin pago): así nadie puede usar el sitio para mandar
+// correos con nuestro nombre a cualquier dirección.
+export async function sendReservation(d, paid, opciones) {
   if (!process.env.BREVO_API_KEY) throw new Error('no-brevo-key');
+  const soloEddie = !!(opciones && opciones.soloEddie);
   const lang = d.lang === 'es' ? 'es' : 'en';
   await logToSheet(d, !!paid);
   const c = clientEmail(d, lang, !!paid);
   const o = ownerEmail(d, !!paid);
   const [aCliente, aEddie] = await Promise.allSettled([
-    sendEmail(d.email, c.subject, c.html, OWNER),
+    soloEddie ? Promise.resolve() : sendEmail(d.email, c.subject, c.html, OWNER),
     sendEmail(OWNER, o.subject, o.html, d.email),
   ]);
   if (aEddie.status === 'rejected') throw aEddie.reason;

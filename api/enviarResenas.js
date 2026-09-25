@@ -45,7 +45,7 @@ async function marcarEnviado(url, email) {
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'markReviewSent', email }),
+      body: JSON.stringify({ action: 'markReviewSent', email, key: process.env.PANEL_KEY }),
     });
     if (!r.ok) return false;
     const j = await r.json().catch(() => ({}));
@@ -56,9 +56,9 @@ async function marcarEnviado(url, email) {
 export default async function handler(req, res) {
   // Solo el cron de Vercel puede disparar esto: cuando existe la env var CRON_SECRET,
   // Vercel la manda como "Authorization: Bearer <CRON_SECRET>" en cada ejecución
-  // programada; cualquier otra llamada sin esa llave se rechaza. (Si la env var
-  // no está configurada aún, se comporta como antes para no romper el cron.)
-  if (process.env.CRON_SECRET && req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
+  // programada; cualquier otra llamada sin esa llave se rechaza.
+  // Sin la clave configurada queda CERRADO (antes quedaba abierto para cualquiera).
+  if (!process.env.CRON_SECRET || req.headers.authorization !== `Bearer ${process.env.CRON_SECRET}`) {
     res.status(401).json({ ok: false, error: 'unauthorized' }); return;
   }
   const url = process.env.SHEETS_WEBHOOK_URL;
@@ -68,7 +68,7 @@ export default async function handler(req, res) {
     const r = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'getAllPaid' }),
+      body: JSON.stringify({ action: 'getAllPaid', key: process.env.PANEL_KEY }),
     });
     const j = await r.json().catch(() => ({}));
     const reservas = (j && j.ok && Array.isArray(j.reservas)) ? j.reservas : [];

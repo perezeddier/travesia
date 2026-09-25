@@ -1,5 +1,5 @@
 /* Service worker — cachea la app para que funcione offline y se pueda instalar */
-const CACHE = 'travesia-control-v1';
+const CACHE = 'travesia-control-v2';
 const ASSETS = ['./', './index.html', './app.css', './app.js', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', (e) => {

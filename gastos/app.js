@@ -12,7 +12,7 @@ const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 const todayISO = () => new Date().toISOString().slice(0, 10);
 const monthOf = (iso) => (iso || '').slice(0, 7);
-const esc = (s) => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 const MESES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 const DIAS  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
@@ -1063,15 +1063,39 @@ function exportData(){
   a.click(); URL.revokeObjectURL(a.href);
   toast('Respaldo descargado 📤');
 }
+/* Un respaldo importado es un archivo de afuera: podría venir manipulado. Los ids
+   van dentro de onclick="...('id')" y los montos/fechas dentro de value="...", así
+   que se dejan pasar SOLO si tienen la forma correcta (letras/números, números,
+   AAAA-MM-DD). El texto libre (nombres, notas) ya se escapa al mostrarse. */
+function limpiarImport(d){
+  const ID = /^[A-Za-z0-9_-]{1,64}$/;
+  const NUM = ['precio','pax','capacidad','monto','tc','comision'];
+  const limpiar = (o) => {
+    if (Array.isArray(o)) return o.map(limpiar);
+    if (!o || typeof o !== 'object') return o;
+    const out = {};
+    for (const k of Object.keys(o)) {
+      let v = o[k];
+      if (k === 'id' || /Id$/.test(k)) v = (typeof v === 'string' && ID.test(v)) ? v : (k === 'id' ? uid() : '');
+      else if (NUM.includes(k)) v = (v === '' || v == null) ? v : (isFinite(+v) ? +v : '');
+      else if (k === 'fecha') v = /^\d{4}-\d{2}-\d{2}$/.test(String(v || '')) ? v : '';
+      else if (v && typeof v === 'object') v = limpiar(v);
+      out[k] = v;
+    }
+    return out;
+  };
+  return limpiar(d);
+}
+
 function importData(input){
   const file = input.files[0]; if(!file) return;
   const r = new FileReader();
   r.onload = ()=>{
     try{
-      const d = JSON.parse(r.result);
+      const d = limpiarImport(JSON.parse(r.result));
       if(!d.vehiculos && !d.viajes && !d.gastos) throw 0;
       if(!confirm('Esto reemplazará todos los datos actuales por los del archivo. ¿Continuar?')) return;
-      localStorage.setItem(DB.KEY, JSON.stringify(d));  // guardar crudo
+      localStorage.setItem(DB.KEY, JSON.stringify(d));  // guardar (ya limpio)
       DB.load();                                        // recargar + normalizar campos faltantes
       DB.save();
       goTab('inicio'); toast('Datos importados ✅');
